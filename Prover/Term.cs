@@ -1,12 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
 namespace Prover
-{
-    class Term
+{ 
+    [DebuggerDisplay("{ToString()}")]
+    class Term : Formula
     {
         public string name;
         public List<Term> subterms;
@@ -33,7 +35,27 @@ namespace Prover
             }
         }
 
-
+        public override string ToString()
+        {
+            var result = new StringBuilder();
+            result.Append(name);
+            if (subterms is not null)
+            {
+                var n = subterms.Count;
+                if (n > 0)
+                {
+                    result.Append('(');
+                    for (int i = 0; i < n; i++)
+                    {
+                        result.Append(subterms[i].ToString());
+                        if (i < n - 1)
+                            result.Append(", ");
+                    }
+                    result.Append(')');
+                }
+            }
+            return result.ToString();
+        }
         public static Term Copy(Term t)
         {
             List<Term> copy = new List<Term>();

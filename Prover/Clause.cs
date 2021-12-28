@@ -76,6 +76,15 @@ namespace Prover
             this.name = name;
         }
 
-
+        public override string ToString()
+        {
+            StringBuilder res = new StringBuilder();
+            res.Append("{ ");
+            foreach (var lit in literals)
+                res.Append(lit.ToString() + ", ");
+            res.Remove(res.Length - 2, 2);
+            res.Append(" }");
+            return res.ToString();
+        }
     }
 }

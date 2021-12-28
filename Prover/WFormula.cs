@@ -126,13 +126,13 @@ namespace Prover
                 wf = tmp;
             }
 
-            //(f, m) = Formula.FormulaMiniScope(f);
-            //if (m)
-            //{
-            //    tmp = new WFormula(f, wf.type);
-            //    tmp.Derivation = Derivation.FlatDerivation("shift_quantors", new List<IDerivable> { wf });
-            //    wf = tmp;
-            //}
+            (f, m) = Formula.FormulaMiniScope(f);
+            if (m)
+            {
+                tmp = new WFormula(f, wf.type);
+                tmp.Derivation = Derivation.FlatDerivation("shift_quantors", new List<IDerivable> { wf });
+                wf = tmp;
+            }
 
             //f = Formula.FormulaVarRename(f);
             //if (!f.Equals(wf.Formula))
@@ -142,29 +142,29 @@ namespace Prover
             //    wf = tmp;
             //}
 
-            //f = Formula.FormulaScolemize(f);
-            //if (!f.Equals(wf.Formula))
-            //{
-            //    tmp = new WFormula(f, wf.type);
-            //    tmp.Derivation = Derivation.FlatDerivation("skolemize", new List<IDerivable> { wf }, "status(esa)");
-            //    wf = tmp;
-            //}
+            f = Formula.FormulaScolemize(f);
+            if (!f.Equals(wf.Formula))
+            {
+                tmp = new WFormula(f, wf.type);
+                tmp.Derivation = Derivation.FlatDerivation("skolemize", new List<IDerivable> { wf }, "status(esa)");
+                wf = tmp;
+            }
 
-            //f = Formula.formulaShiftQuantorsOut(f);
-            //if (!f.Equals(wf.Formula))
-            //{
-            //    tmp = new WFormula(f, wf.type);
-            //    tmp.Derivation = Derivation.FlatDerivation("shift_quantors", new List<IDerivable> { wf });
-            //    wf = tmp;
-            //}
+            f = Formula.formulaShiftQuantorsOut(f);
+            if (!f.Equals(wf.Formula))
+            {
+                tmp = new WFormula(f, wf.type);
+                tmp.Derivation = Derivation.FlatDerivation("shift_quantors", new List<IDerivable> { wf });
+                wf = tmp;
+            }
 
-            //f = Formula.FormulaDistributeDisjunctions(f);
-            //if (!f.Equals(wf.Formula))
-            //{
-            //    tmp = new WFormula(f, wf.type);
-            //    tmp.Derivation = Derivation.FlatDerivation("distribute", new List<IDerivable> { wf });
-            //    wf = tmp;
-            //}
+            f = Formula.FormulaDistributeDisjunctions(f);
+            if (!f.Equals(wf.Formula))
+            {
+                tmp = new WFormula(f, wf.type);
+                tmp.Derivation = Derivation.FlatDerivation("distribute", new List<IDerivable> { wf });
+                wf = tmp;
+            }
             return wf;
         }
     }

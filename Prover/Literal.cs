@@ -85,6 +85,24 @@ namespace Prover
                     || !negative && Term.AtomIsConstFalse(arguments[0]);
             }
         }
+
+        public override string ToString()
+        {
+            StringBuilder result = new StringBuilder();
+            if (negative)
+                result.Append('~');
+            result.Append(name);
+            var n = arguments.Count;
+            result.Append('(');
+            for(int i =0; i < n; i++)
+            {
+                result.Append(arguments[i].ToString());
+                if (i < n - 1)
+                    result.Append(", ");
+            }
+            result.Append(')');
+            return result.ToString();
+        }
         /// <summary>
         ///  Return a copy of self with oposite polarity.
         /// </summary>

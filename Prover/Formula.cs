@@ -26,7 +26,7 @@ namespace Prover
         string op;
         Formula subFormula1;
         Formula subFormula2;
-
+        public Formula() { }
         public Formula(string op, Formula sub1, Formula sub2 = null)
         {
             this.op = op;
@@ -37,7 +37,7 @@ namespace Prover
         public bool IsLiteral => this is Literal;
         public bool IsUnary => subFormula2 is null;
 
-        public bool IsBinary => (subFormula1 is not null) && (subFormula2 is not null);
+        public bool IsBinary => (subFormula1 is not null) && (subFormula2 is not null) && !IsQuantified;
 
         public bool IsQuantified => op == "!" || op == "?";
 
@@ -123,7 +123,7 @@ namespace Prover
         public static Formula ParseQuatified(Lexer lexer, string quantor)
         {
             lexer.CheckTok(TokenType.IdentUpper);
-            var v = Term.ParseTerm(lexer).ToLitera(); //!
+            var v = Term.ParseTerm(lexer);//.ToLitera(); //!
             Formula rest;
             if (lexer.TestTok(TokenType.Comma))
             {
@@ -136,7 +136,7 @@ namespace Prover
                 lexer.AcceptTok(TokenType.Colon);
                 rest = ParseUnitaryFormula(lexer);
             }
-            return new Formula(quantor, v, rest);
+            return new Quantor(quantor, v, rest);
         }
 
         /// <summary>
@@ -355,7 +355,8 @@ namespace Prover
                 if (f.Child1.IsLiteral)
                     // По возможности вставляйте ~ в литералы. Это покрывает случай
                     // ~~P -> P, если одно из отрицаний находится в литерале.
-                    return (new Formula("", ((Literal)f.Child1/*.Child1*/).Negate()), true);
+                    return ((f.Child1 as Literal).Negate(), true);
+                       // (new Formula("", ((Literal)f.Child1/*.Child1*/).Negate()), true);
             }
             else if (f.op == "|")
             {
@@ -407,7 +408,7 @@ namespace Prover
             else if (f.op == "!" || f.op == "?")
             {
                 var vars = f.Child2.CollectFreeVars();
-                if (!vars.Contains((f.Child1 as Literal).QuantorVar))
+                if (!vars.Contains(f.Child1))
                     return (f.Child2, true);
             }
             return (f, false);
@@ -424,10 +425,16 @@ namespace Prover
         {
             if (!IsLiteral)
             {
-                if (polarity)
-                    return ((Literal)this.Child1).IsPropTrue;
-                else
-                    return ((Literal)this.Child1).IsPropFalse;
+                if (Child1 is Literal)
+                    if (polarity)
+                        return ((Literal)this.Child1).IsPropTrue;
+                    else
+                        return ((Literal)this.Child1).IsPropFalse;
+                else if (Child1 is Literal)
+                    if (polarity)
+                        return ((Literal)this.Child2).IsPropTrue;
+                    else
+                        return ((Literal)this.Child2).IsPropFalse;
             }
             return false;
         }
@@ -477,8 +484,7 @@ namespace Prover
                 // квантификатором.
                 if (!IsQuantified) throw new Exception("Ожидался квантор");
                 res = subFormula2.CollectFreeVars();
-               // res.Remove(subFormula1.)
-
+                res.Remove((Term)subFormula1);
             }
             return res;
         }

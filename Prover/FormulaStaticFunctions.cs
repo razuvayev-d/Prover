@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -95,7 +96,7 @@ namespace Prover
                     if (f.subFormula1.IsLiteral)
                     {
                         // Move negations into literals
-                        f = new Formula("", ((Literal)f.subFormula1).Negate());
+                        f = ((Literal)f.subFormula1).Negate(); //new Formula("", ((Literal)f.subFormula1).Negate());
                         m = true;
                     }
 
@@ -168,8 +169,9 @@ namespace Prover
                     }
 
                     //normalform = !m;
-                    modified |= m;
+                    
                 }
+                modified |= m;
             }
             return (f, modified);
         }
@@ -194,7 +196,7 @@ namespace Prover
 
                 if (op == "&" || op == "|")
                 {
-                    if (!subf.subFormula1.CollectFreeVars().Contains((var as Literal).QuantorVar))
+                    if (!subf.subFormula1.CollectFreeVars().Contains(var as Term)) //(!subf.subFormula1.CollectFreeVars().Contains((var as Literal).QuantorVar))
                     {
 
                         arg2 = new Formula(quant, var, subf.subFormula2);
@@ -202,8 +204,7 @@ namespace Prover
                         f = new Formula(op, arg1, arg2);
                         res = true;
                     }
-                    else if (!subf.subFormula2.CollectFreeVars().Contains(((Literal)var).QuantorVar))
-
+                    else if (!subf.subFormula2.CollectFreeVars().Contains(var as Term)) //(!subf.subFormula2.CollectFreeVars().Contains(((Literal)var).QuantorVar))
                     {
 
                         arg1 = new Formula(quant, var, subf.subFormula1);
@@ -268,10 +269,14 @@ namespace Prover
             Term newvar, oldBinding;
             if (f.IsQuantified)
             {
-                var var = ((Literal)f.subFormula1).Name;
+                Term var = ((Term)f.subFormula1);
                 newvar = Substitution.FreshVar();
-                //oldBinding = subst.ModifyBinding(var, newvar);
+                oldBinding = subst.ModifyBinding(var, newvar);
 
+            }
+            if (f.IsLiteral)
+            {
+               // Formula child = (f as Literal).Substitute(subst);
             }
             throw new NotImplementedException();
         }
@@ -281,11 +286,11 @@ namespace Prover
             if (f.IsLiteral)
             {
                 Formula child = (f/*.subFormula1*/ as Literal).Instantiated(subst);
-                f = new Formula("", child);
+                f = child; new Formula("", child);
             }
             else if(f.op == "?")
             {
-                var var = (f.subFormula1 as Literal).QuantorVar;
+                var var = f.subFormula1 as Term; // (f as Quantor).Variable;// (f.subFormula1 as Literal).QuantorVar;
                 var skTerm = Skolem.NewSkolemTerm(variables);
                 Term oldbinding = subst.ModifyBinding(var, skTerm);
                 f = FormulaRekSkolemize(f.subFormula2, variables, subst);
@@ -293,10 +298,10 @@ namespace Prover
             }
             else if (f.op == "!")
             {
-                var var = (f.subFormula1 as Literal).QuantorVar;
+                var var = f.subFormula1 as Term;
                 variables.Add(var);
                 var handle = FormulaRekSkolemize(f.subFormula2, variables, subst);
-                f = new Formula("!", (f.subFormula1 as Literal), handle);
+                f = new Formula("!", (f.subFormula1 as Term), handle);
                 variables.RemoveAt(variables.Count - 1); // pop
             }
             else
@@ -315,15 +320,100 @@ namespace Prover
         {
             var vars = f.CollectFreeVars();
             return FormulaRekSkolemize(f, vars, new Substitution());
+
             throw new NotImplementedException();
         }
+
+        /// <summary>
+        ///     Shift all (universal) quantor to the outermost level.
+        /// </summary>
+        /// <param name="f"></param>
+        /// <returns></returns>
         public static Formula formulaShiftQuantorsOut(Formula f)
         {
-            throw new NotImplementedException();
+            List<Term> varlist = new List<Term>();
+            //(f, varlist) = SeparateQuantors(f);
+            f = SeparateQuantors(f, varlist);
+            while(varlist.Count > 0)
+            {
+                Term t = varlist[varlist.Count - 1];
+                varlist.Remove(t);
+                f = new Quantor("!", t, f);
+            }
+            return f;
+        }
+        /// <summary>
+        ///  Remove all quantors from f, returning the quantor-free core of the
+     /// formula and a list of quantified variables.This will only be
+     /// applied to Skolemized formulas, thus finding an existential
+     ///quantor is an error.To be useful, the input formula also has to be
+     ///variable-normalized.
+        /// </summary>
+        /// <param name="f"></param>
+        /// <param name="varlist"></param>
+        /// <returns></returns>
+        public static Formula SeparateQuantors(Formula f, List<Term> varlist)
+        {
+            Formula result = f; //= f.Copy();
+            //if (varlist is null)
+            //    varlist = new List<Term>();
+            if (f.IsQuantified)
+            {
+                Debug.Assert(f.op.Equals("!"));
+                varlist.Add((Term)f.subFormula1);
+                result = SeparateQuantors(f.subFormula2, varlist);
+            }
+            else if (!f.IsLiteral)
+            {
+                Formula arg1 = null, arg2 = null;
+                if (f.HasSubform1)
+                    arg1 = SeparateQuantors(f.subFormula1, varlist);
+                if (f.HasSubform2)
+                    arg2 = SeparateQuantors(f.subFormula2, varlist);
+                result = new Formula(f.op, arg1, arg2);
+            }
+            return result;
         }
         public static Formula FormulaDistributeDisjunctions(Formula f)
         {
-            throw new NotImplementedException();
+            Formula arg1 = null, arg2 = null;
+            if (f.IsQuantified)
+            {
+                arg1 = f.subFormula1;
+                arg2 = FormulaDistributeDisjunctions(f.subFormula2);
+                f = new Quantor(f.op, (Term)arg1, arg2);
+            }
+            else if (f.IsLiteral)
+            {
+            }
+            else
+            {
+                if (f.HasSubform1)
+                    arg1 = FormulaDistributeDisjunctions(f.subFormula1);
+                if (f.HasSubform2)
+                    arg2 = FormulaDistributeDisjunctions(f.subFormula2);
+                f = new Formula(f.op, arg1, arg2);
+            }
+            if (f.op.Equals("|"))
+            {
+                if (f.subFormula1.op.Equals("&"))
+                {
+                    // (P&Q)|R -> (P|R) & (Q|R)
+                    arg1 = new Formula("|", f.Child1.Child1, f.Child2);
+                    arg2 = new Formula("|", f.Child1.Child2, f.Child2);
+                    f = new Formula("&", arg1, arg2);
+                    f = FormulaDistributeDisjunctions(f);
+                }
+                else if (f.Child2.op.Equals("&"))
+                {
+                    // (R|(P&Q) -> (R|P) & (R|Q)
+                    arg1 = new Formula("|", f.Child1, f.Child2.Child1);
+                    arg2 = new Formula("|", f.Child1, f.Child2.Child2);
+                    f = new Formula("&", arg1, arg2);
+                    f = FormulaDistributeDisjunctions(f);
+                }
+            }
+            return f;         
         }
 
     }
