@@ -1,4 +1,5 @@
 ﻿using System;
+using System.IO;
 
 namespace Prover
 {
@@ -18,6 +19,11 @@ namespace Prover
             problem.Parse(Path);
             var cnf = problem.Clausify();
 
+            using (StreamWriter sw = new StreamWriter("clauses.txt"))
+            {
+                foreach (var clause in cnf.clauses)
+                    sw.WriteLine(clause.ToString());
+            }
         }
     }
 }

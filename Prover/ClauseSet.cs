@@ -11,7 +11,7 @@ namespace Prover
     /// </summary>
     class ClauseSet
     {
-        List<Clause> clauses;
+        public List<Clause> clauses;
 
         public ClauseSet(List<Clause> clauses)
         {
@@ -63,7 +63,7 @@ namespace Prover
                 var disj = c.DisjToList();
                 var litlist = new List<Formula>();
                 foreach (var l in disj)
-                    litlist.Add(l.Child1);
+                    litlist.Add(l);
                 var clause = new Clause(litlist, f.Type);
                 res.Add(clause);
             }
