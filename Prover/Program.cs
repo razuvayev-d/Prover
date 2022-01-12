@@ -19,6 +19,8 @@ namespace Prover
             problem.Parse(Path);
             var cnf = problem.Clausify();
 
+
+            //var state = SimpleProofState(); 
             using (StreamWriter sw = new StreamWriter("clauses.txt"))
             {
                 foreach (var clause in cnf.clauses)

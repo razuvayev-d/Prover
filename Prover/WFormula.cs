@@ -134,13 +134,13 @@ namespace Prover
                 wf = tmp;
             }
 
-            //f = Formula.FormulaVarRename(f);
-            //if (!f.Equals(wf.Formula))
-            //{
-            //    tmp = new WFormula(f, wf.type);
-            //    tmp.Derivation = Derivation.FlatDerivation("variable_rename", new List<IDerivable> { wf });
-            //    wf = tmp;
-            //}
+            f = Formula.FormulaVarRename(f);
+            if (!f.Equals(wf.Formula))
+            {
+                tmp = new WFormula(f, wf.type);
+                tmp.Derivation = Derivation.FlatDerivation("variable_rename", new List<IDerivable> { wf });
+                wf = tmp;
+            }
 
             f = Formula.FormulaScolemize(f);
             if (!f.Equals(wf.Formula))
