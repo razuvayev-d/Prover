@@ -45,6 +45,13 @@ namespace Prover
         /// <returns></returns>
         public bool IsBound(Term var) => subst.ContainsKey(var);
 
+        public void Apply(List<Term> terms)
+        {
+            int n = terms.Count;
+            for (int i = 0; i < n; i++)
+                terms[i] = Apply(terms[i]);
+        }
+
         /// <summary>
         /// Apply the substitution to a term. Return the result.
         /// </summary>

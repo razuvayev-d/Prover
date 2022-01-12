@@ -129,9 +129,14 @@ namespace Prover
             throw new NotImplementedException();
            // return new Literal(this.name, arguments.Cl())
         }
-
-
-     
+        /// <summary>
+        /// Применяет указанную подстановку к аргументам литерала
+        /// </summary>
+        /// <param name="sbst"></param>
+        public void Substitute(Substitution sbst)
+        {
+            sbst.Apply(arguments);
+        }
 
         /// <summary>
         /// Parse a list of literals separated by "|" (logical or). As per

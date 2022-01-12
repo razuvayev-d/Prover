@@ -266,18 +266,55 @@ namespace Prover
         public static Formula FormulaVarRename(Formula f, Substitution subst = null)
         {
             subst ??= new Substitution();
-            Term newvar, oldBinding;
+            Term var = null, newvar = null, oldBinding = null;
+            Formula res = null;
             if (f.IsQuantified)
             {
-                Term var = ((Term)f.subFormula1);
+                // Новая область видимости переменной -> добавить новую привязку к новой
+                // переменной. Сохраните потенциальную старую привязку, чтобы восстановить ее при
+                // выходе из области видимости позже
+                var = ((Term)f.subFormula1);
                 newvar = Substitution.FreshVar();
                 oldBinding = subst.ModifyBinding(var, newvar);
 
             }
+
             if (f.IsLiteral)
             {
-               // Formula child = (f as Literal).Substitute(subst);
+                //Formula child = (f as Literal).Substitute(subst);
+                res = (f as Literal).DeepCopy();
+                (res as Literal).Substitute(subst);
             }
+            else
+            {
+                //Это составная формула, переименовываем ее
+                Term targ1 = null;
+                Formula arg1 = null, arg2 = null;
+
+                if (f.IsQuantified)
+                {
+                    targ1 = newvar;
+                    arg2 = FormulaVarRename(f.Child2, subst);
+                    res = new Quantor(f.op, targ1, arg2);
+                }
+                else
+                {
+                    if (f.HasSubform1)
+                        arg1 = FormulaVarRename(f.Child1, subst);
+                    if (f.HasSubform2)
+                        arg2 = FormulaVarRename(f.Child2, subst);
+                    res = new Formula(f.op, arg1, arg2);
+                }
+            }
+            //Мы выходим из области действия квантификатора,
+            //поэтому восстанавливаем подстановку.
+            if (f.IsQuantified)
+            {
+                subst.ModifyBinding(var, oldBinding);
+            }
+
+            return res;
+
             throw new NotImplementedException();
         }
 
