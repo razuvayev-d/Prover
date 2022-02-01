@@ -19,7 +19,24 @@ namespace Prover
         string type;
         string name;
 
+        /// <summary>
+        /// Клаузы или формулы из которых получена эта клауза
+        /// </summary>
+        public List<string> support = new List<string>();
+        /// <summary>
+        /// Клаузы, которые породила эта клауза
+        /// </summary>
+        public List<string> supportsClauses = new List<string>();
+
+        public int depth = 0;
+        public string rationale = "input";
+        public List<int> evaluation = null;
         public string Type => type;
+
+        public Substitution subst = new Substitution();
+
+        public bool IsEmpty => literals.Count == 0;
+        public int Length => literals.Count;
 
         public static Clause ParseClause(Lexer lexer)
         {
@@ -76,6 +93,18 @@ namespace Prover
             this.name = name;
         }
 
+        public Clause()
+        {
+        }
+
+        public Literal this[int index]
+        {
+            get
+            {
+                return literals[index];
+            }
+        }
+
         public override string ToString()
         {
             StringBuilder res = new StringBuilder();
@@ -85,6 +114,67 @@ namespace Prover
             res.Remove(res.Length - 2, 2);
             res.Append(" }");
             return res.ToString();
+        }
+
+        public Clause FreshVarCopy()
+        {
+            List<Term> vars = CollectVars();
+            Substitution s = Substitution.FreshVarSubst(vars);
+            subst.AddAll(s);
+            return Substitute(s);
+        }
+        /// <summary>
+        // /** ***************************************************************
+      ///Return an instantiated copy of self.Name and type are copied
+     /// and need to be overwritten if that is not desired.
+        /// </summary>
+        /// <param name="subst"></param>
+        /// <returns></returns>
+        public Clause Substitute(Substitution subst)
+        {
+            
+            //System.out.println("INFO in Clause.instantiate(): " + subst);
+            //System.out.println("INFO in Clause.instantiate(): " + this);
+            Clause newC = DeepCopy();
+            newC.literals = new List<Literal>();
+            for (int i = 0; i < literals.Count; i++)
+                newC.literals.Add(literals[i].SubstituteWithCopy(subst));
+            //System.out.println("INFO in Clause.instantiate(): " + newC);
+            return newC;
+        }
+
+        public List<Term> CollectVars()
+        {
+
+            List<Term> res = new List<Term>();
+            for (int i = 0; i < literals.Count; i++)
+                res.AddRange(literals[i].CollectVars());
+            return res;
+        }
+
+        public Clause DeepCopy()
+        {
+            return DeepCopy(0);
+        }
+        /// <summary>
+        /// start is the starting index of the literal list to copy
+        /// </summary>
+        /// <param name="start"></param>
+        /// <returns></returns>
+        public Clause DeepCopy(int start)
+        {
+
+            Clause result = new Clause();
+            result.name = name;
+            result.type = type;
+            result.rationale = rationale;
+            for (int i = 0; i < support.Count; i++)
+                result.support.Add(support[i]);
+            for (int i = start; i < literals.Count; i++)
+                result.literals.Add(literals[i].DeepCopy());
+            if (subst != null)
+                result.subst = subst.DeepCopy();
+            return result;
         }
     }
 }

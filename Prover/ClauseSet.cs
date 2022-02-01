@@ -18,9 +18,39 @@ namespace Prover
             this.clauses = clauses;
         }
 
+        public ClauseSet()
+        {
+            this.clauses = new List<Clause>();
+        }
+
+        internal void AddRange(ClauseSet clauses)
+        {
+            this.clauses.AddRange(clauses.clauses);
+        }
+
         public void AddClause(Clause clause)
         {
             clauses.Add(clause);
+        }
+
+        public Clause ExtractFirst()
+        {
+            if (clauses.Count > 0)
+            {
+                var clause = clauses[0];
+                clauses.RemoveAt(0);
+                return clause;
+            }
+            else
+                return null;
+        }
+
+        public Clause this[int i]
+        {
+            get
+            {
+                return clauses[i];
+            }
         }
 
         public Clause extractClause(Clause clause)
@@ -68,6 +98,32 @@ namespace Prover
                 res.Add(clause);
             }
             return res;
+        }
+
+        /// <summary>
+        /// Вычисляет все бинарные резольвенты между данной клаузой и всеми клаузами в наборе.
+        /// 
+        /// </summary>
+        /// <param name="lit"></param>
+        /// <param name="clauseres"></param>
+        /// <param name="indices"></param>
+        public void GetResolutionLiterals(Literal lit, List<Clause> clauseres, List<int> indices)
+        {
+            if (clauseres.Count == 0)
+                throw new Exception("non empty result variable clauseres passed to ClauseSet.getResolutionLiterals()");
+
+           //assert clauseres.size() == 0 : "non empty result variable clauseres passed to ClauseSet.getResolutionLiterals()";
+            if(indices.Count == 0) 
+                throw new Exception("non empty result variable indices passed to ClauseSet.getResolutionLiterals()");
+            for (int i = 0; i < clauses.Count; i++)
+            {
+                Clause c = clauses[i];
+                for (int j = 0; j < c.Length; j++)
+                {
+                    clauseres.Add(clauses[i]);
+                    indices.Add(j);
+                }
+            }
         }
     }
 }

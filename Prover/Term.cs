@@ -67,6 +67,12 @@ namespace Prover
             return new Term(t.name, copy, t.constant);
         }
 
+
+        public Term DeepCopy()
+        {
+            return Copy(this);
+        }
+
         public static List<Term> ListCopy(List<Term> terms)
         {
             var copy = new List<Term>(terms.Count);
