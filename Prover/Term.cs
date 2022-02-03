@@ -174,7 +174,7 @@ namespace Prover
         public List<Term> TermArgs{
             get 
             {
-                if (IsCompound)
+                //if (IsCompound)
                     return subterms;
                 throw new Exception("Not args");
             }

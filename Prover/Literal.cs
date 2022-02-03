@@ -18,6 +18,8 @@ namespace Prover
         public string Name => name;
         List<Term> arguments;
 
+        public List<Term> Arguments => arguments;
+
         static Literal tru = new Literal("$true", new List<Term> { Term.True });
         static Literal fal = new Literal("$false", new List<Term> { Term.False });
 
