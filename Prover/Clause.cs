@@ -19,6 +19,7 @@ namespace Prover
         string type;
         string name;
 
+        public string Name => name;
         /// <summary>
         /// Клаузы или формулы из которых получена эта клауза
         /// </summary>
@@ -28,6 +29,7 @@ namespace Prover
         /// </summary>
         public List<string> supportsClauses = new List<string>();
 
+        int clauseIdCounter = 0;
         public int depth = 0;
         public string rationale = "input";
         public List<int> evaluation = null;
@@ -175,6 +177,18 @@ namespace Prover
             if (subst != null)
                 result.subst = subst.DeepCopy();
             return result;
+        }
+
+        public void CreateName() => name = "c" + clauseIdCounter++;      
+        
+        public void RemoveDupLits()
+        {
+            literals = literals.Distinct().ToList();
+        }
+
+        public void AddRange(List<Literal> literals)
+        {
+            this.literals.AddRange(literals);
         }
     }
 }

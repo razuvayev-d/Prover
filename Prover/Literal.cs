@@ -136,7 +136,7 @@ namespace Prover
         /// </summary>
         /// <param name="sbst"></param>
         public void Substitute(Substitution sbst)
-        {
+        {        
             sbst.Apply(arguments);
         }
 

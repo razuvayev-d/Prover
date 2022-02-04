@@ -31,8 +31,49 @@ namespace Prover
             if (l1.Negative == l2.Negative) return null;
 
             Substitution sigma = Unification.MGU(l1, l2);
+            if (sigma == null) return null;
+            
+            List<Literal> lits1 = new List<Literal>();
+            
+            for(int i = 0; i < clause1.Length; i++)
+            {
+                var l = clause1[i];
+                if (!l.Equals(l1))
+                {
+                    l.Substitute(sigma);
+                    lits1.Add(l);
+                }
+            }
 
-            throw new NotImplementedException();
+            List<Literal> lits2 = new List<Literal>();
+            for (int i = 0; i < clause2.Length; i++)
+            {
+                var l = clause2[i];
+                if (!l.Equals(l2))
+                {
+                    l.Substitute(sigma);
+                    lits1.Add(l);
+                }
+            }
+                 
+            lits1.AddRange(lits2);
+
+            Clause res = new Clause();
+
+            res.CreateName();
+            res.AddRange(lits1);
+            res.RemoveDupLits();
+            res.rationale = "resolution";
+            res.support.Add(clause1.Name);
+            res.support.Add(clause2.Name);
+
+            clause1.supportsClauses.Add(res.Name);
+            clause2.supportsClauses.Add(res.Name);  
+
+            res.depth = Math.Max(clause1.depth, clause2.depth) + 1;
+            res.subst.AddAll(sigma);
+
+            return res;
         }
     }
 }

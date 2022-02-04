@@ -31,7 +31,7 @@ namespace Prover
         static bool printDerivation = false;
 
         string name;
-        public string Name
+        public virtual string Name
         {
             set
             {
