@@ -13,6 +13,8 @@ namespace Prover
     {
         public List<Clause> clauses;
 
+        public int Count => clauses.Count;
+
         public ClauseSet(List<Clause> clauses)
         {
             this.clauses = clauses;
@@ -109,11 +111,12 @@ namespace Prover
         /// <param name="indices"></param>
         public void GetResolutionLiterals(Literal lit, List<Clause> clauseres, List<int> indices)
         {
-            if (clauseres.Count == 0)
+            
+            if (clauseres.Count != 0)
                 throw new Exception("non empty result variable clauseres passed to ClauseSet.getResolutionLiterals()");
 
            //assert clauseres.size() == 0 : "non empty result variable clauseres passed to ClauseSet.getResolutionLiterals()";
-            if(indices.Count == 0) 
+            if(indices.Count != 0) 
                 throw new Exception("non empty result variable indices passed to ClauseSet.getResolutionLiterals()");
             for (int i = 0; i < clauses.Count; i++)
             {

@@ -15,7 +15,7 @@ namespace Prover
     /// </summary>
     class Clause : Derivable
     {
-        List<Literal> literals;
+        List<Literal> literals = new List<Literal>();
         string type;
         string name;
 
