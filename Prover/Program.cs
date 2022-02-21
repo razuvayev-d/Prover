@@ -9,7 +9,7 @@ namespace Prover
         {
             Console.WriteLine("Hello World!");
 
-            var s = "PUZ001+1.p";
+            var s = "SYN941+1.p";
             FOF(s);
         }
 

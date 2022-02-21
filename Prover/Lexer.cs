@@ -97,6 +97,7 @@ namespace Prover
         string name;
         int pos;
         Stack<Token> tokenStack;
+        public int Pos => pos;
         public Lexer(string source, string name = "user string")
         {
             this.source = source;
