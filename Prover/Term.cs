@@ -67,6 +67,12 @@ namespace Prover
             return new Term(t.name, copy, t.constant);
         }
 
+
+        public Term DeepCopy()
+        {
+            return Copy(this);
+        }
+
         public static List<Term> ListCopy(List<Term> terms)
         {
             var copy = new List<Term>(terms.Count);
@@ -144,7 +150,8 @@ namespace Prover
         public static List<Term> ParseTermList(Lexer lexer)
         {
             var res = new List<Term>();
-            res.Add(ParseTerm(lexer)); ///!!! res.Add(new Term(ParseTerm(lexer).name));
+            res.Add(ParseTerm(lexer)); //res.Add(new Term(ParseTerm(lexer).name));
+            
             while (lexer.TestTok(TokenType.Comma))
             {
                 lexer.AcceptTok(TokenType.Comma);
@@ -168,7 +175,7 @@ namespace Prover
         public List<Term> TermArgs{
             get 
             {
-                if (IsCompound)
+                //if (IsCompound)
                     return subterms;
                 throw new Exception("Not args");
             }

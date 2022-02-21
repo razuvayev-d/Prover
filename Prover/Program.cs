@@ -20,7 +20,15 @@ namespace Prover
             var cnf = problem.Clausify();
 
 
-            //var state = SimpleProofState(); 
+            var state = new SimpleProofState(cnf);
+            Clause res = state.Saturate();
+
+            if (res != null)
+                Console.WriteLine("STATUS: THEOREM");
+            else
+                Console.WriteLine("STATUS: NOT THEOREM");
+
+
             using (StreamWriter sw = new StreamWriter("clauses.txt"))
             {
                 foreach (var clause in cnf.clauses)

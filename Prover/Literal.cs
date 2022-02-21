@@ -13,10 +13,12 @@ namespace Prover
     /// </summary>
     class Literal: Formula
     {
-        public bool negative { get; private set; }
+        public bool Negative { get; private set; }
         string name;
         public string Name => name;
         List<Term> arguments;
+
+        public List<Term> Arguments => arguments;
 
         static Literal tru = new Literal("$true", new List<Term> { Term.True });
         static Literal fal = new Literal("$false", new List<Term> { Term.False });
@@ -27,7 +29,7 @@ namespace Prover
         {
             this.name = name;
             this.arguments = arguments;
-            this.negative = negative;
+            this.Negative = negative;
 
             // TODO: разобраться с обработкой равенства при создании литерала
             //if (atom.Func == "!=")
@@ -71,8 +73,8 @@ namespace Prover
             get
             {
                 if (arguments.Count > 1) return false; // Если аргументов много то очевидно не коннстанта
-                return negative && Term.AtomIsConstFalse(arguments[0])
-                    || !negative && Term.AtomIsConstTrue(arguments[0]);
+                return Negative && Term.AtomIsConstFalse(arguments[0])
+                    || !Negative && Term.AtomIsConstTrue(arguments[0]);
             }
         }
         
@@ -81,15 +83,15 @@ namespace Prover
             get
             {
                 if (arguments.Count > 1) return false; // Если аргументов много то очевидно не константа
-                return negative && Term.AtomIsConstTrue(arguments[0])
-                    || !negative && Term.AtomIsConstFalse(arguments[0]);
+                return Negative && Term.AtomIsConstTrue(arguments[0])
+                    || !Negative && Term.AtomIsConstFalse(arguments[0]);
             }
         }
 
         public override string ToString()
         {
             StringBuilder result = new StringBuilder();
-            if (negative)
+            if (Negative)
                 result.Append('~');
             result.Append(name);
             var n = arguments.Count;
@@ -120,7 +122,7 @@ namespace Prover
             else
             {
                 // TODO: Разобраться с отрицанием константных литералов (complete)
-                return new Literal(/*"~" + */this.name, Term.ListCopy(this.arguments), !this.negative);
+                return new Literal(/*"~" + */ this.name, Term.ListCopy(this.arguments), !this.Negative);
             }
         }
  
@@ -134,10 +136,21 @@ namespace Prover
         /// </summary>
         /// <param name="sbst"></param>
         public void Substitute(Substitution sbst)
-        {
+        {        
             sbst.Apply(arguments);
         }
 
+        /// <summary>
+        /// Возвращает копию литерала с примененной подстановкой
+        /// </summary>
+        /// <param name="sbst"></param>
+        /// <returns></returns>
+        public Literal SubstituteWithCopy(Substitution sbst)
+        {
+            Literal newLit = DeepCopy();
+            newLit.Substitute(sbst);
+            return newLit;
+        }
         /// <summary>
         /// Parse a list of literals separated by "|" (logical or). As per
         ///TPTP 3 syntax, the single word "$false" is interpreted as the
@@ -176,7 +189,7 @@ namespace Prover
                 lexer.Next();
             }
             var atom = ParseAtom(lexer);
-            atom.negative = negative;
+            atom.Negative = negative;
             return atom;
         }
 
@@ -214,7 +227,7 @@ namespace Prover
             List<Term> newlist = new List<Term>(arguments.Count);
             foreach (var term in arguments)
                 newlist.Add(Term.Copy(term));
-            return new Literal(name, newlist, negative);
+            return new Literal(name, newlist, Negative);
         }
     }
 }

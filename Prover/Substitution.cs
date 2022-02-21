@@ -75,8 +75,8 @@ namespace Prover
             {
                 res.name = term.name;
                 var n = term.SubtermsCount;
-                for (int i = 0; i < n; i++)               
-                    res.AddSubterm(Apply(term.subterms[i]));                
+                for (int i = 0; i < n; i++)
+                    res.AddSubterm(Apply(term.subterms[i]));
                 return res;
             }
             return res;
@@ -119,14 +119,48 @@ namespace Prover
                 subst[x] = tmpSubst.Apply(bound);
             }
             if (!subst.ContainsKey(var))
-                subst[var] = term; 
+                subst[var] = term;
         }
 
+        public static Substitution FreshVarSubst(List<Term> vars)
+        {
+
+            Substitution s = new Substitution();
+            for (int i = 0; i < vars.Count; i++)
+            {
+                Term newVar = FreshVar();
+                s.subst.Add(vars[i], newVar);
+            }
+            return s;
+        }
+
+        public void AddAll(Substitution s)
+        {
+            var it = subst.Keys.GetEnumerator();
+
+            while (it.MoveNext())
+            {
+                Term t1 = it.Current;
+                Term t2 = s.subst[t1];
+                subst.Add(t1, t2);
+            }
+        }
 
         public static Term FreshVar()
         {
             freshVarCounter++;
             return new Term("X" + freshVarCounter.ToString());
+        }
+
+        public Substitution DeepCopy()
+        {
+            Substitution result = new Substitution();
+            foreach (var key in subst.Keys)
+            {
+                Term value = subst[key];
+                result.subst.Add(key.DeepCopy(), value.DeepCopy());
+            }
+            return result;
         }
     }
 }
