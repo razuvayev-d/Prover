@@ -122,7 +122,7 @@ namespace Prover
             else
             {
                 // TODO: Разобраться с отрицанием константных литералов (complete)
-                return new Literal(/*"~" +*/ this.name, Term.ListCopy(this.arguments), !this.Negative);
+                return new Literal(/*"~" + */ this.name, Term.ListCopy(this.arguments), !this.Negative);
             }
         }
  
