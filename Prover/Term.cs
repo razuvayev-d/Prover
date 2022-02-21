@@ -150,7 +150,7 @@ namespace Prover
         public static List<Term> ParseTermList(Lexer lexer)
         {
             var res = new List<Term>();
-            res.Add(new Term(ParseTerm(lexer).name));
+            res.Add(ParseTerm(lexer)); //res.Add(new Term(ParseTerm(lexer).name));
             while (lexer.TestTok(TokenType.Comma))
             {
                 lexer.AcceptTok(TokenType.Comma);
