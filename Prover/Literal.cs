@@ -227,9 +227,10 @@ namespace Prover
         public Literal Instantiated(Substitution subst)
         {
             var res = DeepCopy();
-            foreach(var term in res.arguments)
-            {
-                subst.Apply(term);
+            for(int i = 0; i < res.arguments.Count; i++)
+            //foreach(var term in res.arguments)
+            {            
+                res.arguments[i] = subst.Apply(res.arguments[i]);
             }
             return res; 
         }
@@ -240,6 +241,15 @@ namespace Prover
             foreach (var term in arguments)
                 newlist.Add(Term.Copy(term));
             return new Literal(name, newlist, Negative);
+        }
+
+        public override int GetHashCode()
+        {
+            int total = Name.GetHashCode() * 3;
+
+            for (int i = 0; i < arguments.Count; i++)
+                total += arguments[i].GetHashCode() * i;
+            return total;   
         }
     }
 }

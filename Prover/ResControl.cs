@@ -28,5 +28,18 @@ namespace Prover
             }
             return res;
         }
+
+        public static ClauseSet ComputeAllFactors(Clause clause)
+        {
+            ClauseSet res = new();
+            for (int i = 0; i < clause.Length; i++)
+                for (int j = i + 1; j < clause.Length; j++)
+                {
+                    Clause fact = Resolution.Factor(clause, i, j);
+                    if (fact is not null)
+                        res.AddClause(fact);
+                }
+            return res;
+        }
     }
 }

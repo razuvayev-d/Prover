@@ -65,7 +65,7 @@ namespace Prover
                     if (!t1.IsCompound || !t2.IsCompound)
                         return null;
 
-                    if (!t1.TermArgs.Equals(t2.TermArgs))
+                    if (!t1.name.Equals(t2.name))
                         return null;
 
                     terms1.AddRange(t1.TermArgs);

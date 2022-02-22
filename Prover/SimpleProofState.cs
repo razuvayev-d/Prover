@@ -28,17 +28,17 @@ namespace Prover
         {
             //throw new NotImplementedException();
             Clause given_clause = unprocessed.ExtractFirst();
-            given_clause = given_clause.FreshVarCopy();
+            //given_clause = given_clause.FreshVarCopy();
             //System.out.println("#" + given_clause.toStringJustify());
             if (given_clause.IsEmpty)    // We have found an explicit contradiction
                 return given_clause;
 
             ClauseSet newClauses = new ClauseSet();
             //TODO: Разобраться с факторами
-            // ClauseSet factors = ResControl.ComputeAllFactors(given_clause);
+            ClauseSet factors = ResControl.ComputeAllFactors(given_clause);
             //System.out.println("INFO in SimpleProofState.processClause(): factors: " + factors);
 
-            //newClauses.AddAll(factors);
+            newClauses.AddRange(factors);
             ClauseSet resolvents = ResControl.ComputeAllResolvents(given_clause, processed);
             //System.out.println("INFO in SimpleProofState.processClause(): resolvents: " + resolvents);
            

@@ -118,6 +118,10 @@ namespace Prover
 
         public override string ToString()
         {
+            if (IsEmpty)
+            {
+                return "{ }";
+            }
             StringBuilder res = new StringBuilder();
             res.Append("{ ");
             foreach (var lit in literals)
@@ -228,6 +232,14 @@ namespace Prover
                 if (!literals[i].Equals(other.literals[i])) return false;
             }
             return true;
+        }
+
+        public override int GetHashCode()
+        {
+            int total = 0;
+            for (int i = 0; i < Length; i++)
+                total += literals[i].GetHashCode();
+            return total;   
         }
     }
 }

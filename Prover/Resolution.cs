@@ -31,14 +31,14 @@ namespace Prover
             if (l1.Negative == l2.Negative) return null;
 
             //TODO: Разобраться почему этого не было
-            if(l1.Name != l2.Name) return null;
+            if (l1.Name != l2.Name) return null;
 
             Substitution sigma = Unification.MGU(l1, l2);
             if (sigma == null) return null;
-            
+
             List<Literal> lits1 = new List<Literal>();
-            
-            for(int i = 0; i < clause1.Length; i++)
+
+            for (int i = 0; i < clause1.Length; i++)
             {
                 var l = clause1[i];
                 if (!l.Equals(l1))
@@ -58,7 +58,7 @@ namespace Prover
                     lits1.Add(l);
                 }
             }
-                 
+
             lits1.AddRange(lits2);
 
             Clause res = new Clause();
@@ -71,10 +71,41 @@ namespace Prover
             res.support.Add(clause2.Name);
 
             clause1.supportsClauses.Add(res.Name);
-            clause2.supportsClauses.Add(res.Name);  
+            clause2.supportsClauses.Add(res.Name);
 
             res.depth = Math.Max(clause1.depth, clause2.depth) + 1;
             res.subst.AddAll(sigma);
+
+            return res;
+        }
+
+        public static Clause Factor(Clause clause, int lit1, int lit2)
+        {
+            var l1 = clause[lit1];
+            var l2 = clause[lit2];
+
+            if (l1.Negative != l2.Negative) return null;
+
+            Substitution sigma = null;
+            sigma = Unification.MGU(l1, l2);
+            if (sigma is null)
+                return null;
+            List<Literal> literals = new List<Literal>();   
+
+            for(int i = 0; i < clause.Length; i++)
+            {
+                Literal l = clause[i];
+                l.Substitute(sigma);
+                literals.Add(l);
+            }
+
+            Clause res = new Clause();
+
+            res.CreateName();
+            res.AddRange(literals);
+            res.RemoveDupLits();
+            res.rationale = "factoring";
+            res.support.Add(clause.Name);
 
             return res;
         }

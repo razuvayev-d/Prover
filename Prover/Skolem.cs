@@ -11,7 +11,7 @@ namespace Prover
         private static int skolemCount = 0;
         public static string NewSkolemSymbol()
         {
-            return String.Format("skolem%04d", ++skolemCount);
+            return String.Format("skolem{0}", ++skolemCount);
         }
 
         public static Term NewSkolemTerm(List<Term> varlist)

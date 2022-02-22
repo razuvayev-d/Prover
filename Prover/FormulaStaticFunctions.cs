@@ -323,7 +323,7 @@ namespace Prover
             if (f.IsLiteral)
             {
                 Formula child = (f/*.subFormula1*/ as Literal).Instantiated(subst);
-                f = child; new Formula("", child);
+                f = child; //new Formula("", child);
             }
             else if(f.op == "?")
             {
