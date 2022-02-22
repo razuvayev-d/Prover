@@ -439,11 +439,11 @@ namespace Prover
             return false;
         }
 
-        public bool Equals(Formula other)
+        public virtual bool Equals(Formula other)
         {
             if (this.op != other.op) return false;
 
-            if (this.IsLiteral) return ((Literal)this).Equals(other is Literal);
+            if (this.IsLiteral) return (this as Literal).Equals(other as Literal);
 
             //if (this.IsQuantified)
             //    return

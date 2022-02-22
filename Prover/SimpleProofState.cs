@@ -60,6 +60,8 @@ namespace Prover
         {
             while (unprocessed.Count > 0)
             {
+                //unprocessed.clauses = unprocessed.clauses.Distinct().ToList();
+                unprocessed.Distinct();
                 Clause res = ProcessClause();  
                 if (res is not null)
                 {

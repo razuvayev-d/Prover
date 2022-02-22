@@ -47,6 +47,32 @@ namespace Prover
                 return null;
         }
 
+        public void Distinct()
+        {
+            var clauses = new List<Clause>();
+            foreach (var clause in this.clauses)
+            {
+                //if (!clauses.Contains(clause))
+                if (!TMP_CONTAINS(clause, clauses))
+                    clauses.Add(clause);
+            }
+            this.clauses = clauses;
+        }
+
+        /// <summary>
+        /// Потому что встроенный contains использует GetHashCode
+        /// </summary>
+        /// <param name="clause"></param>
+        /// <param name="clauses"></param>
+        /// <returns></returns>
+        public bool TMP_CONTAINS(Clause clause, List<Clause> clauses)
+        {
+            // TODO: замена TMP_CONTAINS
+            foreach (var clause2 in clauses)
+                if (clause2.Equals(clause)) return true;
+            return false;
+        }
+
         public Clause this[int i]
         {
             get

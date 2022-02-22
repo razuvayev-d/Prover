@@ -23,7 +23,7 @@ namespace Prover
             var state = new SimpleProofState(cnf);
             Clause res = state.Saturate();
 
-            if (res != null)
+            if (res.IsEmpty)
                 Console.WriteLine("STATUS: THEOREM");
             else
                 Console.WriteLine("STATUS: NOT THEOREM");
@@ -34,6 +34,15 @@ namespace Prover
                 foreach (var clause in cnf.clauses)
                     sw.WriteLine(clause.ToString());
             }
+        }
+
+        static void Print(Clause res) 
+        {
+            int i = res.depth;
+            var tmp1 = res;
+            var tmp2 = res;
+            //while()
+            //Console.WriteLine(i-- ". " + res.Name + ": " res.ToString() + " from: " + res);
         }
     }
 }

@@ -45,6 +45,18 @@ namespace Prover
             //self.setInferenceLit(True)
         }
 
+        public bool Equals(Literal other)
+        {
+            if (this.Negative != other.Negative) return false;
+            if (this.Name != other.Name) return false;
+            if (this.arguments.Count != other.arguments.Count) return false;
+            int n = arguments.Count;
+            for (int i = 0; i < n; i++)
+            {
+                if (!arguments[i].Equals(other.arguments[i])) return false;
+            }
+            return true;
+        }
 
         public List<Term> CollectVars()
         {

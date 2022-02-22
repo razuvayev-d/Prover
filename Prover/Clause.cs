@@ -29,7 +29,7 @@ namespace Prover
         /// </summary>
         public List<string> supportsClauses = new List<string>();
 
-        int clauseIdCounter = 0;
+        static int clauseIdCounter = 0;
         public int depth = 0;
         public string rationale = "input";
         public List<int> evaluation = null;
@@ -77,7 +77,10 @@ namespace Prover
         {
             this.literals = literals;
             this.type = type;
-            this.name = name;
+            if (name is not null) 
+                this.name = name;
+            else 
+                this.name =String.Format("c{0}", clauseIdCounter++);
         }
 
         public Clause(List<Formula> literals, string type = "plain", string name = null) : base(name)
@@ -92,7 +95,11 @@ namespace Prover
 
             this.literals = lits;
             this.type = type;
-            this.name = name;
+
+            if (name is not null)
+                this.name = name;
+            else
+                this.name = String.Format("c{0}", clauseIdCounter++);
         }
 
         public Clause()
@@ -183,12 +190,42 @@ namespace Prover
         
         public void RemoveDupLits()
         {
-            literals = literals.Distinct().ToList();
+            //literals = literals.Distinct().ToList();
+
+            var lits = new List<Literal>();
+            for (int i = 0; i < literals.Count; i++)
+                    if (!TMP_CONTAINS_LITS(literals[i], lits))
+                        lits.Add(literals[i]);       
+            this.literals = lits;
+
         }
+
+        public bool TMP_CONTAINS_LITS(Literal clause, List<Literal> clauses)
+        {
+            // TODO: замена TMP_CONTAINS_LITS
+            foreach (var clause2 in clauses)
+                if (clause2.Equals(clause)) return true;
+            return false;
+        }
+
+
 
         public void AddRange(List<Literal> literals)
         {
             this.literals.AddRange(literals);
+        }
+
+        public override bool Equals(object obj)
+        {
+            if (!(obj is Clause)) return false;
+            var other = (Clause)obj;
+            if (Length != other.Length) return false;
+
+            for (int i =0; i< Length; i++)
+            {
+                if (!literals[i].Equals(other.literals[i])) return false;
+            }
+            return true;
         }
     }
 }
