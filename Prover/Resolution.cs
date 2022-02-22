@@ -30,6 +30,9 @@ namespace Prover
 
             if (l1.Negative == l2.Negative) return null;
 
+            //TODO: Разобраться почему этого не было
+            if(l1.Name != l2.Name) return null;
+
             Substitution sigma = Unification.MGU(l1, l2);
             if (sigma == null) return null;
             

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -10,6 +11,7 @@ namespace Prover
     [DebuggerDisplay("{ToString()}")]
     class Term : Formula
     {
+        //public static TermEqualityComparer Comparer = new();
         public string name;
         public List<Term> subterms;
         bool constant;
@@ -34,6 +36,8 @@ namespace Prover
                 else return 0;
             }
         }
+
+        
 
         public override string ToString()
         {
@@ -201,6 +205,12 @@ namespace Prover
 
         public static bool AtomIsConstTrue(Term atom) => atom.Equals(True);
 
+        public override bool Equals(object obj)
+        {
+            if (obj is not Formula) return false;
+            return Equals(obj as Formula);
+        }
+
         // override object.Equals
         public override bool Equals(Formula obj)
         {
@@ -220,6 +230,18 @@ namespace Prover
             return base.Equals(obj);
         }
 
+        public override int GetHashCode()
+        {
+            int total = 0;
+            if (subterms is null) return total + name.GetHashCode() * 2;
+            else
+            {
+                for (int i = 0; i < subterms.Count; i++)
+                    total += subterms[i].GetHashCode();
+                return total;
+            }
+        }
+
         // override object.GetHashCode
         //public override int GetHashCode()
         //{
@@ -228,4 +250,18 @@ namespace Prover
         //    //return base.GetHashCode();
         //}
     }
+
+
+    //internal class TermEqualityComparer: System.Collections.Generic.IEqualityComparer<Term>
+    //{
+    //    public bool Equals(Term? x, Term? y)
+    //    {
+    //        return x.Equals(y);
+    //    }
+
+    //    public int GetHashCode([DisallowNull] Term obj)
+    //    {
+    //        return obj.GetHashCode();
+    //    }
+    //}
 }

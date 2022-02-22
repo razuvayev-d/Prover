@@ -104,6 +104,8 @@ namespace Prover
 
         public Clause()
         {
+            clauseIdCounter++;
+            //this.name = String.Format("c{0}", clauseIdCounter++);
         }
 
         public Literal this[int index]

@@ -13,7 +13,7 @@ namespace Prover
     /// </summary>
     class Substitution
     {
-        public Dictionary<Term, Term> subst = new Dictionary<Term, Term>();
+        public Dictionary<Term, Term> subst = new Dictionary<Term, Term>(/*Term.Comparer*/);
         private static int freshVarCounter = 0;
 
         public Substitution(Term variable, Term value)
@@ -52,6 +52,14 @@ namespace Prover
                 terms[i] = Apply(terms[i]);
         }
 
+        // TODO: разобраться почему не работает стандартный метод
+        bool ContainsKey(Term key)
+        {
+            foreach (Term term in subst.Keys)
+                if (term.Equals(key)) return true;
+            return false;
+        }
+
         /// <summary>
         /// Apply the substitution to a term. Return the result.
         /// </summary>
@@ -62,7 +70,8 @@ namespace Prover
             Term res = new Term();
             if (term.IsVar)
             {
-                if (subst.ContainsKey(term))
+                //if (subst.ContainsKey(term))
+                if (ContainsKey(term))
                 {
                     return subst[term];
                 }
@@ -129,7 +138,12 @@ namespace Prover
             for (int i = 0; i < vars.Count; i++)
             {
                 Term newVar = FreshVar();
-                s.subst.Add(vars[i], newVar);
+                // TODO: подумать не заменить ли Dictionary на List<(Term, Term)> или аналог
+                //s.subst.Add(vars[i], newVar);
+                if(s.subst.ContainsKey(vars[i]))
+                    s.subst[vars[i]] = newVar;
+                else    
+                    s.subst.Add(vars[i], newVar);
             }
             return s;
         }

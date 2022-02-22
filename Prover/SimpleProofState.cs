@@ -9,7 +9,10 @@ namespace Prover
     class SimpleProofState
     {
         ClauseSet unprocessed = new ClauseSet();
-        ClauseSet processed = new ClauseSet();
+        // TODO: public proof state
+        public ClauseSet processed = new ClauseSet();
+
+        
 
         public SimpleProofState(ClauseSet clauses)
         {
