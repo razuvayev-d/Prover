@@ -10,7 +10,8 @@ namespace Prover
     class FOFSpec
     {
         List<Clause> clauses = new List<Clause>();
-        List<WFormula> formulas = new List<WFormula>();
+        // TODO: debug сделать private
+        public List<WFormula> formulas = new List<WFormula>();
         bool IsFof = false;
         bool IsConj = false;
         bool hasConj = false;

@@ -19,10 +19,13 @@ namespace Prover
         {
             var problem = new FOFSpec();
             problem.Parse(Path);
+
+
+            Console.WriteLine(problem.formulas[0].Formula.ToString());
             var cnf = problem.Clausify();
+  
 
-
-            var state = new SimpleProofState(cnf);
+        var state = new SimpleProofState(cnf);
             Clause res = state.Saturate();
 
             if (res.IsEmpty)

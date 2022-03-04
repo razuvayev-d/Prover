@@ -48,6 +48,22 @@ namespace Prover
         public Formula Child1 => subFormula1;
         public Formula Child2 => subFormula2;
 
+
+        public override string ToString()
+        {
+            string arg1 = null;
+            string arg2 = null;
+            if(subFormula1 != null) arg1 = subFormula1.ToString();
+            if(subFormula2 != null) arg2 = subFormula2.ToString();
+
+            if(op == null) return arg1;
+            if(op == "~") return "(~" + arg1 + ")";
+            if(op == "!" || op == "?")
+            {
+                return "(" + op + "[" + arg1 + "]:" + arg2 + ")";
+            }
+            return "(" + arg1 + op + arg2 + ")";
+        }
         /// <summary>
         ///   Parse a (naked) formula.
         /// </summary>
@@ -484,6 +500,7 @@ namespace Prover
                 // квантификатором.
                 if (!IsQuantified) throw new Exception("Ожидался квантор");
                 res = subFormula2.CollectFreeVars();
+                res = res.Distinct().ToList();
                 res.Remove((Term)subFormula1);
             }
             return res;
