@@ -41,7 +41,8 @@ namespace Prover
             newClauses.AddRange(factors);
             ClauseSet resolvents = ResControl.ComputeAllResolvents(given_clause, processed);
             //System.out.println("INFO in SimpleProofState.processClause(): resolvents: " + resolvents);
-           
+
+            resolvents.Distinct();
             newClauses.AddRange(resolvents);
 
             processed.AddClause(given_clause);
@@ -50,6 +51,7 @@ namespace Prover
             for (int i = 0; i < newClauses.Count; i++)
             {
                 Clause c = newClauses[i];
+                if (c.IsEmpty) return c;
                 unprocessed.AddClause(c);
             }
             return null;

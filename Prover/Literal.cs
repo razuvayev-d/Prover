@@ -16,12 +16,13 @@ namespace Prover
         public bool Negative { get; private set; }
         string name;
         public string Name => name;
-        List<Term> arguments;
+        // TODO: может оставить arguments null?
+        List<Term> arguments = new List<Term>();
 
         public List<Term> Arguments => arguments;
 
-        static Literal tru = new Literal("$true", new List<Term> { Term.True });
-        static Literal fal = new Literal("$false", new List<Term> { Term.False });
+        static Literal tru = new Literal("$true", new List<Term> ()/*{ Term.True }*/);
+        static Literal fal = new Literal("$false", new List<Term> () /*{ Term.False }*/);
 
         public static Literal True => tru;
         public static Literal False => fal;
@@ -84,7 +85,9 @@ namespace Prover
         public bool IsPropTrue {
             get
             {
-                if (arguments.Count > 1) return false; // Если аргументов много то очевидно не коннстанта
+                //if (arguments is null) return false;
+                //if (arguments.Count != 1) return false; // Если аргументов много то очевидно не коннстанта
+                return this.Equals(True);
                 return Negative && Term.AtomIsConstFalse(arguments[0])
                     || !Negative && Term.AtomIsConstTrue(arguments[0]);
             }
@@ -94,7 +97,9 @@ namespace Prover
         {
             get
             {
-                if (arguments.Count > 1) return false; // Если аргументов много то очевидно не константа
+                //if (arguments is null) return false;
+                //if (arguments.Count != 1) return false; // Если аргументов много то очевидно не константа
+                return this.Equals(False);
                 return Negative && Term.AtomIsConstTrue(arguments[0])
                     || !Negative && Term.AtomIsConstFalse(arguments[0]);
             }
@@ -106,15 +111,18 @@ namespace Prover
             if (Negative)
                 result.Append('~');
             result.Append(name);
-            var n = arguments.Count;
-            result.Append('(');
-            for(int i =0; i < n; i++)
+            if (arguments is not null)
             {
-                result.Append(arguments[i].ToString());
-                if (i < n - 1)
-                    result.Append(", ");
+                var n = arguments.Count;
+                result.Append('(');
+                for (int i = 0; i < n; i++)
+                {
+                    result.Append(arguments[i].ToString());
+                    if (i < n - 1)
+                        result.Append(", ");
+                }
+                result.Append(')');
             }
-            result.Append(')');
             return result.ToString();
         }
         /// <summary>
@@ -137,6 +145,21 @@ namespace Prover
                 return new Literal(/*"~" + */ this.name, Term.ListCopy(this.arguments), !this.Negative);
             }
         }
+
+        /// <summary>
+        /// Принимает на вход два литерала, если они являются контрарной парой возвращает true, иначе false.
+        /// </summary>
+        /// <returns></returns>
+        public static bool IsContrars(Literal one, Literal two)
+        {
+            if (one.Negative == two.Negative) return false;
+
+            if (one.Negative)
+            {
+                return one.Equals(two.Negate());
+            }
+            return two.Equals(one.Negate());
+        }
  
         public Literal Copy()
         {
@@ -147,9 +170,11 @@ namespace Prover
         /// Применяет указанную подстановку к аргументам литерала
         /// </summary>
         /// <param name="sbst"></param>
-        public void Substitute(Substitution sbst)
-        {        
-            sbst.Apply(arguments);
+        public Literal Substitute(Substitution sbst)
+        {
+            Literal copy = DeepCopy();
+            sbst.Apply(copy.arguments);
+            return copy;
         }
 
         /// <summary>
@@ -159,6 +184,7 @@ namespace Prover
         /// <returns></returns>
         public Literal SubstituteWithCopy(Substitution sbst)
         {
+            // TODO: этот метод дублирует Substitute
             Literal newLit = DeepCopy();
             newLit.Substitute(sbst);
             return newLit;

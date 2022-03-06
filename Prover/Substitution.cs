@@ -67,7 +67,8 @@ namespace Prover
         /// <returns></returns>
         public Term Apply(Term term)
         {
-            Term res = new Term();
+            if (term.Constant) return term;
+            Term res = new Term();            
             if (term.IsVar)
             {
                 //if (subst.ContainsKey(term))

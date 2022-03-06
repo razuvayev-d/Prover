@@ -104,6 +104,11 @@ namespace Prover
             return count;
         }
 
+        public override string ToString()
+        {
+            return clauses.ToString();
+        }
+
 
         /// <summary>
         /// Given a formula in CNF, convert it to a set of clauses.

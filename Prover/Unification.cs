@@ -10,6 +10,9 @@ namespace Prover
     {
         public static Substitution MGU(Literal l1, Literal l2)
         {
+            if (l1.Name != l2.Name) return null;
+            //if (l1.Negative == l2.Negative) return null;
+
             List<Term> terms1 = new List<Term>();
             terms1.AddRange(l1.Arguments);
 
@@ -59,6 +62,13 @@ namespace Prover
                     newBinding.Apply(terms2);
 
                     substitution.ComposeBinding(t2, t1);
+                }
+                else if (t2.Constant && t1.Constant)
+                {
+                    //Сравниваем константы по имени, если совпадают то возвращаем текущую подстановку (not null)
+                    if (!t1.name.Equals(t2.name))
+                        return null;
+                    return substitution;
                 }
                 else
                 {

@@ -133,8 +133,8 @@ namespace Prover
                 tmp.Derivation = Derivation.FlatDerivation("shift_quantors", new List<IDerivable> { wf });
                 wf = tmp;
             }
-
-            f = Formula.FormulaVarRename(f);
+            // TODO: ошибка в FormulaVarRename 
+           // f = Formula.FormulaVarRename(f);
             if (!f.Equals(wf.Formula))
             {
                 tmp = new WFormula(f, wf.type);

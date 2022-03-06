@@ -13,9 +13,16 @@ namespace Prover
     {
         //public static TermEqualityComparer Comparer = new();
         public string name;
-        public List<Term> subterms;
+        // TODO: может оставить subterms null?
+        public List<Term> subterms = new List<Term>();
         bool constant;
 
+        public bool Constant
+        { 
+            get { return constant; } 
+            set { constant = value; } 
+        }
+        //public List<Term> subterms => _subterms;
         static Term falseConstant = new Term("$false", constant: true);
         static Term trueConstant = new Term("$true", constant: true);
         public static Term False => falseConstant;
@@ -25,7 +32,8 @@ namespace Prover
         public Term(string name, List<Term> subterms = null, bool constant = false)
         {
             this.name = name;
-            this.subterms = subterms;
+            if (subterms is not null)
+                this.subterms = subterms;           
             this.constant = name == name.ToLower();
         }
 
@@ -43,6 +51,7 @@ namespace Prover
         {
             var result = new StringBuilder();
             result.Append(name);
+            // TODO: subterms null
             if (subterms is not null)
             {
                 var n = subterms.Count;
@@ -63,7 +72,7 @@ namespace Prover
         public static Term Copy(Term t)
         {
             List<Term> copy = new List<Term>();
-            if (t.subterms is null) return new Term(t.name, null, t.constant);
+            //if (t.subterms is null) return new Term(t.name, null, t.constant);
             foreach(var v in t.subterms)
             {
                 copy.Add(Copy(v));
@@ -79,6 +88,8 @@ namespace Prover
 
         public static List<Term> ListCopy(List<Term> terms)
         {
+            //TODO: tems null
+            //if (terms is null) return null;
             var copy = new List<Term>(terms.Count);
             foreach (var t in terms)
             {
@@ -164,8 +175,8 @@ namespace Prover
             return res;
         }
 
-        public bool IsVar => subterms is null;
-        public bool IsCompound => subterms is not null;
+        public bool IsVar => subterms.Count == 0 && !constant; // subterms is null;
+        public bool IsCompound => subterms.Count > 0; //subterms is not null;
 
         public string Func
         {
@@ -219,8 +230,9 @@ namespace Prover
                 return false;
             }
             var t = (Term)obj;
-            if (this.IsVar && t.IsVar) return this.name == t.name;
-            if (this.IsVar != t.IsVar) return false;
+            if (this.IsVar && t.IsVar || this.constant && t.constant) 
+                return this.name == t.name;
+            if (this.IsVar != t.IsVar) return false;       
             if (this.Func != t.Func) return false;
             return TermListEqual(this.TermArgs, t.TermArgs);
 
@@ -236,6 +248,7 @@ namespace Prover
             if (subterms is null) return total + name.GetHashCode() * 2;
             else
             {
+                total = name.GetHashCode() * 2;
                 for (int i = 0; i < subterms.Count; i++)
                     total += subterms[i].GetHashCode();
                 return total;

@@ -17,8 +17,10 @@ namespace Prover
         public static Term NewSkolemTerm(List<Term> varlist)
         {
             Term res = new Term();
+            
             res.name = NewSkolemSymbol();
             var n = varlist.Count;
+            if (n == 0) res.Constant = true;
             for (int i = 0; i < n; i++)
             {
                 Term v = varlist[i];

@@ -381,6 +381,11 @@ namespace Prover
                 if (f.Child1.IsPropConst(false)) return (f.Child2, true);
                 if (f.Child2.IsPropConst(false)) return (f.Child1, true);
                 if (f.Child1.Equals(f.Child2)) return (f.Child2, true);
+
+                //TODO: тождественно ложная контрарная пара
+                if (f.Child1.IsLiteral && f.Child2.IsLiteral)
+                    if (Literal.IsContrars(f.Child1 as Literal, f.Child2 as Literal))
+                        return (Literal.True, true);
             }
             else if (f.op == "&")
             {
@@ -389,6 +394,11 @@ namespace Prover
                 if (f.Child1.IsPropConst(false)) return (f.Child1, true);
                 if (f.Child2.IsPropConst(false)) return (f.Child2, true);
                 if (f.Child1.Equals(f.Child2)) return (f.Child2, true);
+
+                //TODO: тождественно ложная контрарная пара
+                if (f.Child1.IsLiteral && f.Child2.IsLiteral)                   
+                    if (Literal.IsContrars(f.Child1 as Literal, f.Child2 as Literal))
+                        return (Literal.False, true);
             }
             else if(f.op == "<=>")
             {

@@ -31,7 +31,7 @@ namespace Prover
             if (l1.Negative == l2.Negative) return null;
 
             //TODO: Разобраться почему этого не было
-            if (l1.Name != l2.Name) return null;
+            //if (l1.Name != l2.Name) return null;
 
             Substitution sigma = Unification.MGU(l1, l2);
             if (sigma == null) return null;
@@ -43,8 +43,8 @@ namespace Prover
                 var l = clause1[i];
                 if (!l.Equals(l1))
                 {
-                    l.Substitute(sigma);
-                    lits1.Add(l);
+                    var newl = l.Substitute(sigma);
+                    lits1.Add(newl);
                 }
             }
 
@@ -54,8 +54,8 @@ namespace Prover
                 var l = clause2[i];
                 if (!l.Equals(l2))
                 {
-                    l.Substitute(sigma);
-                    lits1.Add(l);
+                    var newl = l.Substitute(sigma);
+                    lits1.Add(newl);
                 }
             }
 
