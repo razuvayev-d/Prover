@@ -101,7 +101,19 @@ namespace Prover
             else
                 this.name = String.Format("c{0}", clauseIdCounter++);
         }
-
+        /// <summary>
+        /// Возвращает вес клаузы по количеству символов
+        /// </summary>
+        /// <param name="fweight"></param>
+        /// <param name="vweight"></param>
+        /// <returns></returns>
+        int Weight(int fweight, int vweight)
+        {
+            var res = 0;
+            foreach (var literal in literals)
+                res += literal.Weight(fweight, vweight);
+            return res;
+        }
         public Clause()
         {
             clauseIdCounter++;

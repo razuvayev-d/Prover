@@ -7,7 +7,7 @@ using System.Text;
 using System.Threading.Tasks;
 
 namespace Prover
-{ 
+{
     [DebuggerDisplay("{ToString()}")]
     class Term : Formula
     {
@@ -18,9 +18,9 @@ namespace Prover
         bool constant;
 
         public bool Constant
-        { 
-            get { return constant; } 
-            set { constant = value; } 
+        {
+            get { return constant; }
+            set { constant = value; }
         }
         //public List<Term> subterms => _subterms;
         static Term falseConstant = new Term("$false", constant: true);
@@ -33,7 +33,7 @@ namespace Prover
         {
             this.name = name;
             if (subterms is not null)
-                this.subterms = subterms;           
+                this.subterms = subterms;
             this.constant = name == name.ToLower();
         }
 
@@ -45,7 +45,7 @@ namespace Prover
             }
         }
 
-        
+
 
         public override string ToString()
         {
@@ -73,7 +73,7 @@ namespace Prover
         {
             List<Term> copy = new List<Term>();
             //if (t.subterms is null) return new Term(t.name, null, t.constant);
-            foreach(var v in t.subterms)
+            foreach (var v in t.subterms)
             {
                 copy.Add(Copy(v));
             }
@@ -115,6 +115,21 @@ namespace Prover
             subterms ??= new List<Term>();
             subterms.AddRange(t);
         }
+
+
+        public int Weight(int fweight, int vweight)
+        {
+            if (IsVar) return vweight;
+            if (Constant) return fweight;
+
+            var res = fweight;
+            foreach (var v in subterms)
+            {
+                res = res + v.Weight(fweight, vweight);
+            }
+            return res; 
+        }
+
 
         public static Term ParseTerm(Lexer lexer)
         {

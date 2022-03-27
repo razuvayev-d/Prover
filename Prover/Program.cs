@@ -13,8 +13,8 @@ namespace Prover
         static void Main(string[] args)
         {
             string[] files = Directory.GetFiles(proplamsDirectory);
-            var s = proplamsDirectory + "SYN951+1.p";
-            FOF(s);
+            var s = proplamsDirectory + "SYN941+1.p";
+            //FOF(s);
             foreach (string file in files)
                 FOF(file);
         }
@@ -36,7 +36,7 @@ namespace Prover
             string formulastr = problem.formulas[0].Formula.ToString();
             Console.WriteLine(problem.formulas[0].Formula.ToString());
             var cnf = problem.Clausify();
-  
+            
 
         var state = new SimpleProofState(cnf);
             Clause res = state.Saturate();
@@ -64,6 +64,12 @@ namespace Prover
                 sw.WriteLine(formulastr);
                 sw.WriteLine("Result: " + verdict);
                 sw.WriteLine("TPTP  : " + TPTPStatus);
+
+                sw.WriteLine("Initial Clauses: ");
+                i = 0;
+                foreach (var s in cnf.clauses)
+                    sw.WriteLine(i++ + ". " + s.ToString());
+
                 sw.WriteLine("\nProof: \n");
                 i = 0;
                 foreach (string s in str)
@@ -140,6 +146,6 @@ namespace Prover
                 Write(path, state, q, sq);
 
             }
-        }
+        }       
     }
 }

@@ -230,7 +230,13 @@ namespace Prover
             atom.Negative = negative;
             return atom;
         }
-
+        public int Weight(int fweight, int vweight)
+        {
+            var res = fweight;
+            foreach (var term in arguments)
+                res += term.Weight(fweight, vweight);
+            return res;
+        }
 
         public static Literal ParseAtom(Lexer lexer)
         {
