@@ -107,7 +107,7 @@ namespace Prover
         /// <param name="fweight"></param>
         /// <param name="vweight"></param>
         /// <returns></returns>
-        int Weight(int fweight, int vweight)
+        public int Weight(int fweight, int vweight)
         {
             var res = 0;
             foreach (var literal in literals)
