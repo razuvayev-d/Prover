@@ -46,6 +46,19 @@ namespace Prover
             //self.setInferenceLit(True)
         }
 
+
+        public bool Match(Literal other, Substitution subst)
+        {
+            if(Negative != other.Negative) return false;
+            bool res = true;
+            for (int i = 0; i < arguments.Count; i++) 
+            {
+                res = Term.Match(arguments[i], other.arguments[i], subst);
+                if (!res)
+                    return false;
+            }
+            return true;
+        }
         public bool Equals(Literal other)
         {
             if (this.Negative != other.Negative) return false;

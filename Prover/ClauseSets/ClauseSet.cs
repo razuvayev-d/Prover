@@ -81,7 +81,7 @@ namespace Prover
             }
         }
 
-        public Clause extractClause(Clause clause)
+        public Clause ExtractClause(Clause clause)
         {
             clauses.Remove(clause);
             return clause;

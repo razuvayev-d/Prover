@@ -19,6 +19,8 @@ namespace Prover
         string type;
         string name;
 
+
+        public List<Literal> Literals => literals;
         public string Name => name;
         /// <summary>
         /// Клаузы или формулы из которых получена эта клауза
@@ -126,6 +128,12 @@ namespace Prover
             {
                 return literals[index];
             }
+        }
+
+       
+        public void AddEval(List<int> eval)
+        {
+            this.evaluation = eval;  
         }
 
         public override string ToString()

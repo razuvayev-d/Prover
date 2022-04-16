@@ -39,7 +39,7 @@ namespace Prover
         }
 
         /// <summary>
-        /// Возвращает True, если var связана в self, false в противном случае.
+        /// Возвращает True, если var связана в этой подстановке, false в противном случае.
         /// </summary>
         /// <param name="var"></param>
         /// <returns></returns>
@@ -91,6 +91,7 @@ namespace Prover
             }
             return res;
         }
+
         /// <summary>
         /// Измените подстановку, добавив новую привязку (var,
         /// терм). Если термин None, удалите привязку для var.Если
@@ -176,6 +177,56 @@ namespace Prover
                 result.subst.Add(key.DeepCopy(), value.DeepCopy());
             }
             return result;
+        }
+    }
+
+    /// <summary>
+    /// Подстановка, которая не позволяет создавать новые привязки, но взамен позволяет backward_subst
+    /// </summary>
+    class BTSubst : Substitution
+    {
+        //Dictionary<Term, Term> bindings;
+        public BTSubst(Dictionary<Term, Term> init)
+        {
+            subst = init;
+        }
+        public BTSubst()
+        {
+        }
+        public int GetState => subst.Count;
+
+        public bool BackTrack()
+        {
+            if (subst.Count == 0) return false;
+
+            var tmp = subst.Last();
+            subst.Remove(tmp.Key);
+            return true;
+        }
+
+        public int BacktrackToState((Substitution, int)btState)
+        {
+            var (substq, state) = btState;
+            if (substq != this) throw new Exception();
+            int res = 0;
+
+            while(subst.Count > state)
+            {
+                BackTrack();
+                res++;
+            }
+            return res;
+        }
+
+        public void AddBinding(Term var, Term term)
+        {
+            subst[var] = term;  
+        }
+
+        //TODO: подумать что сделать с этим безобразием
+        public new void ComposeBinding(Term var, Term term)
+        {
+            throw new NotImplementedException("Для этого класса запрещено");
         }
     }
 }

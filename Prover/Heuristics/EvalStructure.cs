@@ -25,6 +25,19 @@ namespace Prover.Heuristics
             }
         }
 
+
+        public EvalStructure(List<(ClauseEvaluationFunction, int)> eval_descriptor)
+        {
+            if (eval_descriptor.Count == 0) throw new Exception("eval_descriptoir is empty!");
+            EvalFunctions = new List<ClauseEvaluationFunction>();
+            EvalVec = new List<int>();
+            foreach (var eval in eval_descriptor)
+            {
+                EvalFunctions.Add(eval.Item1);
+                EvalVec.Add(eval.Item2);
+            }
+        }
+
         public EvalStructure(ClauseEvaluationFunction cef, int rating)
         {
             EvalFunctions.Add(cef);

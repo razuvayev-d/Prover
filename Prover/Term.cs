@@ -45,7 +45,42 @@ namespace Prover
             }
         }
 
+        public static bool Match(Term matcher, Term target, Substitution subst)
+        {
+            if (subst is not BTSubst) throw new Exception();
+            int btstate = ((BTSubst)subst).GetState;
+            bool result = true;
 
+            if (matcher.IsVar)
+            {
+                if (subst.IsBound(matcher))
+                {
+                    if (!subst[matcher].Equals(target))
+
+                        result = false;
+                }
+                else ((BTSubst)subst).AddBinding(matcher, target);
+            }
+            else
+            {
+                if(target.IsVar || matcher.name != target.name)
+                {
+                    result = false;
+                }
+                else
+                {
+                    for (int i = 0; i < matcher.subterms.Count; i++)
+                    {
+                        result = Match(matcher.subterms[i], target.subterms[i], subst);
+                        if (!result)
+                            break;
+                    }
+                }
+            }
+            if (result) return true;
+            ((BTSubst)subst).BacktrackToState((subst, btstate));
+            return false;
+        }
 
         public override string ToString()
         {
