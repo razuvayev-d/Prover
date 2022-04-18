@@ -23,18 +23,25 @@ namespace Prover
             set { constant = value; }
         }
         //public List<Term> subterms => _subterms;
-        static Term falseConstant = new Term("$false", constant: true);
-        static Term trueConstant = new Term("$true", constant: true);
+        static Term falseConstant = new Term("$false", new List<Term>(), constant: true);
+        static Term trueConstant = new Term("$true", new List<Term>(), constant: true);
         public static Term False => falseConstant;
         public static Term True => trueConstant;
 
         public Term() { }
-        public Term(string name, List<Term> subterms = null, bool constant = false)
+        public Term(string name, List<Term> subterms = null)
         {
             this.name = name;
             if (subterms is not null)
                 this.subterms = subterms;
-            this.constant = name == name.ToLower();
+            this.constant = name == name.ToLower() && (subterms is null || subterms.Count == 0);
+        }
+        public Term(string name, List<Term> subterms, bool constant)
+        {
+            this.name = name;
+            if (subterms is not null)
+                this.subterms = subterms;
+            this.constant = constant;
         }
 
         public int SubtermsCount {
@@ -142,12 +149,14 @@ namespace Prover
         public void AddSubterm(Term t)
         {
             subterms ??= new List<Term>();
+            constant = false;
             subterms.Add(t);
         }
 
         public void AddSubterms(List<Term> t)
         {
             subterms ??= new List<Term>();
+            constant = false;
             subterms.AddRange(t);
         }
 
@@ -283,13 +292,8 @@ namespace Prover
             if (this.IsVar && t.IsVar || this.constant && t.constant) 
                 return this.name == t.name;
             if (this.IsVar != t.IsVar) return false;       
-            if (this.Func != t.Func) return false;
+            if (this.name != t.name) return false;
             return TermListEqual(this.TermArgs, t.TermArgs);
-
-
-            // TODO: write your implementation of Equals() here
-            throw new NotImplementedException();
-            return base.Equals(obj);
         }
 
         public override int GetHashCode()

@@ -40,6 +40,8 @@ namespace Prover.Heuristics
 
         public EvalStructure(ClauseEvaluationFunction cef, int rating)
         {
+            EvalFunctions = new List<ClauseEvaluationFunction>();
+            EvalVec = new List<int>();
             EvalFunctions.Add(cef);
             EvalVec.Add(rating);
             currentCount = EvalVec[0];

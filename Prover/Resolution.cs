@@ -55,7 +55,7 @@ namespace Prover
                 if (!l.Equals(l2))
                 {
                     var newl = l.Substitute(sigma);
-                    lits1.Add(newl);
+                    lits2.Add(newl);
                 }
             }
 

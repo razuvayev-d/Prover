@@ -15,6 +15,11 @@ namespace Prover
         public bool forward_subsumption;
         public bool backward_subsumption;
         public object literal_selection;
+
+        public SearchParams()
+        {
+        }
+
         public SearchParams(EvalStructure heuristics,
                             bool delete_tautologies = false,
                             bool forward_subsumption = false,
@@ -34,8 +39,8 @@ namespace Prover
     internal class ProofState
     {
         SearchParams Params;
-        HeuristicClauseSet unprocessed;
-        ClauseSet processed;
+        public HeuristicClauseSet unprocessed;
+        public ClauseSet processed;
 
 
         int initial_clause_count;
@@ -68,11 +73,11 @@ namespace Prover
 
             if (given_clause.IsEmpty) return given_clause;
 
-           // if (Params.delete_tautologies && given_clause.IsTautology)
-            {
-                tautologies_deleted++;
-                return null;
-            }
+            //if (Params.delete_tautologies && given_clause.IsTautology)
+            //{
+            //    tautologies_deleted++;
+            //    return null;
+            //}
 
             if (Params.forward_subsumption && Subsumption.Forward(processed, given_clause))
             {
@@ -93,8 +98,12 @@ namespace Prover
             ClauseSet newClauses = new ClauseSet();
             ClauseSet factors = ResControl.ComputeAllFactors(given_clause);
 
+            
             newClauses.AddRange(factors);
             ClauseSet resolvents = ResControl.ComputeAllResolvents(given_clause, processed);
+
+            factor_count += factors.Count;
+            resolvent_count += resolvents.Count;
 
             resolvents.Distinct();
             newClauses.AddRange(resolvents);
@@ -129,13 +138,14 @@ namespace Prover
 
         public string StatisticsString()
         {
-            return String.Format(@"Initial clauses {0} 
-                                     Processed clauses  : {1}
-                                     Factors computed   : {2}
-                                     Resolvents computed: {3}
-                                     Tautologies deleted: {4}
-                                     Forward subsumed   : {5}
-                                     Backward subsumed  : {6})",
+            return String.Format(
+                @"Initial clauses    : {0} 
+Processed clauses  : {1}
+Factors computed   : {2}
+Resolvents computed: {3}
+Tautologies deleted: {4}
+Forward subsumed   : {5}
+Backward subsumed  : {6}",
                                      initial_clause_count, 
                                      proc_clause_count,
                                      factor_count,

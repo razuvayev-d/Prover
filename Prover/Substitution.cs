@@ -68,7 +68,7 @@ namespace Prover
         public Term Apply(Term term)
         {
             if (term.Constant) return term;
-            Term res = new Term();            
+                  
             if (term.IsVar)
             {
                 //if (subst.ContainsKey(term))
@@ -78,18 +78,19 @@ namespace Prover
                 }
                 else
                 {
-                    res.name = term.name;
+                    return term;
+                    //res.name = term.name;
                 }
             }
             else
             {
+                Term res = new Term();
                 res.name = term.name;
                 var n = term.SubtermsCount;
                 for (int i = 0; i < n; i++)
                     res.AddSubterm(Apply(term.subterms[i]));
                 return res;
-            }
-            return res;
+            }        
         }
 
         /// <summary>
