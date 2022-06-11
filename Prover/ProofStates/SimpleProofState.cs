@@ -28,27 +28,23 @@ namespace Prover.ProofStates
         /// <returns></returns>
         public Clause ProcessClause()
         {
-            //throw new NotImplementedException();
             Clause given_clause = unprocessed.ExtractFirst();
-            //given_clause = given_clause.FreshVarCopy();
-            //System.out.println("#" + given_clause.toStringJustify());
-            if (given_clause.IsEmpty)    // We have found an explicit contradiction
+            given_clause = given_clause.FreshVarCopy();
+            
+            if (given_clause.IsEmpty)    
                 return given_clause;
 
             ClauseSet newClauses = new ClauseSet();
             //TODO: Разобраться с факторами
-            ClauseSet factors = ResControl.ComputeAllFactors(given_clause);
-            //System.out.println("INFO in SimpleProofState.processClause(): factors: " + factors);
+            ClauseSet factors = ResControl.ComputeAllFactors(given_clause);     
 
             newClauses.AddRange(factors);
             ClauseSet resolvents = ResControl.ComputeAllResolvents(given_clause, processed);
-            //System.out.println("INFO in SimpleProofState.processClause(): resolvents: " + resolvents);
-
+           
             resolvents.Distinct();
             newClauses.AddRange(resolvents);
 
-            processed.AddClause(given_clause);
-            //System.out.println("INFO in SimpleProofState.processClause(): processed clauses: " + processed);
+            processed.AddClause(given_clause);         
 
             for (int i = 0; i < newClauses.Count; i++)
             {
