@@ -1,9 +1,5 @@
 ﻿using Prover.DataStructures;
-using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Prover.Heuristics
 {
@@ -45,8 +41,8 @@ namespace Prover.Heuristics
         int vweight;
         public SymbolCountEvaluation(int fweight = 2, int vweight = 1)
         {
-            this.fweight = fweight; 
-            this.vweight = vweight; 
+            this.fweight = fweight;
+            this.vweight = vweight;
             name = string.Format("ClauseEvalFun(%s, %s)", fweight, vweight);
             hEval = (clause) => clause.Weight(fweight, vweight);
         }

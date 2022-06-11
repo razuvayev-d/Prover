@@ -1,10 +1,6 @@
-﻿using System;
+﻿using Prover.DataStructures;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.IO;
-using Prover.DataStructures;
 
 namespace Prover.Tokenization
 {

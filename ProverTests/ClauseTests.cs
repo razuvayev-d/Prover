@@ -1,5 +1,4 @@
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using Prover;
 using Prover.DataStructures;
 using Prover.Tokenization;
 
@@ -25,7 +24,7 @@ cnf(dup, axiom, p(a)|q(a)|p(a)).
             c2 = Clause.ParseClause(lex);
             c3 = Clause.ParseClause(lex);
             c4 = Clause.ParseClause(lex);
-            c5 = Clause.ParseClause(lex);         
+            c5 = Clause.ParseClause(lex);
         }
         [TestMethod]
         public void InsignificantOuterBrackets()
@@ -38,7 +37,7 @@ cnf(dup, axiom, p(a)|q(a)|p(a)).
         {
             var cf = c1.FreshVarCopy();
 
-            Assert.AreEqual(c1.Weight(2,1), c2.Weight(2,1));
+            Assert.AreEqual(c1.Weight(2, 1), c2.Weight(2, 1));
             Assert.AreEqual(c1.Weight(1, 1), c2.Weight(1, 1));
         }
         [TestMethod]

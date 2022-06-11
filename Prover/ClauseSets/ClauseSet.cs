@@ -2,9 +2,6 @@
 using Prover.Tokenization;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Prover
 {
@@ -144,12 +141,12 @@ namespace Prover
         /// <param name="indices"></param>
         public void GetResolutionLiterals(Literal lit, List<Clause> clauseres, List<int> indices)
         {
-            
+
             if (clauseres.Count != 0)
                 throw new Exception("non empty result variable clauseres passed to ClauseSet.getResolutionLiterals()");
 
-           //assert clauseres.size() == 0 : "non empty result variable clauseres passed to ClauseSet.getResolutionLiterals()";
-            if(indices.Count != 0) 
+            //assert clauseres.size() == 0 : "non empty result variable clauseres passed to ClauseSet.getResolutionLiterals()";
+            if (indices.Count != 0)
                 throw new Exception("non empty result variable indices passed to ClauseSet.getResolutionLiterals()");
             for (int i = 0; i < clauses.Count; i++)
             {

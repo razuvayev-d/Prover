@@ -3,9 +3,6 @@ using Prover.RosolutionRule;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Prover
 {
@@ -26,7 +23,7 @@ namespace Prover
             {
                 normalForm = true;
                 (f, m) = Formula.RootFormulaNNF(f, polarity);
-                modified |= m;            
+                modified |= m;
                 if (f.op == "~")
                 {
                     (handle, m) = Formula.FormulaNNF(f.subFormula1, !polarity);
@@ -60,7 +57,7 @@ namespace Prover
                 }
                 else
                 {
-                    
+
                     if (!f.IsLiteral)
                     {
                         if ((f.op == "" && f.Child1.IsLiteral))
@@ -171,7 +168,7 @@ namespace Prover
                     }
 
                     //normalform = !m;
-                    
+
                 }
                 // TODO: новые изменения
                 else if (f.op == "|")
@@ -190,7 +187,7 @@ namespace Prover
                             // False | Q = Q                          
                             f = f.Child2;
                             m = true;
-                        }                       
+                        }
                     }
                     // symmetric case
                     if (f.Child2.IsLiteral)
@@ -404,7 +401,7 @@ namespace Prover
                 Formula child = (f/*.subFormula1*/ as Literal).Instantiated(subst);
                 f = child; //new Formula("", child);
             }
-            else if(f.op == "?")
+            else if (f.op == "?")
             {
                 var var = f.subFormula1 as Term; // (f as Quantor).Variable;// (f.subFormula1 as Literal).QuantorVar;
                 var skTerm = Skolem.NewSkolemTerm(variables);
@@ -426,7 +423,7 @@ namespace Prover
                 Formula arg2 = null;
                 if (f.HasSubform1)
                     arg1 = FormulaRekSkolemize(f.subFormula1, variables, subst);
-                if (f.HasSubform2) 
+                if (f.HasSubform2)
                     arg2 = FormulaRekSkolemize(f.subFormula2, variables, subst);
                 f = new Formula(f.op, arg1, arg2);
             }
@@ -450,7 +447,7 @@ namespace Prover
             List<Term> varlist = new List<Term>();
             //(f, varlist) = SeparateQuantors(f);
             f = SeparateQuantors(f, varlist);
-            while(varlist.Count > 0)
+            while (varlist.Count > 0)
             {
                 Term t = varlist[varlist.Count - 1];
                 varlist.Remove(t);
@@ -460,10 +457,10 @@ namespace Prover
         }
         /// <summary>
         ///  Remove all quantors from f, returning the quantor-free core of the
-     /// formula and a list of quantified variables.This will only be
-     /// applied to Skolemized formulas, thus finding an existential
-     ///quantor is an error.To be useful, the input formula also has to be
-     ///variable-normalized.
+        /// formula and a list of quantified variables.This will only be
+        /// applied to Skolemized formulas, thus finding an existential
+        ///quantor is an error.To be useful, the input formula also has to be
+        ///variable-normalized.
         /// </summary>
         /// <param name="f"></param>
         /// <param name="varlist"></param>
@@ -529,13 +526,13 @@ namespace Prover
                     f = FormulaDistributeDisjunctions(f);
                 }
             }
-            return f;         
+            return f;
         }
 
     }
 }
-        
-                           
-                
-            
+
+
+
+
 

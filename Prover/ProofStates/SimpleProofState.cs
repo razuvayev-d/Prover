@@ -1,10 +1,5 @@
 ﻿using Prover.DataStructures;
 using Prover.RosolutionRule;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Prover.ProofStates
 {
@@ -30,21 +25,21 @@ namespace Prover.ProofStates
         {
             Clause given_clause = unprocessed.ExtractFirst();
             given_clause = given_clause.FreshVarCopy();
-            
-            if (given_clause.IsEmpty)    
+
+            if (given_clause.IsEmpty)
                 return given_clause;
 
             ClauseSet newClauses = new ClauseSet();
-            //TODO: Разобраться с факторами
-            ClauseSet factors = ResControl.ComputeAllFactors(given_clause);     
+
+            ClauseSet factors = ResControl.ComputeAllFactors(given_clause);
 
             newClauses.AddRange(factors);
             ClauseSet resolvents = ResControl.ComputeAllResolvents(given_clause, processed);
-           
+
             resolvents.Distinct();
             newClauses.AddRange(resolvents);
 
-            processed.AddClause(given_clause);         
+            processed.AddClause(given_clause);
 
             for (int i = 0; i < newClauses.Count; i++)
             {

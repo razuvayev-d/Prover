@@ -1,11 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Prover.DataStructures;
+﻿using Prover.DataStructures;
 using Prover.Heuristics;
 using Prover.RosolutionRule;
+using System;
 
 namespace Prover.ProofStates
 {

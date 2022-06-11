@@ -1,12 +1,8 @@
-﻿using System;
+﻿using Prover.DataStructures;
+using Prover.Tokenization;
+using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-using System.Threading.Channels;
-using Prover.DataStructures;
-using Prover.Tokenization;
 
 namespace Prover
 {
@@ -55,12 +51,12 @@ namespace Prover
         {
             string arg1 = null;
             string arg2 = null;
-            if(subFormula1 != null) arg1 = subFormula1.ToString();
-            if(subFormula2 != null) arg2 = subFormula2.ToString();
+            if (subFormula1 != null) arg1 = subFormula1.ToString();
+            if (subFormula2 != null) arg2 = subFormula2.ToString();
 
-            if(op == null) return arg1;
-            if(op == "~") return "(~" + arg1 + ")";
-            if(op == "!" || op == "?")
+            if (op == null) return arg1;
+            if (op == "~") return "(~" + arg1 + ")";
+            if (op == "!" || op == "?")
             {
                 return "(" + op + "[" + arg1 + "]:" + arg2 + ")";
             }
@@ -374,7 +370,7 @@ namespace Prover
                     // По возможности вставляйте ~ в литералы. Это покрывает случай
                     // ~~P -> P, если одно из отрицаний находится в литерале.
                     return ((f.Child1 as Literal).Negate(), true);
-                       // (new Formula("", ((Literal)f.Child1/*.Child1*/).Negate()), true);
+                // (new Formula("", ((Literal)f.Child1/*.Child1*/).Negate()), true);
             }
             else if (f.op == "|")
             {
@@ -398,11 +394,11 @@ namespace Prover
                 if (f.Child1.Equals(f.Child2)) return (f.Child2, true);
 
                 //TODO: тождественно ложная контрарная пара
-                if (f.Child1.IsLiteral && f.Child2.IsLiteral)                   
+                if (f.Child1.IsLiteral && f.Child2.IsLiteral)
                     if (Literal.IsContrars(f.Child1 as Literal, f.Child2 as Literal))
                         return (Literal.False, true);
             }
-            else if(f.op == "<=>")
+            else if (f.op == "<=>")
             {
                 if (f.Child1.IsPropConst(true)) return (f.Child2, true);
                 if (f.Child2.IsPropConst(true)) return (f.Child1, true);
@@ -420,7 +416,7 @@ namespace Prover
                 }
                 if (f.Child1.Equals(f.Child2)) return (Literal.True, true);
             }
-            else if(f.op == "=>")
+            else if (f.op == "=>")
             {
                 if (f.Child1.IsPropConst(true)) return (f.Child2, true);
                 if (f.Child2.IsPropConst(true)) return (Literal.True, true);
@@ -506,7 +502,7 @@ namespace Prover
                 res.AddRange(subFormula2.CollectFreeVars());
             }
             else
-            { 
+            {
                 //Кванторный случай. Сначала мы собираем все свободные переменные в
                 // квантифицированной формуле, затем удаляем ту, которая связана с
                 // квантификатором.
@@ -517,23 +513,23 @@ namespace Prover
             }
             return res;
         }
-        
+
     }
 }
 
 
-    //class Litera1 : Formula
-    //{
-    //    string name; //предикативная буква
-    //    List<Term> terms;
+//class Litera1 : Formula
+//{
+//    string name; //предикативная буква
+//    List<Term> terms;
 
 
-    //    public Litera1(string atom, bool negative = false)
-    //    {
-    //        if (negative) op = OpType.Negation;
-    //        else op = OpType.NoOp;
+//    public Litera1(string atom, bool negative = false)
+//    {
+//        if (negative) op = OpType.Negation;
+//        else op = OpType.NoOp;
 
 
-    //    }
-    //}
+//    }
+//}
 

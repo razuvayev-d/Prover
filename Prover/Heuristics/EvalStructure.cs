@@ -1,9 +1,6 @@
 ﻿using Prover.DataStructures;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Prover.Heuristics
 {
@@ -58,7 +55,8 @@ namespace Prover.Heuristics
 
         public int NextEval
         {
-            get {
+            get
+            {
                 current++;
                 if (current >= EvalVec.Count)
                     current = 0;

@@ -1,14 +1,12 @@
-﻿using System;
-using System.IO;
-using System.Linq;
-using System.Collections.Generic;
-using System.Text.RegularExpressions;
-
-using Prover.Heuristics;
-using System.Diagnostics;
-using Prover.DataStructures;
+﻿using Prover.DataStructures;
 using Prover.ProofStates;
 using Prover.Tokenization;
+using System;
+using System.Collections.Generic;
+using System.Diagnostics;
+using System.IO;
+using System.Linq;
+using System.Text.RegularExpressions;
 
 namespace Prover
 {
@@ -40,7 +38,7 @@ namespace Prover
             problem.Parse(Path);
 
             string formulastr = problem.formulas[0].Formula.ToString();
-           
+
             var cnf = problem.Clausify();
 
             var state = new ProofState(param, cnf, false, false);
@@ -105,9 +103,9 @@ namespace Prover
             string formulastr = problem.formulas[0].Formula.ToString();
             Console.WriteLine(problem.formulas[0].Formula.ToString());
             var cnf = problem.Clausify();
-            
 
-        var state = new SimpleProofState(cnf);
+
+            var state = new SimpleProofState(cnf);
             Clause res = state.Saturate();
 
             if (res.IsEmpty)
@@ -152,7 +150,7 @@ namespace Prover
             //}
         }
         //static int i = 1;
-        static void Print(SimpleProofState state, Clause res, List<string> sq) 
+        static void Print(SimpleProofState state, Clause res, List<string> sq)
         {
             if (res.support.Count == 0)
             {
@@ -256,6 +254,6 @@ namespace Prover
                 Write(path, state, q, sq);
 
             }
-        }       
+        }
     }
 }

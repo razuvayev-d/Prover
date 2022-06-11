@@ -1,10 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Prover.DataStructures;
+﻿using Prover.DataStructures;
 using Prover.Heuristics;
+using System.Collections.Generic;
 
 namespace Prover
 {
@@ -38,7 +34,7 @@ namespace Prover
         /// <returns></returns>
         public Clause ExtractBestByEval(int heuristicIndex)
         {
-            if(clauses.Count == 0) return null;
+            if (clauses.Count == 0) return null;
             int best = 0;
             int besteval = clauses[0].evaluation[heuristicIndex];
 
@@ -48,7 +44,7 @@ namespace Prover
                 {
                     besteval = clauses[i].evaluation[heuristicIndex];
                     best = i;
-                }           
+                }
             }
             var ret = clauses[best];
             clauses.RemoveAt(best);
