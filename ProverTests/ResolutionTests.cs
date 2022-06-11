@@ -1,14 +1,13 @@
-using Microsoft.VisualStudio.TestTools.UnitTesting;
-using Prover;
+﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
+using Prover.DataStructures;
+using Prover.RosolutionRule;
+using Prover.Tokenization;
 
-namespace Tests
+namespace ProverTests
 {
     [TestClass]
     public class ResolutionTest
     {
-        
-
-
         static Clause c1 = new Clause();
         static Clause c2 = new Clause();
         static Clause c3 = new Clause();
@@ -57,8 +56,8 @@ namespace Tests
             c8 = Clause.ParseClause(lex);
             c9 = Clause.ParseClause(lex);
             c10 = Clause.ParseClause(lex);
-            c11 =  Clause.ParseClause(lex);
-            c12 =  Clause.ParseClause(lex);
+            c11 = Clause.ParseClause(lex);
+            c12 = Clause.ParseClause(lex);
             c13 = Clause.ParseClause(lex);
         }
         [TestMethod]
@@ -99,7 +98,7 @@ namespace Tests
         [TestMethod]
         public void TestMethod7()
         {
-            Assert.AreNotEqual(Resolution.Apply(c12, 0, c13, 0), null);
+            Assert.AreEqual(Resolution.Apply(c12, 0, c13, 0), null);
         }
     }
 }

@@ -1,17 +1,19 @@
-﻿using System;
+﻿using Prover.RosolutionRule;
+using Prover.Tokenization;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Prover
+namespace Prover.DataStructures
 {
     /// <summary>
     /// Класс, представляющий литерал. Литерал - это подписанный атом. Мы
     /// уже допускаем равносильные атомы с инфиксными "=" или "!="
     /// и нормализуем их при создании.
     /// </summary>
-    class Literal: Formula
+    public class Literal : Formula
     {
         public bool Negative { get; private set; }
         string name;
@@ -21,8 +23,8 @@ namespace Prover
 
         public List<Term> Arguments => arguments;
 
-        static Literal tru = new Literal("$true", new List<Term> ()/*{ Term.True }*/);
-        static Literal fal = new Literal("$false", new List<Term> () /*{ Term.False }*/);
+        static Literal tru = new Literal("$true", new List<Term>()/*{ Term.True }*/);
+        static Literal fal = new Literal("$false", new List<Term>() /*{ Term.False }*/);
 
         public static Literal True => tru;
         public static Literal False => fal;
@@ -30,7 +32,7 @@ namespace Prover
         {
             this.name = name;
             this.arguments = arguments;
-            this.Negative = negative;
+            Negative = negative;
 
             // TODO: разобраться с обработкой равенства при создании литерала
             //if (atom.Func == "!=")
@@ -49,9 +51,9 @@ namespace Prover
 
         public bool Match(Literal other, Substitution subst)
         {
-            if(Negative != other.Negative) return false;
+            if (Negative != other.Negative) return false;
             bool res = true;
-            for (int i = 0; i < arguments.Count; i++) 
+            for (int i = 0; i < arguments.Count; i++)
             {
                 res = Term.Match(arguments[i], other.arguments[i], subst);
                 if (!res)
@@ -61,9 +63,9 @@ namespace Prover
         }
         public bool Equals(Literal other)
         {
-            if (this.Negative != other.Negative) return false;
-            if (this.Name != other.Name) return false;
-            if (this.arguments.Count != other.arguments.Count) return false;
+            if (Negative != other.Negative) return false;
+            if (Name != other.Name) return false;
+            if (arguments.Count != other.arguments.Count) return false;
             int n = arguments.Count;
             for (int i = 0; i < n; i++)
             {
@@ -88,31 +90,32 @@ namespace Prover
         {
             get
             {
-                return new Term(this.Name, null);
+                return new Term(Name, null);
                 if (arguments.Count > 1)
                     throw new Exception("Литерал кванторной переменной имеет больше одного аргумента");
                 return arguments[0];
             }
         }
-    
-        public bool IsPropTrue {
+
+        public bool IsPropTrue
+        {
             get
             {
                 //if (arguments is null) return false;
                 //if (arguments.Count != 1) return false; // Если аргументов много то очевидно не коннстанта
-                return this.Equals(True);
+                return Equals(True);
                 return Negative && Term.AtomIsConstFalse(arguments[0])
                     || !Negative && Term.AtomIsConstTrue(arguments[0]);
             }
         }
-        
+
         public bool IsPropFalse
         {
             get
             {
                 //if (arguments is null) return false;
                 //if (arguments.Count != 1) return false; // Если аргументов много то очевидно не константа
-                return this.Equals(False);
+                return Equals(False);
                 return Negative && Term.AtomIsConstTrue(arguments[0])
                     || !Negative && Term.AtomIsConstFalse(arguments[0]);
             }
@@ -144,7 +147,7 @@ namespace Prover
         public Literal Negate()
         {
             //return null;
-            if (this.IsPropTrue)
+            if (IsPropTrue)
             {
                 return fal;
             }
@@ -155,7 +158,7 @@ namespace Prover
             else
             {
                 // TODO: Разобраться с отрицанием константных литералов (complete)
-                return new Literal(/*"~" + */ this.name, Term.ListCopy(this.arguments), !this.Negative);
+                return new Literal(/*"~" + */ name, Term.ListCopy(arguments), !Negative);
             }
         }
 
@@ -173,11 +176,11 @@ namespace Prover
             }
             return two.Equals(one.Negate());
         }
- 
+
         public Literal Copy()
         {
             throw new NotImplementedException();
-           // return new Literal(this.name, arguments.Cl())
+            // return new Literal(this.name, arguments.Cl())
         }
         /// <summary>
         /// Применяет указанную подстановку к аргументам литерала
@@ -205,14 +208,22 @@ namespace Prover
         /// <summary>
         /// Parse a list of literals separated by "|" (logical or). As per
         ///TPTP 3 syntax, the single word "$false" is interpreted as the
-   /// false literal, and ignored.
+        /// false literal, and ignored.
         /// </summary>
         /// <param name=""></param>
         public static List<Literal> ParseLiteralList(Lexer lexer)
         {
-           List<Literal> res = new List<Literal>();
+            List<Literal> res = new List<Literal>();
 
-            do
+            if (lexer.LookLit() == "$false")
+                lexer.Next();
+            else
+            {
+                var lit = ParseLiteral(lexer);
+                res.Add(lit);
+            }
+
+            while (lexer.TestTok(TokenType.Or))
             {
                 lexer.Next();
                 if (lexer.LookLit() == "$false")
@@ -223,7 +234,6 @@ namespace Prover
                     res.Add(lit);
                 }
             }
-            while (lexer.TestTok(TokenType.Or));
             return res;
         }
         /// <summary>
@@ -272,12 +282,12 @@ namespace Prover
         public Literal Instantiated(Substitution subst)
         {
             var res = DeepCopy();
-            for(int i = 0; i < res.arguments.Count; i++)
+            for (int i = 0; i < res.arguments.Count; i++)
             //foreach(var term in res.arguments)
-            {            
+            {
                 res.arguments[i] = subst.Apply(res.arguments[i]);
             }
-            return res; 
+            return res;
         }
 
         public Literal DeepCopy()
@@ -294,7 +304,7 @@ namespace Prover
 
             for (int i = 0; i < arguments.Count; i++)
                 total += arguments[i].GetHashCode() * i;
-            return total;   
+            return total;
         }
     }
 }

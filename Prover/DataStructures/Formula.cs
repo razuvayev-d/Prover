@@ -5,6 +5,8 @@ using System.Text;
 using System.Threading.Tasks;
 
 using System.Threading.Channels;
+using Prover.DataStructures;
+using Prover.Tokenization;
 
 namespace Prover
 {
@@ -21,7 +23,7 @@ namespace Prover
     }
 
 
-    partial class Formula
+    public partial class Formula
     {
         string op;
         Formula subFormula1;

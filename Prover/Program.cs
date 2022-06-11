@@ -6,6 +6,9 @@ using System.Text.RegularExpressions;
 
 using Prover.Heuristics;
 using System.Diagnostics;
+using Prover.DataStructures;
+using Prover.ProofStates;
+using Prover.Tokenization;
 
 namespace Prover
 {

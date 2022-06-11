@@ -4,10 +4,10 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Prover
+namespace Prover.DataStructures
 {
 
-    class Quantor : Formula
+    public class Quantor : Formula
     {
         public enum Type
         {
@@ -15,8 +15,8 @@ namespace Prover
             Universal
         }
 
-        public Term Variable => (Term)this.Child1;
-        public Formula Formula => this.Child2;
+        public Term Variable => (Term)Child1;
+        public Formula Formula => Child2;
         Type type;
         //public Quantor(Type type, Term variable, Formula formula)
         //{

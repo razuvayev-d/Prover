@@ -4,11 +4,11 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Prover
+namespace Prover.DataStructures
 {
 
 
-    interface IDerivable
+    public interface IDerivable
     {
 
     }
@@ -17,7 +17,7 @@ namespace Prover
     /// Может быть тривиальным (клауза/формула получаена непосредственно из входных данных)
     /// или состоять из правила вывода и списка родителей.
     /// </summary>
-    class Derivable : IDerivable
+    public class Derivable : IDerivable
     {
         /// <summary>
         /// Счетчик для генерирования новых имет для клауз
@@ -36,7 +36,7 @@ namespace Prover
             set
             {
                 if (value == null)
-                    name = String.Format("c{0}", derivedIdCounter++);
+                    name = string.Format("c{0}", derivedIdCounter++);
                 name = value;
             }
         }
@@ -74,7 +74,7 @@ namespace Prover
     /// ссылка на существующий объект деривации("reference"), или
     /// умозаключение со списком предпосылок.
     /// </summary>
-    class Derivation : IDerivable
+    public class Derivation : IDerivable
     {
         string op;
         public Derivation(string op, List<IDerivable> parents = null, string status = "status(thm)")
@@ -89,7 +89,7 @@ namespace Prover
                 parentList.Add(new Derivation("reference", new List<IDerivable> { p }));
 
             return new Derivation(op, parentList, status);
-       }
+        }
     }
 
 }

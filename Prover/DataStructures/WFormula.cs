@@ -1,10 +1,11 @@
-﻿using System;
+﻿using Prover.Tokenization;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Prover
+namespace Prover.DataStructures
 {
     /// <summary>
     ///  Datatype for the complete first-order formula, including
@@ -79,7 +80,7 @@ namespace Prover
                 var negf = new Formula("~", formula);
                 var negW = new WFormula(negf, "negated_conjecture");
                 negW.Derivation = Derivation.FlatDerivation("assume_negation",
-                                          new List<IDerivable> { this.Derivation },
+                                          new List<IDerivable> { Derivation },
                                           "status(cth)");
                 return negW;
             }
@@ -108,17 +109,17 @@ namespace Prover
             bool m, m0, m1;
             Formula f;
             WFormula tmp;
-            (f, m0) = Prover.Formula.FormulaOpSimplify(wf.Formula);
+            (f, m0) = Formula.FormulaOpSimplify(wf.Formula);
             (f, m1) = Formula.FormulaSimplify(f);
 
             if (m0 || m1)
             {
                 tmp = new WFormula(f, wf.type);
-                tmp.Derivation = Derivation.FlatDerivation("fof_simplification", new List<IDerivable> { wf } );
+                tmp.Derivation = Derivation.FlatDerivation("fof_simplification", new List<IDerivable> { wf });
                 wf = tmp;//!!!
             }
 
-            (f, m) = Prover.Formula.FormulaNNF(f, true);
+            (f, m) = Formula.FormulaNNF(f, true);
             if (m)
             {
                 tmp = new WFormula(f, wf.type);
@@ -134,7 +135,7 @@ namespace Prover
                 wf = tmp;
             }
             // TODO: ошибка в FormulaVarRename 
-           // f = Formula.FormulaVarRename(f);
+            // f = Formula.FormulaVarRename(f);
             if (!f.Equals(wf.Formula))
             {
                 tmp = new WFormula(f, wf.type);

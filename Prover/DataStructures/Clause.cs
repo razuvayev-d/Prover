@@ -1,10 +1,12 @@
-﻿using System;
+﻿using Prover.RosolutionRule;
+using Prover.Tokenization;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Prover
+namespace Prover.DataStructures
 {
     /// <summary>
     /// Класс, представляющий клаузулу. В настоящее время клаузула состоит из
@@ -13,7 +15,7 @@ namespace Prover
     /// - Тип ("простой", если не задан).
     /// - Имя(генерируется автоматически, если не задано)
     /// </summary>
-    class Clause : Derivable
+    public class Clause : Derivable
     {
         List<Literal> literals = new List<Literal>();
         string type;
@@ -79,17 +81,17 @@ namespace Prover
         {
             this.literals = literals;
             this.type = type;
-            if (name is not null) 
+            if (name is not null)
                 this.name = name;
-            else 
-                this.name =String.Format("c{0}", clauseIdCounter++);
+            else
+                this.name = string.Format("c{0}", clauseIdCounter++);
         }
 
         public Clause(List<Formula> literals, string type = "plain", string name = null) : base(name)
         {
             var n = literals.Count;
             List<Literal> lits = new List<Literal>(n);
-            for (int i = 0; i < n; i++) 
+            for (int i = 0; i < n; i++)
             {
                 // lits[i] = (Literal)literals[i];
                 lits.Add((Literal)literals[i]);
@@ -101,7 +103,7 @@ namespace Prover
             if (name is not null)
                 this.name = name;
             else
-                this.name = String.Format("c{0}", clauseIdCounter++);
+                this.name = string.Format("c{0}", clauseIdCounter++);
         }
         /// <summary>
         /// Возвращает вес клаузы по количеству символов
@@ -130,10 +132,10 @@ namespace Prover
             }
         }
 
-       
+
         public void AddEval(List<int> eval)
         {
-            this.evaluation = eval;  
+            evaluation = eval;
         }
 
         public override string ToString()
@@ -160,14 +162,14 @@ namespace Prover
         }
         /// <summary>
         // /** ***************************************************************
-      ///Return an instantiated copy of self.Name and type are copied
-     /// and need to be overwritten if that is not desired.
+        ///Return an instantiated copy of self.Name and type are copied
+        /// and need to be overwritten if that is not desired.
         /// </summary>
         /// <param name="subst"></param>
         /// <returns></returns>
         public Clause Substitute(Substitution subst)
         {
-            
+
             //System.out.println("INFO in Clause.instantiate(): " + subst);
             //System.out.println("INFO in Clause.instantiate(): " + this);
             Clause newC = DeepCopy();
@@ -212,17 +214,17 @@ namespace Prover
             return result;
         }
 
-        public void CreateName() => name = "c" + clauseIdCounter++;      
-        
+        public void CreateName() => name = "c" + clauseIdCounter++;
+
         public void RemoveDupLits()
         {
             //literals = literals.Distinct().ToList();
 
             var lits = new List<Literal>();
             for (int i = 0; i < literals.Count; i++)
-                    if (!TMP_CONTAINS_LITS(literals[i], lits))
-                        lits.Add(literals[i]);       
-            this.literals = lits;
+                if (!TMP_CONTAINS_LITS(literals[i], lits))
+                    lits.Add(literals[i]);
+            literals = lits;
 
         }
 
@@ -247,7 +249,7 @@ namespace Prover
             var other = (Clause)obj;
             if (Length != other.Length) return false;
 
-            for (int i =0; i< Length; i++)
+            for (int i = 0; i < Length; i++)
             {
                 if (!literals[i].Equals(other.literals[i])) return false;
             }
@@ -259,7 +261,7 @@ namespace Prover
             int total = 0;
             for (int i = 0; i < Length; i++)
                 total += literals[i].GetHashCode();
-            return total;   
+            return total;
         }
     }
 }

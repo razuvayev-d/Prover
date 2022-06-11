@@ -1,23 +1,24 @@
-﻿using System;
+﻿using Prover.DataStructures;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Prover
+namespace Prover.RosolutionRule
 {
     class Skolem
     {
         private static int skolemCount = 0;
         public static string NewSkolemSymbol()
         {
-            return String.Format("skolem{0}", ++skolemCount);
+            return string.Format("skolem{0}", ++skolemCount);
         }
 
         public static Term NewSkolemTerm(List<Term> varlist)
         {
             Term res = new Term();
-            
+
             res.name = NewSkolemSymbol();
             var n = varlist.Count;
             if (n == 0) res.Constant = true;

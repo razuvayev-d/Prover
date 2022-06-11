@@ -4,13 +4,13 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Prover
+namespace Prover.DataStructures
 {
     /// <summary>
     ///  A signature object, containing function symbols, predicate
     /// symbols, and their associated arities.
     /// </summary>
-    class Signature
+    public class Signature
     {
         Dictionary<string, int> funs = new Dictionary<string, int>();
         Dictionary<string, int> preds = new Dictionary<string, int>();

@@ -1,10 +1,12 @@
-﻿using System;
+﻿using Prover.DataStructures;
+using Prover.RosolutionRule;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Prover
+namespace Prover.ProofStates
 {
     class SimpleProofState
     {
@@ -12,7 +14,7 @@ namespace Prover
         // TODO: public proof state
         public ClauseSet processed = new ClauseSet();
 
-        
+
 
         public SimpleProofState(ClauseSet clauses)
         {
@@ -67,10 +69,10 @@ namespace Prover
             {
                 //unprocessed.clauses = unprocessed.clauses.Distinct().ToList();
                 unprocessed.Distinct();
-                Clause res = ProcessClause();  
+                Clause res = ProcessClause();
                 if (res is not null)
                 {
-                    return res; 
+                    return res;
                 }
             }
             return null;

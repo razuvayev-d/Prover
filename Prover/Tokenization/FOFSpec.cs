@@ -4,8 +4,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.IO;
+using Prover.DataStructures;
 
-namespace Prover
+namespace Prover.Tokenization
 {
     class FOFSpec
     {
@@ -49,7 +50,7 @@ namespace Prover
                     lex.AcceptTok(TokenType.SQString);
                     lex.AcceptTok(TokenType.ClosePar);
                     lex.AcceptTok(TokenType.FullStop);
-                    this.Parse(name, refdir);
+                    Parse(name, refdir);
                 }
 
             }
@@ -89,14 +90,14 @@ namespace Prover
             IsFof = true;
             formulas.Add(formula);
         }
-        
+
         /// <summary>
         /// Преобразовывает все формулы в клаузы.
         ///
         /// </summary>
         public ClauseSet Clausify()
         {
-            while(formulas.Count > 0)
+            while (formulas.Count > 0)
             {
                 var form = formulas[formulas.Count - 1];
                 formulas.Remove(form);

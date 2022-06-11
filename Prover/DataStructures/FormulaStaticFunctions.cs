@@ -1,4 +1,6 @@
-﻿using System;
+﻿using Prover.DataStructures;
+using Prover.RosolutionRule;
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
@@ -7,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace Prover
 {
-    partial class Formula
+    public partial class Formula
     {
         /// <summary>
         ///Convert f into a NNF.Equivalences(<=>) are eliminated

@@ -1,20 +1,21 @@
-﻿using System;
+﻿using Prover.DataStructures;
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Prover
+namespace Prover.RosolutionRule
 {
     static class ResControl
     {
         public static ClauseSet ComputeAllResolvents(Clause clause, ClauseSet clauseSet)
         {
             ClauseSet res = new ClauseSet();
-            for(int lit = 0; lit < clause.Length; lit++)
+            for (int lit = 0; lit < clause.Length; lit++)
             {
-                List<Clause> clauseres = new List<Clause>(); 
+                List<Clause> clauseres = new List<Clause>();
                 List<int> indices = new List<int>();
 
                 clauseSet.GetResolutionLiterals(clause[lit], clauseres, indices);

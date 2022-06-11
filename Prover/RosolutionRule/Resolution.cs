@@ -1,15 +1,16 @@
-﻿using System;
+﻿using Prover.DataStructures;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Prover
+namespace Prover.RosolutionRule
 {
     /// <summary>
     /// Реализация правила Резолюции
     /// </summary>
-    class Resolution
+    public class Resolution
     {
         /// <summary>
         /// Применяет правило резолюции к клаузам clause1, clause2.
@@ -90,9 +91,9 @@ namespace Prover
             sigma = Unification.MGU(l1, l2);
             if (sigma is null)
                 return null;
-            List<Literal> literals = new List<Literal>();   
+            List<Literal> literals = new List<Literal>();
 
-            for(int i = 0; i < clause.Length; i++)
+            for (int i = 0; i < clause.Length; i++)
             {
                 Literal l = clause[i];
                 l.Substitute(sigma);

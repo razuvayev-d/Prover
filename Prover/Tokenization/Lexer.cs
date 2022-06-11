@@ -5,10 +5,10 @@ using System.Threading.Tasks;
 using System.Text.RegularExpressions;
 using System.Linq;
 
-namespace Prover
+namespace Prover.Tokenization
 {
 
-    enum TokenType
+    public enum TokenType
     {
         NoToken,
         WhiteSpace,
@@ -41,7 +41,7 @@ namespace Prover
         EOFToken
     }
 
-    class Token
+    public class Token
     {
         public TokenType type;
         public string literal;
@@ -55,12 +55,17 @@ namespace Prover
             this.source = source;
             this.pos = pos;
         }
+
+        public override string ToString()
+        {
+            return string.Format("\"{0}\" ({1})", literal, type.ToString());
+        }
     }
 
     /// <summary>
     /// Лексический анализатор
     /// </summary>
-    class Lexer
+    public class Lexer
     {
         static List<(Regex, TokenType)> tokenDefs = new List<(Regex, TokenType)>{
             (new Regex(@"^\."),                    TokenType.FullStop),
@@ -132,14 +137,14 @@ namespace Prover
         /// <returns></returns>
         Token NextUnfiltered()
         {
-            if (tokenStack.Count > 0) 
+            if (tokenStack.Count > 0)
                 return tokenStack.Pop();
 
             int old_pos = pos;
 
             if (source.Substring(old_pos) == "")
                 return new Token(TokenType.EOFToken, string.Empty, source, old_pos);
-            foreach(var i in tokenDefs)
+            foreach (var i in tokenDefs)
             {
                 var mr = i.Item1.Match(source.Substring(pos)/*, pos*/); //Заменить на source.Substring(pos)
                 if (mr.Success)
@@ -152,11 +157,11 @@ namespace Prover
             }
             throw new ArgumentException("IllegalCharacterError (not impl)");
         }
-        Token Look() 
+        Token Look()
         {
             var res = Next();
             Push(res);
-            return res; 
+            return res;
         }
 
         /// <summary>
@@ -177,12 +182,12 @@ namespace Prover
         /// <summary>
         /// Взять список ожидаемых типов лексем. Если следующий токен
         ///не входит в число ожидаемых, выйдите с ошибкой.В противном случае
-       ///ничего.
+        ///ничего.
         /// </summary>
         /// <param name="tokenTypes"></param>
         public void CheckTok(params TokenType[] tokenTypes)
         {
-            if (!TestTok(tokenTypes)) throw new ArgumentException("UnexpectedTokenError (not imp)");
+            if (!TestTok(tokenTypes)) throw new ArgumentException("UnexpectedTokenError (not imp). " + source[pos]);
 
         }
 

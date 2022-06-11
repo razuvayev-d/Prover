@@ -1,17 +1,18 @@
-﻿using System;
+﻿using Prover.DataStructures;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Prover
+namespace Prover.RosolutionRule
 {
     /// <summary>
     /// Подстановки отображают переменные на термы. Подстановки, используемые здесь
     /// всегда полностью развернуты, т.е.каждая переменная привязана непосредственно к
     /// термином, к которому она привязана.
     /// </summary>
-    class Substitution
+    public class Substitution
     {
         public Dictionary<Term, Term> subst = new Dictionary<Term, Term>(/*Term.Comparer*/);
         private static int freshVarCounter = 0;
@@ -68,7 +69,7 @@ namespace Prover
         public Term Apply(Term term)
         {
             if (term.Constant) return term;
-                  
+
             if (term.IsVar)
             {
                 //if (subst.ContainsKey(term))
@@ -90,7 +91,7 @@ namespace Prover
                 for (int i = 0; i < n; i++)
                     res.AddSubterm(Apply(term.subterms[i]));
                 return res;
-            }        
+            }
         }
 
         /// <summary>
@@ -143,9 +144,9 @@ namespace Prover
                 Term newVar = FreshVar();
                 // TODO: подумать не заменить ли Dictionary на List<(Term, Term)> или аналог
                 //s.subst.Add(vars[i], newVar);
-                if(s.subst.ContainsKey(vars[i]))
+                if (s.subst.ContainsKey(vars[i]))
                     s.subst[vars[i]] = newVar;
-                else    
+                else
                     s.subst.Add(vars[i], newVar);
             }
             return s;
@@ -205,13 +206,13 @@ namespace Prover
             return true;
         }
 
-        public int BacktrackToState((Substitution, int)btState)
+        public int BacktrackToState((Substitution, int) btState)
         {
             var (substq, state) = btState;
             if (substq != this) throw new Exception();
             int res = 0;
 
-            while(subst.Count > state)
+            while (subst.Count > state)
             {
                 BackTrack();
                 res++;
@@ -221,7 +222,7 @@ namespace Prover
 
         public void AddBinding(Term var, Term term)
         {
-            subst[var] = term;  
+            subst[var] = term;
         }
 
         //TODO: подумать что сделать с этим безобразием

@@ -1,4 +1,6 @@
-﻿using System;
+﻿using Prover.RosolutionRule;
+using Prover.Tokenization;
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
@@ -6,10 +8,10 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Prover
+namespace Prover.DataStructures
 {
     [DebuggerDisplay("{ToString()}")]
-    class Term : Formula
+    public class Term : Formula
     {
         //public static TermEqualityComparer Comparer = new();
         public string name;
@@ -34,7 +36,7 @@ namespace Prover
             this.name = name;
             if (subterms is not null)
                 this.subterms = subterms;
-            this.constant = name == name.ToLower() && (subterms is null || subterms.Count == 0);
+            constant = name == name.ToLower() && (subterms is null || subterms.Count == 0);
         }
         public Term(string name, List<Term> subterms, bool constant)
         {
@@ -44,7 +46,8 @@ namespace Prover
             this.constant = constant;
         }
 
-        public int SubtermsCount {
+        public int SubtermsCount
+        {
             get
             {
                 if (IsCompound) return subterms.Count;
@@ -70,7 +73,7 @@ namespace Prover
             }
             else
             {
-                if(target.IsVar || matcher.name != target.name)
+                if (target.IsVar || matcher.name != target.name)
                 {
                     result = false;
                 }
@@ -171,7 +174,7 @@ namespace Prover
             {
                 res = res + v.Weight(fweight, vweight);
             }
-            return res; 
+            return res;
         }
 
 
@@ -225,7 +228,7 @@ namespace Prover
         {
             var res = new List<Term>();
             res.Add(ParseTerm(lexer)); //res.Add(new Term(ParseTerm(lexer).name));
-            
+
             while (lexer.TestTok(TokenType.Comma))
             {
                 lexer.AcceptTok(TokenType.Comma);
@@ -246,16 +249,17 @@ namespace Prover
             }
         }
 
-        public List<Term> TermArgs{
-            get 
+        public List<Term> TermArgs
+        {
+            get
             {
                 //if (IsCompound)
-                    return subterms;
+                return subterms;
                 throw new Exception("Not args");
             }
         }
 
-        public bool IsConstFalse => this.Equals(Term.False);
+        public bool IsConstFalse => Equals(False);
 
 
         bool TermListEqual(List<Term> l1, List<Term> l2)
@@ -289,11 +293,11 @@ namespace Prover
                 return false;
             }
             var t = (Term)obj;
-            if (this.IsVar && t.IsVar || this.constant && t.constant) 
-                return this.name == t.name;
-            if (this.IsVar != t.IsVar) return false;       
-            if (this.name != t.name) return false;
-            return TermListEqual(this.TermArgs, t.TermArgs);
+            if (IsVar && t.IsVar || constant && t.constant)
+                return name == t.name;
+            if (IsVar != t.IsVar) return false;
+            if (name != t.name) return false;
+            return TermListEqual(TermArgs, t.TermArgs);
         }
 
         public override int GetHashCode()

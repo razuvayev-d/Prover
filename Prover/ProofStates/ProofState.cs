@@ -3,10 +3,11 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-
+using Prover.DataStructures;
 using Prover.Heuristics;
+using Prover.RosolutionRule;
 
-namespace Prover
+namespace Prover.ProofStates
 {
     internal class SearchParams
     {
@@ -54,16 +55,16 @@ namespace Prover
         public ProofState(SearchParams Params, ClauseSet clauses, bool silent = false, bool indexed = false)
         {
             this.Params = Params;
-            this.unprocessed = new HeuristicClauseSet(Params.heuristics);
+            unprocessed = new HeuristicClauseSet(Params.heuristics);
             if (indexed)
                 throw new NotImplementedException();
             else
                 processed = new ClauseSet();
-            foreach (Clause clause in clauses.clauses)  
+            foreach (Clause clause in clauses.clauses)
                 unprocessed.AddClause(clause);
 
             initial_clause_count = unprocessed.Count;
-            this.silent=silent;
+            this.silent = silent;
         }
 
         public Clause ProcessClause()
@@ -92,13 +93,13 @@ namespace Prover
 
             if (Params.literal_selection != null)
             {
-               // given_clause.SelectInferenceLits(Params.literal_selection);
+                // given_clause.SelectInferenceLits(Params.literal_selection);
             }
 
             ClauseSet newClauses = new ClauseSet();
             ClauseSet factors = ResControl.ComputeAllFactors(given_clause);
 
-            
+
             newClauses.AddRange(factors);
             ClauseSet resolvents = ResControl.ComputeAllResolvents(given_clause, processed);
 
@@ -109,7 +110,7 @@ namespace Prover
             newClauses.AddRange(resolvents);
 
             processed.AddClause(given_clause);
-         
+
             for (int i = 0; i < newClauses.Count; i++)
             {
                 Clause c = newClauses[i];
@@ -138,7 +139,7 @@ namespace Prover
 
         public string StatisticsString()
         {
-            return String.Format(
+            return string.Format(
                 @"Initial clauses    : {0} 
 Processed clauses  : {1}
 Factors computed   : {2}
@@ -146,7 +147,7 @@ Resolvents computed: {3}
 Tautologies deleted: {4}
 Forward subsumed   : {5}
 Backward subsumed  : {6}",
-                                     initial_clause_count, 
+                                     initial_clause_count,
                                      proc_clause_count,
                                      factor_count,
                                      resolvent_count,

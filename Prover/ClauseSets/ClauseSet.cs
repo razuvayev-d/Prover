@@ -1,4 +1,6 @@
-﻿using System;
+﻿using Prover.DataStructures;
+using Prover.Tokenization;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
