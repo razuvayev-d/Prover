@@ -269,7 +269,9 @@ namespace Prover.DataStructures
                 var rhs = Term.ParseTerm(lexer);
                 return new Literal(op, new List<Term> { lhs, rhs });//new List<string> { op, lhs[0], rhs[0] };
             }
-            return atom.ToLitera();
+            // TODO: замена приведения на функцию
+            //return atom.ToLiteral();
+            return (Literal)atom;
         }
 
         /// <summary>

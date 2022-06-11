@@ -140,10 +140,16 @@ namespace Prover.DataStructures
             return copy;
         }
 
-        public Literal ToLitera()
+        public Literal ToLiteral()
         {
             //if (constant) throw new Exception("Константа не может быть литерой");
             return new Literal(name, subterms);
+        }
+
+        public static implicit operator Literal(Term t)
+        {
+            if (t.constant) throw new Exception("Константа не может быть литерой");
+            return new Literal(t.name, t.subterms);
         }
 
         public void AddSubterm(Term t)
@@ -309,27 +315,6 @@ namespace Prover.DataStructures
                 return total;
             }
         }
-
-        // override object.GetHashCode
-        //public override int GetHashCode()
-        //{
-        //    // TODO: write your implementation of GetHashCode() here
-        //    //throw new NotImplementedException();
-        //    //return base.GetHashCode();
-        //}
     }
 
-
-    //internal class TermEqualityComparer: System.Collections.Generic.IEqualityComparer<Term>
-    //{
-    //    public bool Equals(Term? x, Term? y)
-    //    {
-    //        return x.Equals(y);
-    //    }
-
-    //    public int GetHashCode([DisallowNull] Term obj)
-    //    {
-    //        return obj.GetHashCode();
-    //    }
-    //}
 }
