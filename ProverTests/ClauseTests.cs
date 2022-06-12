@@ -54,5 +54,10 @@ cnf(dup, axiom, p(a)|q(a)|p(a)).
             c5.RemoveDupLits();
             Assert.IsTrue(c5.Length < s);
         }
+        [TestMethod]
+        public void TautologyTest()
+        {
+            Assert.IsTrue(c4.IsTautology);
+        }
     }
 }
