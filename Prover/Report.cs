@@ -15,6 +15,7 @@ namespace Prover
         public Report(ProofState state)
         {
             statistics = new Statistics();
+            statistics.initial_count = state.initial_clause_count;
             statistics.proc_clause_cout = state.proc_clause_count;
             statistics.resolvent_count = state.resolvent_count;
             statistics.factor_count = state.factor_count;
@@ -26,7 +27,8 @@ namespace Prover
         {
             [JsonPropertyName("Elapsed time")]
             public double ElapsedTime { get; set; }
-            [JsonPropertyName("Initial clauses ")]
+            [JsonPropertyName("Initial clauses")]
+            public int initial_count { get; set; }
             public int proc_clause_cout { get; set; }
             public int factor_count { get; set; }
             public int resolvent_count { get; set; }

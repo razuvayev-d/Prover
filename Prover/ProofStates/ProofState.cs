@@ -40,7 +40,7 @@ namespace Prover.ProofStates
         public ClauseSet processed;
 
 
-        int initial_clause_count;
+        public int initial_clause_count;
         public int proc_clause_count = 0;
         public int factor_count = 0;
         public int resolvent_count = 0;
@@ -66,15 +66,15 @@ namespace Prover.ProofStates
         public Clause ProcessClause()
         {
             var given_clause = unprocessed.ExtractBest();
-            //given_clause = given_clause.FreshVarCopy(); //TODO: сделать уже копирование...
+            given_clause = given_clause.FreshVarCopy(); //TODO: сделать уже копирование...
 
             if (given_clause.IsEmpty) return given_clause;
 
-            //if (Params.delete_tautologies && given_clause.IsTautology)
-            //{
-            //    tautologies_deleted++;
-            //    return null;
-            //}
+            if (Params.delete_tautologies && given_clause.IsTautology)
+            {
+                tautologies_deleted++;
+                return null;
+            }
 
             if (Params.forward_subsumption && Subsumption.Forward(processed, given_clause))
             {

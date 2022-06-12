@@ -102,7 +102,7 @@ namespace Prover
 
 
 
-            using (StreamWriter sw = new StreamWriter(answersDirectory + System.IO.Path.GetFileName(Path)))
+            using (StreamWriter sw = new StreamWriter(answersDirectory + System.IO.Path.GetFileNameWithoutExtension(Path) + ".json"))
             {
                 sw.WriteLine(json);
                 //sw.WriteLine("Read formula: ");
