@@ -8,6 +8,11 @@ using System.IO;
 using System.Linq;
 using System.Text.RegularExpressions;
 
+using System.Text.Json;
+using System.Text;
+using System.Text.Unicode;
+using System.Text.Encodings.Web;
+
 namespace Prover
 {
     class Program
@@ -24,6 +29,7 @@ namespace Prover
         }
         static void FOFFull(string Path)
         {
+            Clause.ResetCounter();
             var param = new SearchParams();
             param.heuristics = Heuristics.Heuristics.PickGiven5;
             string TPTPStatus;
@@ -65,25 +71,57 @@ namespace Prover
                 Console.WriteLine(i++ + ". " + s);
 
 
+            i = 1;
+            StringBuilder initialCl = new StringBuilder();
+            foreach (var s in cnf.clauses)
+                initialCl.Append(i++ + ". " + s.ToString() + "\n");
+
+            i = 1;
+            StringBuilder proof = new StringBuilder();
+            foreach (string s in str)
+                proof.Append(i++ + ". " + s + "\n");
+
+            var report = new Report(state)
+            {
+                ProblemName = System.IO.Path.GetFileName(Path),
+                Formula = formulastr,
+                Result = verdict,
+                TPTPResult = TPTPStatus,
+                InitialClauses = initialCl.ToString(),
+                Proof = proof.ToString()
+            };
+            report.statistics.ElapsedTime = stopwatch.Elapsed.TotalMilliseconds;
+        
+
+            string json = JsonSerializer.Serialize<Report>(report, 
+                new JsonSerializerOptions() 
+                { 
+                    WriteIndented = true,  
+                    Encoder = JavaScriptEncoder.UnsafeRelaxedJsonEscaping //JavaScriptEncoder.Create(UnicodeRanges.All) 
+                });
+
+
+
             using (StreamWriter sw = new StreamWriter(answersDirectory + System.IO.Path.GetFileName(Path)))
             {
-                sw.WriteLine("Read formula: ");
-                sw.WriteLine(formulastr);
-                sw.WriteLine("Result: " + verdict);
-                sw.WriteLine("TPTP  : " + TPTPStatus);
+                sw.WriteLine(json);
+                //sw.WriteLine("Read formula: ");
+                //sw.WriteLine(formulastr);
+                //sw.WriteLine("Result: " + verdict);
+                //sw.WriteLine("TPTP  : " + TPTPStatus);
 
-                sw.WriteLine("\nStatistics: ");
-                sw.WriteLine("Elapsed time: " + stopwatch.Elapsed.TotalMilliseconds);
-                sw.WriteLine(state.StatisticsString());
-                sw.WriteLine("\nInitial Clauses: ");
-                i = 1;
-                foreach (var s in cnf.clauses)
-                    sw.WriteLine(i++ + ". " + s.ToString());
+                //sw.WriteLine("\nStatistics: ");
+                //sw.WriteLine("Elapsed time: " + stopwatch.Elapsed.TotalMilliseconds);
+                //sw.WriteLine(state.StatisticsString());
+                //sw.WriteLine("\nInitial Clauses: ");
+                //i = 1;
+                //foreach (var s in cnf.clauses)
+                //    sw.WriteLine(i++ + ". " + s.ToString());
 
-                sw.WriteLine("\nProof: \n");
-                i = 1;
-                foreach (string s in str)
-                    sw.WriteLine(i++ + ". " + s);
+                //sw.WriteLine("\nProof: \n");
+                //i = 1;
+                //foreach (string s in str)
+                //    sw.WriteLine(i++ + ". " + s);
             }
         }
         static void FOF(string Path)
@@ -123,6 +161,12 @@ namespace Prover
             Console.WriteLine("\nPROOF: ");
             foreach (string s in str)
                 Console.WriteLine(i++ + ". " + s);
+
+
+            
+
+
+            
 
 
             using (StreamWriter sw = new StreamWriter(answersDirectory + System.IO.Path.GetFileName(Path)))
@@ -254,6 +298,11 @@ namespace Prover
                 Write(path, state, q, sq);
 
             }
+        }
+
+        static void CreateReport(string Path, ProofState state, Clause res)
+        {
+
         }
     }
 }

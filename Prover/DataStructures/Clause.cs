@@ -41,6 +41,10 @@ namespace Prover.DataStructures
         public bool IsEmpty => literals.Count == 0;
         public int Length => literals.Count;
 
+        public static void ResetCounter()
+        {
+            clauseIdCounter = 0;
+        }
         public static Clause ParseClause(Lexer lexer)
         {
             lexer.AcceptLit("cnf");

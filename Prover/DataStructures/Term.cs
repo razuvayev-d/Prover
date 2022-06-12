@@ -148,7 +148,7 @@ namespace Prover.DataStructures
 
         public static implicit operator Literal(Term t)
         {
-            if (t.constant) throw new Exception("Константа не может быть литерой");
+            //if (t.constant) throw new Exception("Константа не может быть литерой");
             return new Literal(t.name, t.subterms);
         }
 

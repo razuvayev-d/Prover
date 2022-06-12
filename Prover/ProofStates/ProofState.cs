@@ -41,12 +41,12 @@ namespace Prover.ProofStates
 
 
         int initial_clause_count;
-        int proc_clause_count = 0;
-        int factor_count = 0;
-        int resolvent_count = 0;
-        int tautologies_deleted = 0;
-        int forward_subsumed = 0;
-        int backward_subsumed = 0;
+        public int proc_clause_count = 0;
+        public int factor_count = 0;
+        public int resolvent_count = 0;
+        public int tautologies_deleted = 0;
+        public int forward_subsumed = 0;
+        public int backward_subsumed = 0;
         bool silent;
         public ProofState(SearchParams Params, ClauseSet clauses, bool silent = false, bool indexed = false)
         {
