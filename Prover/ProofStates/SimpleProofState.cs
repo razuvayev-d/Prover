@@ -1,5 +1,5 @@
 ﻿using Prover.DataStructures;
-using Prover.RosolutionRule;
+using Prover.ResolutionMethod;
 
 namespace Prover.ProofStates
 {

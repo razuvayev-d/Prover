@@ -2,7 +2,7 @@
 using System;
 using System.Collections.Generic;
 
-namespace Prover.RosolutionRule
+namespace Prover.ResolutionMethod
 {
     /// <summary>
     /// Реализация правила Резолюции

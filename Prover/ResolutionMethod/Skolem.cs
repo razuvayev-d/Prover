@@ -1,7 +1,7 @@
 ﻿using Prover.DataStructures;
 using System.Collections.Generic;
 
-namespace Prover.RosolutionRule
+namespace Prover.ResolutionMethod
 {
     class Skolem
     {

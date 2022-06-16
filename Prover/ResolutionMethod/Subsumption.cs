@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 
-namespace Prover.RosolutionRule
+namespace Prover.ResolutionMethod
 {
     internal static class Subsumption
     {

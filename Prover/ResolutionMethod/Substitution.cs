@@ -3,7 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace Prover.RosolutionRule
+namespace Prover.ResolutionMethod
 {
     /// <summary>
     /// Подстановки отображают переменные на термы. Подстановки, используемые здесь

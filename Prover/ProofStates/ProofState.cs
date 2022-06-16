@@ -1,6 +1,6 @@
 ﻿using Prover.DataStructures;
 using Prover.Heuristics;
-using Prover.RosolutionRule;
+using Prover.ResolutionMethod;
 using System;
 
 namespace Prover.ProofStates

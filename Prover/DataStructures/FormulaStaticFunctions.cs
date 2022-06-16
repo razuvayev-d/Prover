@@ -1,5 +1,5 @@
 ﻿using Prover.DataStructures;
-using Prover.RosolutionRule;
+using Prover.ResolutionMethod;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;

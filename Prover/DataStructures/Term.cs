@@ -1,4 +1,4 @@
-﻿using Prover.RosolutionRule;
+﻿using Prover.ResolutionMethod;
 using Prover.Tokenization;
 using System;
 using System.Collections.Generic;

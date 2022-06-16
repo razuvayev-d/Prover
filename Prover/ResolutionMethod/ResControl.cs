@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 
-namespace Prover.RosolutionRule
+namespace Prover.ResolutionMethod
 {
     static class ResControl
     {
