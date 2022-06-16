@@ -11,6 +11,10 @@ namespace Prover.RosolutionRule
             return string.Format("skolem{0}", ++skolemCount);
         }
 
+        public static void ResetSkolemCount()
+        {
+            skolemCount = 0;
+        }
         public static Term NewSkolemTerm(List<Term> varlist)
         {
             Term res = new Term();

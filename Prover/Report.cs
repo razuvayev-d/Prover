@@ -1,11 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Text.Json;
+﻿using Prover.ProofStates;
 using System.Text.Json.Serialization;
-using Prover.ProofStates;
 
 namespace Prover
 {
@@ -37,7 +31,7 @@ namespace Prover
             public int backward_subsumed { get; set; }
         }
 
-        
+
         public string ProblemName { get; set; }
         [JsonPropertyName("Read formula")]
         public string Formula { get; set; }

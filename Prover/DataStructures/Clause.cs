@@ -42,16 +42,16 @@ namespace Prover.DataStructures
         public bool IsEmpty => literals.Count == 0;
         public int Length => literals.Count;
 
-        public bool IsTautology 
+        public bool IsTautology
         {
             get
             {
                 var groups = literals.GroupBy((x) => x.Name);
-                foreach(var group in groups)
+                foreach (var group in groups)
                 {
                     bool f = group.First().Negative;
-                    
-                    foreach(var el in group)
+
+                    foreach (var el in group)
                     {
                         f ^= el.Negative;
                     }

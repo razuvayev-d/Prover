@@ -123,6 +123,7 @@ namespace Prover.ProofStates
             {
                 //unprocessed.clauses = unprocessed.clauses.Distinct().ToList();
                 unprocessed.Distinct();
+                processed.Distinct();
                 Clause res = ProcessClause();
                 if (res is not null)
                 {

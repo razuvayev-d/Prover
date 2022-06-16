@@ -6,12 +6,10 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
-using System.Text.RegularExpressions;
-
-using System.Text.Json;
 using System.Text;
-using System.Text.Unicode;
 using System.Text.Encodings.Web;
+using System.Text.Json;
+using System.Text.RegularExpressions;
 
 namespace Prover
 {
@@ -91,12 +89,12 @@ namespace Prover
                 Proof = proof.ToString()
             };
             report.statistics.ElapsedTime = stopwatch.Elapsed.TotalMilliseconds;
-        
 
-            string json = JsonSerializer.Serialize<Report>(report, 
-                new JsonSerializerOptions() 
-                { 
-                    WriteIndented = true,  
+
+            string json = JsonSerializer.Serialize<Report>(report,
+                new JsonSerializerOptions()
+                {
+                    WriteIndented = true,
                     Encoder = JavaScriptEncoder.UnsafeRelaxedJsonEscaping //JavaScriptEncoder.Create(UnicodeRanges.All) 
                 });
 
@@ -163,10 +161,10 @@ namespace Prover
                 Console.WriteLine(i++ + ". " + s);
 
 
-            
 
 
-            
+
+
 
 
             using (StreamWriter sw = new StreamWriter(answersDirectory + System.IO.Path.GetFileName(Path)))
