@@ -91,7 +91,7 @@ namespace Prover
             report.statistics.ElapsedTime = stopwatch.Elapsed.TotalMilliseconds;
 
 
-            string json = JsonSerializer.Serialize<Report>(report,
+            string json = JsonSerializer.Serialize(report,
                 new JsonSerializerOptions()
                 {
                     WriteIndented = true,

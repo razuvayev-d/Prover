@@ -43,6 +43,11 @@ namespace Prover.DataStructures
             this.constant = constant;
         }
 
+        public static Term FromString(string str)
+        {
+            return Term.ParseTerm(new Lexer(str));
+        }
+
         public int SubtermsCount
         {
             get
