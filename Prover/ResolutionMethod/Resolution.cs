@@ -77,6 +77,19 @@ namespace Prover.ResolutionMethod
             return res;
         }
 
+        public static Clause Apply(Clause clause1, Clause clause2)
+        {
+            Clause res;
+            for (int i = 0; i < clause1.Length; i++)
+                for (int j = 0; j < clause2.Length; j++)
+                {
+                    res = Apply(clause1, i, clause2, j);
+                    if (res is not null)
+                        return res;
+                }
+            return null;
+        }
+
         public static Clause Factor(Clause clause, int lit1, int lit2)
         {
             var l1 = clause[lit1];

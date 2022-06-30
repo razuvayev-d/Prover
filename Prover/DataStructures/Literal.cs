@@ -71,6 +71,31 @@ namespace Prover.DataStructures
             }
             return true;
         }
+        /// <summary>
+        /// Сравнивает литералы без учета знака
+        /// </summary>
+        /// <param name="other"></param>
+        /// <returns></returns>
+        public bool AtomEquals(Literal other)
+        {
+            if (Name != other.Name) return false;
+            if (arguments.Count != other.arguments.Count) return false;
+            int n = arguments.Count;
+            for (int i = 0; i < n; i++)
+            {
+                if (!arguments[i].Equals(other.arguments[i])) return false;
+            }
+            return true;
+        }
+
+        public static bool ContainsWithounSigned(List<Literal> coll, Literal literal)
+        {
+            foreach (Literal c in coll)
+            {
+                if (c.AtomEquals(literal)) return true;
+            }
+            return false;
+        }
 
         public List<Term> CollectVars()
         {
@@ -298,6 +323,10 @@ namespace Prover.DataStructures
             return new Literal(name, newlist, Negative);
         }
 
+        /// <summary>
+        /// TODO: Хеш-код не зависит от знака! 
+        /// </summary>
+        /// <returns></returns>
         public override int GetHashCode()
         {
             int total = Name.GetHashCode() * 3;

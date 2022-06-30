@@ -18,8 +18,7 @@ namespace Prover.DataStructures
         List<Literal> literals = new List<Literal>();
         string type;
         string name;
-
-
+        
         public List<Literal> Literals => literals;
         public string Name => name;
         /// <summary>
@@ -34,6 +33,9 @@ namespace Prover.DataStructures
         static int clauseIdCounter = 0;
         public int depth = 0;
         public string rationale = "input";
+        /// <summary>
+        /// 
+        /// </summary>
         public List<int> evaluation = null;
         public string Type => type;
 
