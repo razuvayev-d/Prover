@@ -4,6 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace Prover.ProofStates
@@ -11,7 +12,7 @@ namespace Prover.ProofStates
     internal class RatingProofState
     {
 
-
+        public CancellationTokenSource token;
         SearchParams Params;
 
 
@@ -116,7 +117,7 @@ namespace Prover.ProofStates
 
 
 
-        public Clause Saturate()
+        public Clause Saturate2()
         {
             int k = 0;
 
@@ -124,7 +125,7 @@ namespace Prover.ProofStates
             List<Clause> resolvents = new List<Clause>();
    
             List<Clause> Skplus = new List<Clause>();
-            List<List<Clause>> S = new List<List<Clause>>();
+            //List<List<Clause>> S = new List<List<Clause>>();
 
             ClauseArray = GetOrderedClauses(); //M_k
             int n = unprocessed.Count;
@@ -132,15 +133,18 @@ namespace Prover.ProofStates
             int j = n - 1;
             while (true)
             {
-                S.Add(new List<Clause>());
+                //S.Add(new List<Clause>());
                 if (resolvents.Where(x => x.IsEmpty).Any())
                 {
                     return resolvents.Where((x) => x.IsEmpty).ToList()[0];
                 }
                 ClauseArray = GetOrderedClauses(); //M_k
+                n = unprocessed.Count;
                 i = 0;
                 j = n - 1;
+                
             step32:
+                if (ClauseArray.Count < 2) return null;
                 Clause resolvent = ResolutionMethod.Resolution.Apply(ClauseArray[i], ClauseArray[j]);
 
                 if (resolvent is null)
@@ -190,7 +194,20 @@ namespace Prover.ProofStates
                     resolvent.evaluation = Params.heuristics.Evaluate(resolvent);
                     resolvents.Add(resolvent);
 
-                    allClauses.Add(resolvent);  
+                    allClauses.Add(resolvent);
+
+                    if (j > i)
+                    {
+                        j--;
+                        goto step32;
+                    }
+                    if (i < n - 1)
+                    {
+                        i++;
+                        j = n - 1;
+                        if (j < 0) continue;
+                        goto step32;
+                    }
 
                     //step51
                     if (unprocessed.Count > 0)
@@ -204,11 +221,95 @@ namespace Prover.ProofStates
 
                     }
                     unprocessed.AddClause(resolvent);
+                    resolvent_count++;
                     n++;
-                        continue;
+                    n = unprocessed.Count;
+
+                    continue;
                 }
             }
 
-        } 
+        }
+
+        public Clause Saturate()
+        {
+            int k = 0;
+            var M = unprocessed;
+            var S = new List<List<Clause>>();
+            int i, j;
+            int n;
+            List<Clause> Mk;
+            S.Add(new List<Clause>());
+            S.Add(new List<Clause>());
+        step2:
+            if (S[k].Where(x => x.IsEmpty).Any())
+            {
+                return S[k].Where((x) => x.IsEmpty).ToList()[0];
+            }
+
+        step3:
+        //if disjuncts exist
+        step31:
+            n = M.Count;
+            i = 0;
+            j = n - 1;
+            Mk = GetOrderedClauses();
+
+        step32:
+            if (token.IsCancellationRequested) return null;
+            var resolvent = ResolutionMethod.Resolution.Apply(ClauseArray[i], ClauseArray[j]);
+            if (resolvent is not null) goto step4;
+            else goto step331;
+
+            step331:
+            if (j > i)
+            {
+                j--;
+                goto step32;
+            }
+            else
+            {
+                if (i < n - 1)
+                {
+                    i++;
+                    j = n - 1;
+                    goto step32;
+                }
+                else goto step5;
+            }
+        step4:
+            S[k + 1].Add(resolvent);
+            M.AddClause(resolvent);
+            allClauses.Add(resolvent);
+            resolvent_count++;
+        step5:
+            if (S[k + 1].Where(x => x.IsEmpty).Any())
+            {
+                return S[k + 1].Where((x) => x.IsEmpty).ToList()[0];
+            }
+            else
+            {
+                k = k + 1;
+                S.Add(new List<Clause>());
+                //S[k + 1] = new List<Clause>();
+                goto step51;
+            }
+        step51:
+            if (M.Count > 1)
+            {
+                var tmp = Mk[j];
+                M.ExtractClause(Mk[i]);
+                M.ExtractClause(tmp);
+                n -= 2;
+                goto step2;
+            }
+            else
+            {
+                if (S[k + 1].Where(x => x.IsEmpty).Any())
+                    return S[k + 1].Where(x => x.IsEmpty).ToList()[0];
+                else
+                    return null;
+            }
+        }
     }
 }

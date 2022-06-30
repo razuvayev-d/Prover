@@ -6,7 +6,7 @@ namespace Prover
 
     internal class Report
     {
-        public Report(ProofState state)
+        public Report(ProofState state, int depth = 0)
         {
             statistics = new Statistics();
             statistics.initial_count = state.initial_clause_count;
@@ -16,6 +16,7 @@ namespace Prover
             statistics.forward_subsumed = state.forward_subsumed;
             statistics.backward_subsumed = state.backward_subsumed;
             statistics.tautologies_deleted = state.tautologies_deleted;
+            statistics.depth = depth;
         }
         public Report(RatingProofState state, int depth)
         {
@@ -48,6 +49,8 @@ namespace Prover
         public string ProblemName { get; set; }
         [JsonPropertyName("Read formula")]
         public string Formula { get; set; }
+
+        public string HeuristicName { get; set; }
         public string Result { get; set; }
         public string TPTPResult { get; set; }
         public Statistics statistics { get; set; }

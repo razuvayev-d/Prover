@@ -2,6 +2,7 @@
 using Prover.Heuristics;
 using Prover.ResolutionMethod;
 using System;
+using System.Threading;
 
 namespace Prover.ProofStates
 {
@@ -38,7 +39,7 @@ namespace Prover.ProofStates
         SearchParams Params;
         public HeuristicClauseSet unprocessed;
         public ClauseSet processed;
-
+        public CancellationTokenSource token;
 
         public int initial_clause_count;
         public int proc_clause_count = 0;
@@ -121,6 +122,7 @@ namespace Prover.ProofStates
         {
             while (unprocessed.Count > 0)
             {
+                if (token.IsCancellationRequested) return null;
                 //unprocessed.clauses = unprocessed.clauses.Distinct().ToList();
                 unprocessed.Distinct();
                 processed.Distinct();
