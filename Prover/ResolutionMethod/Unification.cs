@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace Prover.ResolutionMethod
 {
-    class Unification
+    public class Unification
     {
         public static Substitution MGU(Literal l1, Literal l2)
         {

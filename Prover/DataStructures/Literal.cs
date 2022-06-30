@@ -46,7 +46,7 @@ namespace Prover.DataStructures
             //self.setInferenceLit(True)
         }
 
-
+        public bool IsInference { get; set; } = false;
         public bool Match(Literal other, Substitution subst)
         {
             if (Negative != other.Negative) return false;
