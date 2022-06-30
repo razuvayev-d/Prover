@@ -1,4 +1,5 @@
 ﻿using Prover.DataStructures;
+using Prover.Heuristics;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -27,15 +28,21 @@ namespace Prover.ProofStates
         List<Literal> freqLiterals;
         HeuristicClauseSet unprocessed;
         List<Clause> ClauseArray;
+
+        public List<Clause> allClauses = new List<Clause>();
         public RatingProofState(SearchParams Params, ClauseSet clauses)
         {
             freqLiterals = GetFrequentLiterals(clauses);
 
             this.Params = Params;
+            this.Params.heuristics = new EvalStructure(new RatingEvaluation(freqLiterals), 1);
             unprocessed = new HeuristicClauseSet(Params.heuristics);
 
             foreach (Clause clause in clauses.clauses)
+            {
                 unprocessed.AddClause(clause);
+                allClauses.Add(clause);
+            }
 
 
             initial_clause_count = unprocessed.Count;
@@ -49,7 +56,7 @@ namespace Prover.ProofStates
 
         }
 
-        private List<Literal> GetFrequentLiterals(ClauseSet clauses)
+        public static List<Literal> GetFrequentLiterals(ClauseSet clauses)
         {
             List<Literal> c = new List<Literal>();
             List<Literal> c1 = new List<Literal>();
@@ -120,9 +127,9 @@ namespace Prover.ProofStates
             List<List<Clause>> S = new List<List<Clause>>();
 
             ClauseArray = GetOrderedClauses(); //M_k
-
+            int n = unprocessed.Count;
             int i = 0;
-            int j = unprocessed.Count - 1;
+            int j = n - 1;
             while (true)
             {
                 S.Add(new List<Clause>());
@@ -131,6 +138,8 @@ namespace Prover.ProofStates
                     return resolvents.Where((x) => x.IsEmpty).ToList()[0];
                 }
                 ClauseArray = GetOrderedClauses(); //M_k
+                i = 0;
+                j = n - 1;
             step32:
                 Clause resolvent = ResolutionMethod.Resolution.Apply(ClauseArray[i], ClauseArray[j]);
 
@@ -143,10 +152,10 @@ namespace Prover.ProofStates
                     }
                     else
                     {
-                        if (i < ClauseArray.Count - 1)
+                        if (i < n - 1)
                         {
                             i++;
-                            j = ClauseArray.Count - 1;
+                            j = n - 1;
                             goto step32;
                         }
                         else
@@ -157,15 +166,15 @@ namespace Prover.ProofStates
                             }
                             else
                             {
-
-
-
+                          
                                 if (unprocessed.Count > 0) {
                                     var a = ClauseArray[i];
                                     var b = ClauseArray[j];
 
                                     M.ExtractClause(a);
                                     M.ExtractClause(b);
+                                    n -= 2;
+                                    continue;
                                 }
                                 else
                                 {
@@ -178,8 +187,25 @@ namespace Prover.ProofStates
                 }
                 else //resolvent is not null
                 {
+                    resolvent.evaluation = Params.heuristics.Evaluate(resolvent);
                     resolvents.Add(resolvent);
-                    continue;
+
+                    allClauses.Add(resolvent);  
+
+                    //step51
+                    if (unprocessed.Count > 0)
+                    {
+                        var a = ClauseArray[i];
+                        var b = ClauseArray[j];
+
+                        M.ExtractClause(a);
+                        M.ExtractClause(b);
+                        n -= 2;
+
+                    }
+                    unprocessed.AddClause(resolvent);
+                    n++;
+                        continue;
                 }
             }
 

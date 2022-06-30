@@ -70,7 +70,6 @@ namespace Prover.Heuristics
                                                                                 (new SymbolCountEvaluation(2, 1), 2),
                                                                                 (new FIFOEvaluation(), 1)
                                                                                                                });
-
     }
 
 }

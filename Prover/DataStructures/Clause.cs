@@ -173,6 +173,7 @@ namespace Prover.DataStructures
                 res.Append(lit.ToString() + ", ");
             res.Remove(res.Length - 2, 2);
             res.Append(" }");
+            res.Append("  rating = " + this.evaluation[0].ToString());
             return res.ToString();
         }
 

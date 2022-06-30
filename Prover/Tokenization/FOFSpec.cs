@@ -6,7 +6,7 @@ namespace Prover.Tokenization
 {
     class FOFSpec
     {
-        List<Clause> clauses = new List<Clause>();
+        public List<Clause> clauses = new List<Clause>();
         // TODO: debug сделать private
         public List<WFormula> formulas = new List<WFormula>();
         bool IsFof = false;

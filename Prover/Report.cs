@@ -17,6 +17,18 @@ namespace Prover
             statistics.backward_subsumed = state.backward_subsumed;
             statistics.tautologies_deleted = state.tautologies_deleted;
         }
+        public Report(RatingProofState state, int depth)
+        {
+            statistics = new Statistics();
+            statistics.initial_count = state.initial_clause_count;
+            statistics.proc_clause_cout = state.proc_clause_count;
+            statistics.resolvent_count = state.resolvent_count;
+            statistics.factor_count = state.factor_count;
+            statistics.forward_subsumed = state.forward_subsumed;
+            statistics.backward_subsumed = state.backward_subsumed;
+            statistics.tautologies_deleted = state.tautologies_deleted;
+            statistics.depth = depth;
+        }
         public class Statistics
         {
             [JsonPropertyName("Elapsed time")]
@@ -29,6 +41,7 @@ namespace Prover
             public int tautologies_deleted { get; set; }
             public int forward_subsumed { get; set; }
             public int backward_subsumed { get; set; }
+            public int depth { get; set; }
         }
 
 
