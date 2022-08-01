@@ -31,7 +31,8 @@ namespace Prover.DataStructures
         public List<string> supportsClauses = new List<string>();
 
         static int clauseIdCounter = 0;
-        public int depth = 0;
+
+        public int depth { get; set; } = 0;
         public string rationale = "input";
         /// <summary>
         /// 
@@ -229,6 +230,7 @@ namespace Prover.DataStructures
             result.name = name;
             result.type = type;
             result.rationale = rationale;
+            result.depth = depth;
             for (int i = 0; i < support.Count; i++)
                 result.support.Add(support[i]);
             for (int i = start; i < literals.Count; i++)

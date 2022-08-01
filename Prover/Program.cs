@@ -27,7 +27,7 @@ namespace Prover
             //FOF(s);
             foreach (string file in files)
                 //FOFFull(file);
-                Rating(file);
+               Rating(file);
         }
 
         static void Rating(string Path)
@@ -49,7 +49,7 @@ namespace Prover
             problem.Parse(Path);
 
             //string formulastr = problem.clauses[0].ToString();
-            string formulastr = problem.formulas[0].Formula.ToString();
+            string formulastr = "FORMULA";// problem.formulas[0].Formula.ToString();
 
             ClauseSet cnf = problem.Clausify();
 
@@ -65,7 +65,7 @@ namespace Prover
             stopwatch.Restart();
             tsk.Start();
             //var res = state.Saturate();
-            bool complete = tsk.Wait(30000);
+            bool complete = tsk.Wait(5000);
             stopwatch.Stop();
             token.Cancel();
            
@@ -165,7 +165,7 @@ namespace Prover
             Clause.ResetCounter();
             string timeoutStatus = string.Empty;
             var param = new SearchParams();
-            param.heuristics = Heuristics.Heuristics.PickGiven5;
+            param.heuristics = Heuristics.Heuristics.SymbolCountEval;
             string TPTPStatus;
             using (StreamReader sr = new StreamReader(Path))
             {
@@ -177,7 +177,7 @@ namespace Prover
             var problem = new FOFSpec();
             problem.Parse(Path);
 
-            string formulastr = problem.formulas[0].Formula.ToString();
+            string formulastr = "FORMULA";// problem.formulas[0].Formula.ToString();
             // string formulastr = problem.clauses.ToString();
             var cnf = problem.Clausify();
 
@@ -193,7 +193,7 @@ namespace Prover
             stopwatch.Restart();
             tsk.Start();
             //var res = state.Saturate();
-            bool complete = tsk.Wait(30000);
+            bool complete = tsk.Wait(5000);
             stopwatch.Stop();
             token.Cancel();
             Clause res;
