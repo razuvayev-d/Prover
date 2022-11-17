@@ -6,6 +6,7 @@ namespace Prover.Heuristics
 {
     internal class RatingEvaluation : ClauseEvaluationFunction
     {
+        public override int ParamsCount { get { return 0; } }
         public RatingEvaluation(List<Literal> freqLiterals)
         {
             name = "RatingEvaluation";

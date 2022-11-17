@@ -2,16 +2,29 @@
 using System;
 using System.Collections.Generic;
 
-namespace GeneticAlgotithm
+namespace Porver.GeneticAlgotithm
 {
 	[Serializable]
 	class Individual
 	{
+		public List<List<object>> genes; //Каждый элемент список вида [name, weight, par1, par2 ... ]
+
+		public int Fitness { get; private set; }
+
+		public bool InvalidFitness = true;
+
+		public Individual(List<List<object>> genes, int Fitness, bool InvalidF)
+        {
+			this.genes = genes;
+			this.Fitness = Fitness;
+			this.InvalidFitness = InvalidF;
+        }
+
 		[Serializable]
 		public class FunctionWithParams
         {
-			EvalStructure func;
-			List<float> param;
+			public EvalStructure func { get; set; }
+			public List<float> param { get; set; }
 
 			public FunctionWithParams(EvalStructure structure, List<float> parameters)
             {
@@ -20,8 +33,8 @@ namespace GeneticAlgotithm
             }
 		}
 
-		List<FunctionWithParams> functions;
-		List<int> weights;
+		public List<FunctionWithParams> functions { get; set; }
+		public List<int> weights { get; set; }
 
 		public Individual(List<FunctionWithParams> funcs, List<int> weights)
         {
@@ -42,6 +55,15 @@ namespace GeneticAlgotithm
 
 			this.functions = funcs;
 			this.weights = weights;	
+        }
+
+        public Individual()
+        {
+        }
+
+        public static Individual CreateNewIndividual()
+        {
+			return null;
         }
 	}
 }

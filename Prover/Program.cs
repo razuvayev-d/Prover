@@ -26,8 +26,8 @@ namespace Prover
             var s = proplamsDirectory + "SYN941+1.p";
             //FOF(s);
             foreach (string file in files)
-                //FOFFull(file);
-               Rating(file);
+                FOFFull(file);
+               //Rating(file);
         }
 
         static void Rating(string Path)

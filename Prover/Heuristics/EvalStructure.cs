@@ -4,6 +4,12 @@ using System.Collections.Generic;
 
 namespace Prover.Heuristics
 {
+
+    /// <summary>
+    /// Представляют собой эвристическую схему обработки предложений. Схема
+    /// содержит несколько различных функций оценки и способ
+    /// чередования между ними.
+    /// </summary>
     internal class EvalStructure
     {
         public List<ClauseEvaluationFunction> EvalFunctions = null;
