@@ -12,6 +12,8 @@ namespace Prover.Heuristics
         FIFO,
         NegatePrio,
         SymbolCount,
+        LIFO,
+        ConstPrio
     }
     delegate int Heuristic(Clause clause);
     internal abstract class ClauseEvaluationFunction
@@ -63,7 +65,8 @@ namespace Prover.Heuristics
             hEval = (clause) =>
             {
                 int sum = 0;
-                
+                for (int i = 0; i < clause.Literals.Count; i++)
+                    sum += clause.Literals[i].ConstCount;
                 return sum;
             };
         }
