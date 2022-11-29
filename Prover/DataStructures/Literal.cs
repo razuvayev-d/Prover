@@ -26,6 +26,18 @@ namespace Prover.DataStructures
 
         public static Literal True => tru;
         public static Literal False => fal;
+
+        public int ConstCount
+        {
+            get
+            {
+                int sum = 0;
+                for(int i = 0; i < arguments.Count; i++)
+                    sum += arguments[i].ConstCount;
+                return sum;
+            }
+        }
+
         public Literal(string name, List<Term> arguments, bool negative = false) : base(string.Empty, null)
         {
             this.name = name;
