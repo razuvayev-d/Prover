@@ -7,9 +7,12 @@ using System.Threading.Tasks;
 
 namespace Prover.Heuristics
 {
-
- 
-
+    public enum HeuristicsFunctions 
+    { 
+        FIFO,
+        NegatePrio,
+        SymbolCount,
+    }
     delegate int Heuristic(Clause clause);
     internal abstract class ClauseEvaluationFunction
     {
@@ -32,6 +35,40 @@ namespace Prover.Heuristics
         }
     }
 
+
+    internal class NegatePrio : ClauseEvaluationFunction
+    {
+        public override int ParamsCount { get { return 1; } }
+        public NegatePrio(int weight)
+        {
+
+            name = "NegatePrio";
+            hEval = (clause) =>
+            {
+                int sum = 0;
+                foreach (var lit in clause.Literals)
+                    if (lit.Negative) sum += weight;
+                return sum;
+            };
+        }
+    }
+
+    internal class ConstPrio : ClauseEvaluationFunction
+    {
+        public override int ParamsCount { get { return 1; } }
+        public ConstPrio(int weight)
+        {
+
+            name = "NegatePrio";
+            hEval = (clause) =>
+            {
+                int sum = 0;
+                
+                return sum;
+            };
+        }
+    }
+
     internal class FIFOEvaluation : ClauseEvaluationFunction
     {
         public override int ParamsCount { get { return 0; } }
@@ -41,6 +78,18 @@ namespace Prover.Heuristics
             name = "FIFOEval";
             FIFOCounter = 0;
             hEval = (clause) => { return ++FIFOCounter; };
+        }
+    }
+
+    internal class LIFOEvaluation : ClauseEvaluationFunction
+    {
+        public override int ParamsCount { get { return 0; } }
+        int FIFOCounter;
+        public LIFOEvaluation()
+        {
+            name = "FIFOEval";
+            FIFOCounter = 0;
+            hEval = (clause) => { return --FIFOCounter; };
         }
     }
 

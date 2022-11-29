@@ -20,6 +20,11 @@ namespace Porver.GeneticAlgotithm
 			this.InvalidFitness = InvalidF;
         }
 
+		public static Individual GreateRandom()
+        {
+			return 
+        }
+
 		[Serializable]
 		public class FunctionWithParams
         {

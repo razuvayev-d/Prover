@@ -140,6 +140,11 @@ namespace Prover.GeneticAlgorithm
             public int Size { get; set; } = 100;
             public GeneticMode Mode { get; set; } = GeneticMode.CreateNewPopulation;
 
+            public double Favor { get; set; } = 0.1;
+
+            public double probWeight { get; set; } = 0.5;
+            public double probParam { get; set; } = 0.3;
+
             public int MaxNumberOfGeneration { get; set; } = 10;
 
         }
@@ -167,11 +172,15 @@ namespace Prover.GeneticAlgorithm
                 {
                     population.fitness[i] = Fitness.Calculate(population.individuals[i]);
 
-                    GeneticOperators.Mutation(population.individuals[i], 0.5, 0.3);
-
-
+                    GeneticOperators.Mutation(population.individuals[i], Options.probWeight, Options.probParam);
                 }
-
+                Population newPopulation = new Population();
+                List<Individual> newIndividuals = new List<Individual>();
+                for(int i = 0; i < Options.Size; i++)
+                    for(int j = 1; j < i + 1; j++)
+                    {
+                        newIndividuals.Add(GeneticOperators.Crossover(population.individuals[i], population.individuals[j], Options.Favor));
+                    }
 
             }
         }

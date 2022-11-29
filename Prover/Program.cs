@@ -155,8 +155,6 @@ namespace Prover
             using (StreamWriter sw = new StreamWriter(answersDirectory + System.IO.Path.GetFileNameWithoutExtension(Path) + ".json"))
             {
                 sw.WriteLine(json);
-
-
             }
         }
 

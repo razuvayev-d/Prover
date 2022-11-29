@@ -77,5 +77,10 @@ namespace Prover.GeneticAlgorithm
                     newfunction.Add(weight_founcts.Item2[i]);
             return newfunction;
         }
+
+        public static Population Select(Population population)
+        {
+            return null;
+        }
     }
 }

@@ -4,6 +4,8 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Text.Encodings.Web;
+using System.Text.Json;
 using System.Threading.Tasks;
 
 namespace Prover.GeneticAlgorithm
@@ -24,6 +26,19 @@ namespace Prover.GeneticAlgorithm
                 fitness.Add(0);
         }
 
+        public Population()
+        {
+        }
+
+        public void SaveToFile(string name)
+        {
+            string jsn = JsonSerializer.Serialize(this,
+              new JsonSerializerOptions()
+              {
+                  WriteIndented = true,
+                  Encoder = JavaScriptEncoder.UnsafeRelaxedJsonEscaping //JavaScriptEncoder.Create(UnicodeRanges.All) 
+              });
+        }
         public static Population GreateNewPopulation(int size)
         {
             List<Individual> individuals = new List<Individual>(size);

@@ -16,6 +16,20 @@ namespace Prover.DataStructures
         public List<Term> subterms = new List<Term>();
         bool constant;
 
+
+        public int ConstCount
+        {
+            get
+            {
+                if (constant)
+                    return 1;
+                int sum = 0;
+                for (int i = 0; i < subterms.Count; i++)
+                    sum += this.subterms[i].ConstCount;
+                return sum;
+            }
+        }
+
         public bool Constant
         {
             get { return constant; }
