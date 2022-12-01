@@ -15,8 +15,8 @@ namespace Prover.Heuristics
         LIFO,
         ConstPrio
     }
-    delegate int Heuristic(Clause clause);
-    internal abstract class ClauseEvaluationFunction
+    public delegate int Heuristic(Clause clause);
+    public abstract class ClauseEvaluationFunction
     {
         public abstract int ParamsCount { get; }
         protected string name;
@@ -61,7 +61,7 @@ namespace Prover.Heuristics
         public ConstPrio(int weight)
         {
 
-            name = "NegatePrio";
+            name = "ConstPrio";
             hEval = (clause) =>
             {
                 int sum = 0;

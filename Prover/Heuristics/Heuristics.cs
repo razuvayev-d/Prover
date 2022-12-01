@@ -25,6 +25,21 @@ namespace Prover.Heuristics
                                                                                 (new SymbolCountEvaluation(2, 1), 2),
                                                                                 (new FIFOEvaluation(), 1)
                                                                                                                });
+        public static EvalStructure InitialBest = new EvalStructure(new List<(ClauseEvaluationFunction, int)> {
+                                                                                (new ConstPrio(6), 6),
+                                                                                (new NegatePrio(4), 9),
+                                                                                (new SymbolCountEvaluation(1,5), 7),
+                                                                                  (new SymbolCountEvaluation(0,7), 9),
+                                                                                  (new LIFOEvaluation(), 5)
+                                                                                                               });
+
+        public static EvalStructure BreedingBest = new EvalStructure(new List<(ClauseEvaluationFunction, int)> {
+                                                                                (new SymbolCountEvaluation(1, 5), 9),
+                                                                                (new FIFOEvaluation(), 5),
+                                                                                (new LIFOEvaluation(), 7),
+                                                                                  (new SymbolCountEvaluation(1,5), 9),
+                                                                                  (new FIFOEvaluation(), 5)
+                                                                                                               });
     }
 
 }

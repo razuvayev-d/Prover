@@ -9,14 +9,19 @@ namespace Prover.Heuristics
     /// содержит несколько различных функций оценки и способ
     /// чередования между ними.
     /// </summary>
-    internal class EvalStructure
+    public class EvalStructure
     {
         public List<ClauseEvaluationFunction> EvalFunctions = null;
         public List<int> EvalVec = null;
         int current = 0;
         int currentCount = 0;
         string name = string.Empty;
-
+   
+        /// <summary>
+        /// Deprecated
+        /// </summary>
+        /// <param name="descriptor"></param>
+        /// <param name="rating"></param>
         public EvalStructure(List<ClauseEvaluationFunction> descriptor, List<int> rating)
         {
             if (descriptor != null && rating != null && descriptor.Count > 0 && rating.Count > 0)

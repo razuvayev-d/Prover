@@ -13,21 +13,54 @@ using System.Text.Json;
 using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
+using Prover.Genetic;
 
 namespace Prover
 {
     class Program
     {
+        static int Count = 0;
         static string proplamsDirectory = @"./problems/";
         static string answersDirectory = @"./answers/";
+
+        static List<string> solved = new List<string>();
         static void Main(string[] args)
         {
+            //GeneticBreeding();
+
             string[] files = Directory.GetFiles(proplamsDirectory);
             var s = proplamsDirectory + "SYN941+1.p";
             //FOF(s);
             foreach (string file in files)
                 FOFFull(file);
-               //Rating(file);
+            //Rating(file);
+
+            Console.ForegroundColor = ConsoleColor.Green;
+            Console.WriteLine("Solved: {0} / {1}", Count, files.Length);
+            Console.WriteLine("Solved problems:");
+            Console.ResetColor();   
+
+            foreach(var x in solved)
+            {
+                Console.WriteLine(x);
+            }
+        }
+
+        static void GeneticBreeding()
+        {
+            GeneticOptions options = new GeneticOptions();
+            options.Size = 25;
+            options.MaxNumberOfGeneration = 50;
+            options.GenerationTimeOutThreshold = 100;
+            options.probWeight = 0.5;
+            options.LightTimeOut = 3000;
+            //options.Mode = GeneticOptions.GeneticMode.LoadExistingPopulation;
+            //options.PopulationFileName = "InitialPopulation1.txt";
+
+            GeneticAlgorithm algorithm = new GeneticAlgorithm(options);
+
+            algorithm.Evolution();
+
         }
 
         static void Rating(string Path)
@@ -103,7 +136,10 @@ namespace Prover
                 return;
             }
             if (res.IsEmpty)
+            {
+                Count++;
                 Console.WriteLine("STATUS: THEOREM");
+            }             
             else
                 Console.WriteLine("STATUS: NOT THEOREM");
 
@@ -163,7 +199,7 @@ namespace Prover
             Clause.ResetCounter();
             string timeoutStatus = string.Empty;
             var param = new SearchParams();
-            param.heuristics = Heuristics.Heuristics.SymbolCountEval;
+            param.heuristics = Heuristics.Heuristics.BreedingBest;
             string TPTPStatus;
             using (StreamReader sr = new StreamReader(Path))
             {
@@ -198,6 +234,8 @@ namespace Prover
             if (complete)
             {
                 res = tsk.Result;
+                Count++;
+                solved.Add(Path);
             }
             else
             {
@@ -236,7 +274,7 @@ namespace Prover
 
             string verdict = res.IsEmpty ? "STATUS: THEOREM" : "STATUS: NOT THEOREM";
             var str = new List<string>();
-            Print(state, res, str);
+            //Print(state, res, str);
 
             str.Reverse();
             str = str.Distinct().ToList();
