@@ -9,17 +9,35 @@ namespace Prover
 {
     internal class ResolutionIndex
     {
-        Dictionary<Literal, List<(Clause, int)>> pos_ind = new Dictionary<Literal, List<(Clause, int)>>();
-        Dictionary<Literal, List<(Clause, int)>> neg_ind = new Dictionary<Literal, List<(Clause, int)>>();
+        public class Candidate
+        {
+            public Clause Clause;
+            public int Position;
 
-        private void InsertData(Dictionary<Literal, List<(Clause, int)>> idx, Literal topsymbol, (Clause, int) payload)
+            public Candidate(Clause clause, int pos)
+            {
+                Clause = clause;
+                Position = pos;
+            }
+
+            public static implicit operator Candidate((Clause, int) pair)
+            {
+                return new Candidate(pair.Item1, pair.Item2);
+            }
+
+        }
+
+        Dictionary<string, List<Candidate>> pos_ind = new Dictionary<string, List<Candidate>>();
+        Dictionary<string, List<Candidate>> neg_ind = new Dictionary<string, List<Candidate>>();
+
+        private void InsertData(Dictionary<string, List<Candidate>> idx, string topsymbol, Candidate payload)
         {
             if (!idx.ContainsKey(topsymbol)) 
-                idx.Add(topsymbol, new List<(Clause, int)>());
+                idx.Add(topsymbol, new List<Candidate>());
             idx[topsymbol].Add(payload);
         }
 
-        private void RemoveData(Dictionary<Literal, List<(Clause, int)>> idx, Literal topsymbol, (Clause, int) payload)
+        private void RemoveData(Dictionary<string, List<Candidate>> idx, string topsymbol, Candidate payload)
         {
             idx[topsymbol].Remove(payload);
         }
@@ -32,9 +50,9 @@ namespace Prover
                 if (lit.IsInference)
                 {
                     if (!lit.Negative) //positive case
-                        InsertData(pos_ind, lit, (clause, i));
+                        InsertData(pos_ind, lit.Name, (clause, i));
                     else
-                        InsertData(neg_ind, lit, (clause, i));
+                        InsertData(neg_ind, lit.Name, (clause, i));
                 }
             }
         }
@@ -47,12 +65,26 @@ namespace Prover
                 if (lit.IsInference)
                 {
                     if (!lit.Negative) //positive case
-                        RemoveData(pos_ind, lit, (clause, i));
+                        RemoveData(pos_ind, lit.Name, (clause, i));
                     else
-                        RemoveData(neg_ind, lit, (clause, i));
+                        RemoveData(neg_ind, lit.Name, (clause, i));
                 }
             }
         }
 
+        public List<Candidate> GetResolutionLiterals(Literal lit)
+        {
+            var idx = neg_ind;
+            if (!lit.Negative)
+                idx = neg_ind;
+            else
+                idx = pos_ind;
+
+            if(idx.ContainsKey(lit.Name))
+                return idx[lit.Name];
+            return new List<Candidate>();
+        }
+
+        //public PredAbstractionIsSubSequence(Candidate candidate, )
     }
 }

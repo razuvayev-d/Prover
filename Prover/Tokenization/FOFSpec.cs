@@ -53,7 +53,7 @@ namespace Prover.Tokenization
         }
 
         /// <summary>
-        /// Читает файл используя конфенцию TPTP/
+        /// Читает файл используя конвенцию TPTP/
         /// </summary>
         /// <param name="source"></param>
         /// <param name="refdir"></param>
