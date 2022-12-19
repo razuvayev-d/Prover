@@ -5,7 +5,7 @@ namespace Prover.Heuristics
 {
     static class Heuristics
     {
-        public static EvalStructure FIFOEval = new EvalStructure(new FIFOEvaluation(), 1);
+        public static EvalStructure FIFOEval { get; } =  new EvalStructure(new FIFOEvaluation(), 1);
         /// <summary>
         /// Стратегия предпочтения более коротких дизъюнктов. Меньше символов -- лучше. Требует чтобы была включена подстановка.
         /// </summary>
@@ -33,7 +33,7 @@ namespace Prover.Heuristics
                                                                                   (new LIFOEvaluation(), 5)
                                                                                                                });
 
-        public static EvalStructure BreedingBest = new EvalStructure(new List<(ClauseEvaluationFunction, int)> {
+        public static EvalStructure BreedingBest { get; } = new EvalStructure(new List<(ClauseEvaluationFunction, int)> {
                                                                                 (new SymbolCountEvaluation(1, 5), 9),
                                                                                 (new FIFOEvaluation(), 5),
                                                                                 (new LIFOEvaluation(), 7),

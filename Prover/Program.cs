@@ -20,7 +20,7 @@ namespace Prover
     class Program
     {
         static int Count = 0;
-        static string proplamsDirectory = @"./problems/";
+        static string problemsDirectory = @"./problems/";
         static string answersDirectory = @"./answers/";
 
         static List<string> solved = new List<string>();
@@ -28,9 +28,11 @@ namespace Prover
         {
             //GeneticBreeding();
 
-            string[] files = Directory.GetFiles(proplamsDirectory);
-            var s = proplamsDirectory + "SYN941+1.p";
+            string[] files = Directory.GetFiles(problemsDirectory);
+            var s = problemsDirectory + "SYN941+1.p";
             //FOF(s);
+            //FOFFull(problemsDirectory + "SYN966+1.p");
+
             foreach (string file in files)
                 FOFFull(file);
             //Rating(file);
@@ -274,7 +276,8 @@ namespace Prover
 
             string verdict = res.IsEmpty ? "STATUS: THEOREM" : "STATUS: NOT THEOREM";
             var str = new List<string>();
-            //Print(state, res, str);
+            Console.WriteLine(Path);
+            Print(state, res, str);
 
             str.Reverse();
             str = str.Distinct().ToList();
