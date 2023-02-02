@@ -229,7 +229,7 @@ namespace Prover
             stopwatch.Restart();
             tsk.Start();
             //var res = state.Saturate();
-            bool complete = tsk.Wait(5000);
+            bool complete = tsk.Wait(500000);
             stopwatch.Stop();
             token.Cancel();
             Clause res;
