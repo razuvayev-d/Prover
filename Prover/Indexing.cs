@@ -1,13 +1,17 @@
 ﻿using Prover.DataStructures;
+using Prover.Genetic;
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
+using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
+using static Prover.ResolutionIndex;
 
 namespace Prover
 {
-    internal class ResolutionIndex
+    public class ResolutionIndex
     {
         public class Candidate
         {
@@ -27,8 +31,8 @@ namespace Prover
 
         }
 
-        Dictionary<string, List<Candidate>> pos_ind = new Dictionary<string, List<Candidate>>();
-        Dictionary<string, List<Candidate>> neg_ind = new Dictionary<string, List<Candidate>>();
+       public Dictionary<string, List<Candidate>> pos_ind = new Dictionary<string, List<Candidate>>();
+      public  Dictionary<string, List<Candidate>> neg_ind = new Dictionary<string, List<Candidate>>();
 
         private void InsertData(Dictionary<string, List<Candidate>> idx, string topsymbol, Candidate payload)
         {
@@ -85,6 +89,130 @@ namespace Prover
             return new List<Candidate>();
         }
 
-        //public PredAbstractionIsSubSequence(Candidate candidate, )
+    }
+
+
+    internal class SubsumptionIndex
+    {
+
+
+        public class ArrayElement
+        {
+            public int LenPA;
+            public List<(bool, string)> PredicateAbstraction;
+            public List<Clause> Entry;
+
+            public ArrayElement(int Len, List<(bool, string)> PredicateAbstraction, List<Clause> Entry)
+            {
+                this.LenPA = Len;
+                this.PredicateAbstraction = PredicateAbstraction;
+                this.Entry = Entry;
+            }
+
+            public static implicit operator ArrayElement((int, List<(bool, string)>, List<Clause>) tuple)
+            {
+                return new ArrayElement(tuple.Item1, tuple.Item2, tuple.Item3);
+            }
+        }
+        public static bool PredAbstractionIsSubSequence(List<(bool, string)> candidate, List<(bool, string)> superseq)
+        {
+            int i = 0;
+            int end = superseq.Count;
+
+            try
+            {
+                foreach (var sub in candidate) {
+                    while (superseq[i] != sub)
+                    {
+                        i++;
+                    }
+                    i++;
+                }
+            }
+            catch (Exception e)
+            { return false; }
+            return true;
+        }
+
+        public Dictionary<List<(bool, string)>, List<Clause>> PredAbstrSet = new Dictionary<List<(bool, string)>, List<Clause>>();
+
+        public List<ArrayElement> PredAbstrArr = new List<ArrayElement>();
+
+        public void InsertClause(Clause clause)
+        {
+            var pa = clause.PredicateAbstraction();
+            if (PredAbstrSet.ContainsKey(pa))
+                PredAbstrSet[pa].Add(clause);
+            else
+            {
+                var entry = new List<Clause>();
+                PredAbstrSet[pa] = entry;
+                PredAbstrSet[pa].Add(clause);
+                int l = pa.Count;
+                int i = 0;
+
+                foreach (var el in PredAbstrArr)
+                {
+                    if (el.LenPA >= 1)
+                        break;
+                    i++;
+                }
+                PredAbstrArr.Insert(i, (l, pa, entry));
+                entry.Add(clause);  
+            }
+            
+        }
+
+        public void RemoveClause(Clause clause) 
+        {
+            var pa = clause.PredicateAbstraction();
+            PredAbstrSet[pa].Remove(clause);
+        }
+
+        public bool IsIndexed(Clause clause)
+        {
+            var pa = clause.PredicateAbstraction();
+            if (PredAbstrSet.ContainsKey(pa))
+            {
+                if (PredAbstrSet[pa].Contains(clause)) return true;
+            }
+            return false;
+        } 
+
+        public List<Clause> GetSubsumingCandidates(Clause queryclause)
+        {
+            var pa = queryclause.PredicateAbstraction();
+            var pa_len = pa.Count;
+
+            var res = new List<Clause>();   
+            foreach (var el in PredAbstrArr)
+            {
+                if (el.LenPA > pa_len)
+                    break;
+                if(SubsumptionIndex.PredAbstractionIsSubSequence(el.PredicateAbstraction, pa))
+                {
+                    res.AddRange(el.Entry);
+                }
+            }
+            return res;
+        }
+
+        public List<Clause> GetSubsumedCandidates(Clause queryclause)
+        {
+            var pa = queryclause.PredicateAbstraction();
+            var pa_len = pa.Count;
+
+            var res = new List<Clause>();
+            foreach (var el in PredAbstrArr)
+            {
+                if (el.LenPA < pa_len)
+                    continue;
+                if (SubsumptionIndex.PredAbstractionIsSubSequence(pa, el.PredicateAbstraction))
+                {
+                    res.AddRange(el.Entry);
+                }
+            }
+            return res;
+        }
     }
 }

@@ -296,6 +296,15 @@ namespace Prover.DataStructures
             return res;
         }
 
+        /// <summary>
+        /// Абстракция для литерала -- кортеж (знак, предикативный символ). 
+        /// Знак -- True если положительный литерал, False если отрицательный. 
+        /// </summary>
+        /// <returns></returns>
+        public (bool, string) PredicateAbstraction()
+        {
+            return (!Negative, name);
+        }
         public static Literal ParseAtom(Lexer lexer)
         {
             var atom = Term.ParseTerm(lexer);

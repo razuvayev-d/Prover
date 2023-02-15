@@ -2,6 +2,7 @@
 using Prover.Tokenization;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.InteropServices;
 using System.Text;
 
 namespace Prover.DataStructures
@@ -288,6 +289,24 @@ namespace Prover.DataStructures
             for (int i = 0; i < Length; i++)
                 total += literals[i].GetHashCode();
             return total;
+        }
+
+        public List<(bool, string)> PredicateAbstraction()
+        {
+            List<(bool, string)> abstr = new List<(bool, string)>();
+            var n = this.literals.Count;
+            for (int i = 0; i < n; i++)
+            {
+                abstr.Add(this.literals[i].PredicateAbstraction()); 
+            }
+            abstr.Sort((x, y) =>
+            {
+                var c = x.Item1.CompareTo(y.Item1);
+                if (c == 0)
+                    return x.Item2.CompareTo(y.Item2);
+                return c;
+            });
+            return abstr;
         }
     }
 }
