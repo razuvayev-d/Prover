@@ -1,6 +1,6 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
-using Porver.Genetic;
 using Prover.Genetic;
+using Prover;
 
 namespace ProverTests
 {

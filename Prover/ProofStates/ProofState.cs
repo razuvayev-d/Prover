@@ -3,16 +3,17 @@ using Prover.Heuristics;
 using Prover.ResolutionMethod;
 using System;
 using System.Threading;
+using Prover.ClauseSets;
 
 namespace Prover.ProofStates
 {
     internal class SearchParams
     {
-        public EvalStructure heuristics;
-        public bool delete_tautologies;
-        public bool forward_subsumption;
-        public bool backward_subsumption;
-        public object literal_selection;
+        public EvalStructure heuristics { get; set; }
+        public bool delete_tautologies { get; set; }
+        public bool forward_subsumption { get; set; }
+        public bool backward_subsumption { get; set; }
+        public object literal_selection { get; set; }
 
         public SearchParams()
         {
@@ -54,7 +55,7 @@ namespace Prover.ProofStates
             this.Params = Params;
             unprocessed = new HeuristicClauseSet(Params.heuristics);
             if (indexed)
-                throw new NotImplementedException();
+                processed = new IndexedClauseSet();
             else
                 processed = new ClauseSet();
             foreach (Clause clause in clauses.clauses)
@@ -74,13 +75,13 @@ namespace Prover.ProofStates
             if (Params.delete_tautologies && given_clause.IsTautology)
             {
                 tautologies_deleted++;
-                return null;
+                //return null;
             }
 
             if (Params.forward_subsumption && Subsumption.Forward(processed, given_clause))
             {
                 forward_subsumed++;
-                return null;
+                //return null;
             }
 
             if (Params.backward_subsumption)
@@ -95,15 +96,15 @@ namespace Prover.ProofStates
 
             ClauseSet newClauses = new ClauseSet();
             ClauseSet factors = ResControl.ComputeAllFactors(given_clause);
-
+            factor_count += factors.Count;
 
             newClauses.AddRange(factors);
             ClauseSet resolvents = ResControl.ComputeAllResolvents(given_clause, processed);
 
-            factor_count += factors.Count;
+           
             resolvent_count += resolvents.Count;
 
-            resolvents.Distinct();
+            //resolvents.Distinct();
             newClauses.AddRange(resolvents);
 
             processed.AddClause(given_clause);

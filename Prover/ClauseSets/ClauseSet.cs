@@ -2,13 +2,15 @@
 using Prover.Tokenization;
 using System;
 using System.Collections.Generic;
+using System.Text;
+using Prover.ClauseSets;
 
-namespace Prover
+namespace Prover.ClauseSets
 {
     /// <summary>
     /// Класс представляет набор клауз
     /// </summary>
-    class ClauseSet
+    public class ClauseSet
     {
         public List<Clause> clauses;
 
@@ -29,7 +31,7 @@ namespace Prover
             this.clauses.AddRange(clauses.clauses);
         }
 
-        public void AddClause(Clause clause)
+        public virtual void AddClause(Clause clause)
         {
             clauses.Add(clause);
         }
@@ -80,7 +82,7 @@ namespace Prover
             }
         }
 
-        public Clause ExtractClause(Clause clause)
+        public virtual Clause ExtractClause(Clause clause)
         {
             clauses.Remove(clause);
             return clause;
@@ -105,7 +107,15 @@ namespace Prover
 
         public override string ToString()
         {
-            return clauses.ToString();
+            int i = 1;
+            StringBuilder sb = new StringBuilder();
+            foreach (Clause clause in clauses)
+            {
+                sb.Append(i++ + ". ");
+                sb.Append(clause.ToString());
+                sb.Append("\n");
+            }
+            return sb.ToString();
         }
 
 

@@ -1,5 +1,6 @@
 ﻿using Prover.Tokenization;
 using System.Collections.Generic;
+using Prover.ClauseSets;
 
 namespace Prover.DataStructures
 {
@@ -7,7 +8,7 @@ namespace Prover.DataStructures
     ///  Datatype for the complete first-order formula, including
     ///meta-information like type and name.
     /// </summary>
-    class WFormula : Derivable
+    public class WFormula : Derivable
     {
         Formula formula;
         string type;

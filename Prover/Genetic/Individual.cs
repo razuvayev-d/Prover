@@ -3,7 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 
-namespace Porver.Genetic
+namespace Prover.Genetic
 {
 	[Serializable]
 	public class Individual

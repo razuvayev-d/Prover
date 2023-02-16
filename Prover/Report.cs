@@ -1,5 +1,7 @@
 ﻿using Prover.ProofStates;
 using System.Text.Json.Serialization;
+using System.Text;
+using System.Runtime.Intrinsics.X86;
 
 namespace Prover
 {
@@ -43,6 +45,19 @@ namespace Prover
             public int forward_subsumed { get; set; }
             public int backward_subsumed { get; set; }
             public int depth { get; set; }
+
+            public override string ToString()
+            {
+                StringBuilder sb = new StringBuilder();
+                const int offset = 25;
+                sb.Append("Затрачено времени: ".PadRight(offset, ' ') + ElapsedTime);
+                sb.Append("\nНачальных клауз: ".PadRight(offset, ' ') + initial_count);
+                sb.Append("\nФакторизовано: ".PadRight(offset, ' ') + factor_count);
+                sb.Append("\nВычислено резольвент: ".PadRight(offset, ' ') + resolvent_count);
+                sb.Append("\nГлубина вывода: ".PadRight(offset, ' ') + depth);
+
+                return sb.ToString();
+            }
         }
 
 

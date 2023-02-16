@@ -3,61 +3,61 @@ using System.Collections.Generic;
 
 namespace Prover.Heuristics
 {
-    delegate int Heuristic(Clause clause);
-    internal abstract class ClauseEvaluationFunction
-    {
-        protected string name;
-        protected Heuristic hEval;
-        public ClauseEvaluationFunction()
-        {
-            name = "Virtual base";
-        }
+    //delegate int Heuristic(Clause clause);
+    //internal abstract class ClauseEvaluationFunction
+    //{
+    //    protected string name;
+    //    protected Heuristic hEval;
+    //    public ClauseEvaluationFunction()
+    //    {
+    //        name = "Virtual base";
+    //    }
 
-        public override string ToString()
-        {
-            return string.Format("ClauseEvalFun(%s)", name);
-        }
+    //    public override string ToString()
+    //    {
+    //        return string.Format("ClauseEvalFun(%s)", name);
+    //    }
 
-        public int Call(Clause clause)
-        {
-            return hEval(clause);
-        }
-    }
+    //    public int Call(Clause clause)
+    //    {
+    //        return hEval(clause);
+    //    }
+    //}
 
-    internal class FIFOEvaluation : ClauseEvaluationFunction
-    {
-        int FIFOCounter;
-        public FIFOEvaluation()
-        {
-            name = "FIFOEval";
-            FIFOCounter = 0;
-            hEval = (clause) => { return ++FIFOCounter; };
-        }
-    }
+    //internal class FIFOEvaluation : ClauseEvaluationFunction
+    //{
+    //    int FIFOCounter;
+    //    public FIFOEvaluation()
+    //    {
+    //        name = "FIFOEval";
+    //        FIFOCounter = 0;
+    //        hEval = (clause) => { return ++FIFOCounter; };
+    //    }
+    //}
 
-    internal class LIFOEvaluation : ClauseEvaluationFunction
-    {
-        int LIFOCounter;
-        public LIFOEvaluation()
-        {
-            name = "LIFOEval";
-            LIFOCounter = 0;
-            hEval = (clause) => { return --LIFOCounter; };
-        }
-    }
+    //internal class LIFOEvaluation : ClauseEvaluationFunction
+    //{
+    //    int LIFOCounter;
+    //    public LIFOEvaluation()
+    //    {
+    //        name = "LIFOEval";
+    //        LIFOCounter = 0;
+    //        hEval = (clause) => { return --LIFOCounter; };
+    //    }
+    //}
 
-    internal class SymbolCountEvaluation : ClauseEvaluationFunction
-    {
-        int fweight;
-        int vweight;
-        public SymbolCountEvaluation(int fweight = 2, int vweight = 1)
-        {
-            this.fweight = fweight;
-            this.vweight = vweight;
-            name = string.Format("ClauseEvalFun(%s, %s)", fweight, vweight);
-            hEval = (clause) => clause.Weight(fweight, vweight);
-        }
-    }
+    //internal class SymbolCountEvaluation : ClauseEvaluationFunction
+    //{
+    //    int fweight;
+    //    int vweight;
+    //    public SymbolCountEvaluation(int fweight = 2, int vweight = 1)
+    //    {
+    //        this.fweight = fweight;
+    //        this.vweight = vweight;
+    //        name = string.Format("ClauseEvalFun(%s, %s)", fweight, vweight);
+    //        hEval = (clause) => clause.Weight(fweight, vweight);
+    //    }
+    //}
 
     static class Heuristics
     {

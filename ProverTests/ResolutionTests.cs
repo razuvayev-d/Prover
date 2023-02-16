@@ -100,5 +100,10 @@ namespace ProverTests
         {
             Assert.AreEqual(Resolution.Apply(c12, 0, c13, 0), null);
         }
+
+
+       
+
+    
     }
 }

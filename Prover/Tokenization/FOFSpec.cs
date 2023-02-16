@@ -1,6 +1,7 @@
 ﻿using Prover.DataStructures;
 using System.Collections.Generic;
 using System.IO;
+using Prover.ClauseSets;
 
 namespace Prover.Tokenization
 {

@@ -2,7 +2,7 @@
 using Prover.Heuristics;
 using System.Collections.Generic;
 
-namespace Prover
+namespace Prover.ClauseSets
 {
     /// <summary>
     /// Все клаузы этого набора оцениваются эвристическими функциями. Класс поддерживает получение лучшей клаузы в соответствии с любой эвристикой.

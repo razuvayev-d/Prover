@@ -1,5 +1,6 @@
 ﻿using Prover.DataStructures;
 using Prover.ResolutionMethod;
+using Prover.ClauseSets;
 
 namespace Prover.ProofStates
 {

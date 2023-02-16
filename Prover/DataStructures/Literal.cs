@@ -58,30 +58,44 @@ namespace Prover.DataStructures
             //self.setInferenceLit(True)
         }
 
-        public bool IsInference { get; set; } = false;
+        public bool IsInference { get; set; } = true;
         public bool Match(Literal other, Substitution subst)
         {
-            if (Negative != other.Negative) return false;
+            int btstate = ((BTSubst)subst).GetState;
+            // TODO: зачем я тут написал negative?
+            //if (Negative != other.Negative) return false;
+            if (name != other.name) return false;
             bool res = true;
-            for (int i = 0; i < arguments.Count; i++)
+
+            //int min = Math.Min(other.arguments.Count, arguments.Count);
+            int min = arguments.Count;
+            for (int i = 0; i < min; i++)
             {
                 res = Term.Match(arguments[i], other.arguments[i], subst);
                 if (!res)
                     return false;
             }
-            return true;
+            if(res) 
+                return true;
+            ((BTSubst)subst).BacktrackToState((subst, btstate));
+            return false;
         }
-        public bool Equals(Literal other)
+        public override bool Equals(object obj)
         {
-            if (Negative != other.Negative) return false;
-            if (Name != other.Name) return false;
-            if (arguments.Count != other.arguments.Count) return false;
-            int n = arguments.Count;
-            for (int i = 0; i < n; i++)
+            if (obj is Literal)
             {
-                if (!arguments[i].Equals(other.arguments[i])) return false;
+                Literal other = (Literal)obj;
+                if (Negative != other.Negative) return false;
+                if (Name != other.Name) return false;
+                if (arguments.Count != other.arguments.Count) return false;
+                int n = arguments.Count;
+                for (int i = 0; i < n; i++)
+                {
+                    if (!arguments[i].Equals(other.arguments[i])) return false;
+                }
+                return true;
             }
-            return true;
+            return false;
         }
         /// <summary>
         /// Сравнивает литералы без учета знака
@@ -301,9 +315,9 @@ namespace Prover.DataStructures
         /// Знак -- True если положительный литерал, False если отрицательный. 
         /// </summary>
         /// <returns></returns>
-        public (bool, string) PredicateAbstraction()
+        public PredicateAbstraction PredicateAbstraction()
         {
-            return (!Negative, name);
+            return new PredicateAbstraction(!Negative, name);
         }
         public static Literal ParseAtom(Lexer lexer)
         {

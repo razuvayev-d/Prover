@@ -1,14 +1,15 @@
 ﻿using Prover.DataStructures;
 using System.Collections.Generic;
 using System.Linq;
+using Prover.ClauseSets;
 
 namespace Prover.ResolutionMethod
 {
-    internal static class Subsumption
+    public static class Subsumption
     {
         public static bool SubsumeLitLists(List<Literal> subsumer, List<Literal> subsumed, BTSubst subst)
         {
-            //if (subsumer.Count > 0) return true;
+            if (subsumer.Count == 0) return true;
 
             foreach (var lit in subsumed)
             {
@@ -26,7 +27,7 @@ namespace Prover.ResolutionMethod
 
         public static bool Subsumes(Clause subsumer, Clause subsumed)
         {
-            if (subsumer.Length != subsumed.Length) return false;
+            if (subsumer.Length > subsumed.Length) return false;
             var subst = new BTSubst();
             return SubsumeLitLists(subsumer.Literals, subsumed.Literals, subst);
         }

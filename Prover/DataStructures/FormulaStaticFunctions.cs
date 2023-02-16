@@ -171,43 +171,43 @@ namespace Prover
 
                 }
                 // TODO: новые изменения
-                else if (f.op == "|")
-                {
-                    if (f.Child1.IsLiteral)
-                    {
-                        var lit = f.Child1 as Literal;
-                        if (lit.IsPropTrue)
-                        {
-                            // True | Q = True                           
-                            f = Literal.True;
-                            m = true;
-                        }
-                        else if (lit.IsPropFalse)
-                        {
-                            // False | Q = Q                          
-                            f = f.Child2;
-                            m = true;
-                        }
-                    }
-                    // symmetric case
-                    if (f.Child2.IsLiteral)
-                    {
-                        var lit = f.Child2 as Literal;
-                        if (lit.IsPropTrue)
-                        {
-                            // Q | True = True
-                            f = Literal.True;
-                            m = true;
-                        }
-                        else if (lit.IsPropFalse)
-                        {
-                            // Q | False = Q
-                            f = f.Child1;
-                            m = true;
-                        }
-                    }
+                //else if (f.op == "|")
+                //{
+                //    if (f.Child1.IsLiteral)
+                //    {
+                //        var lit = f.Child1 as Literal;
+                //        if (lit.IsPropTrue)
+                //        {
+                //            // True | Q = True                           
+                //            f = Literal.True;
+                //            m = true;
+                //        }
+                //        else if (lit.IsPropFalse)
+                //        {
+                //            // False | Q = Q                          
+                //            f = f.Child2;
+                //            m = true;
+                //        }
+                //    }
+                //    // symmetric case
+                //    if (f.Child2.IsLiteral)
+                //    {
+                //        var lit = f.Child2 as Literal;
+                //        if (lit.IsPropTrue)
+                //        {
+                //            // Q | True = True
+                //            f = Literal.True;
+                //            m = true;
+                //        }
+                //        else if (lit.IsPropFalse)
+                //        {
+                //            // Q | False = Q
+                //            f = f.Child1;
+                //            m = true;
+                //        }
+                //    }
 
-                }
+                //}
                 else if (f.op == "&")
                 {
                     if (f.Child1.IsLiteral)

@@ -1,4 +1,4 @@
-﻿using Porver.Genetic;
+﻿using Prover.Genetic;
 using Prover.DataStructures;
 using Prover.Heuristics;
 using Prover.ProofStates;

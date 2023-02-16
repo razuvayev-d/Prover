@@ -183,7 +183,7 @@ namespace Prover.ResolutionMethod
     /// <summary>
     /// Подстановка, которая не позволяет создавать новые привязки, но взамен позволяет backward_subst
     /// </summary>
-    class BTSubst : Substitution
+    public class BTSubst : Substitution
     {
         //Dictionary<Term, Term> bindings;
         public BTSubst(Dictionary<Term, Term> init)

@@ -291,9 +291,9 @@ namespace Prover.DataStructures
             return total;
         }
 
-        public List<(bool, string)> PredicateAbstraction()
+        public PredicateAbstrArray PredicateAbstraction()
         {
-            List<(bool, string)> abstr = new List<(bool, string)>();
+            List<PredicateAbstraction> abstr = new List<PredicateAbstraction>();
             var n = this.literals.Count;
             for (int i = 0; i < n; i++)
             {
