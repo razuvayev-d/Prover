@@ -63,7 +63,7 @@ namespace Prover.DataStructures
         {
             int btstate = ((BTSubst)subst).GetState;
             // TODO: зачем я тут написал negative?
-            //if (Negative != other.Negative) return false;
+            if (Negative != other.Negative) return false;
             if (name != other.name) return false;
             bool res = true;
 
@@ -135,16 +135,16 @@ namespace Prover.DataStructures
         /// Для случая когда литерал это кванторная переменная. Возвращает единственный терм. 
         /// Если терм не единственный бросает исключение.
         /// </summary>
-        public Term QuantorVar
-        {
-            get
-            {
-                return new Term(Name, null);
-                if (arguments.Count > 1)
-                    throw new Exception("Литерал кванторной переменной имеет больше одного аргумента");
-                return arguments[0];
-            }
-        }
+        //public Term QuantorVar
+        //{
+        //    get
+        //    {
+        //        return new Term(Name, null);
+        //        if (arguments.Count > 1)
+        //            throw new Exception("Литерал кванторной переменной имеет больше одного аргумента");
+        //        return arguments[0];
+        //    }
+        //}
 
         public bool IsPropTrue
         {

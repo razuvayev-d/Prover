@@ -27,7 +27,7 @@ namespace Prover
         static List<string> solved = new List<string>();
 
 
-
+        static bool indexing = false;
         static void Main(string[] args)
         {
             //GeneticBreeding();
@@ -37,8 +37,10 @@ namespace Prover
             //FOF(s);
             //FOFFull(problemsDirectory + "SYN966+1.p");
             // string path = Console.ReadLine();
-            string path = "SYN036+1.p";// "SYN965+1.p";
+            string path = "SYN969+1.p";
             FOFFull(path);
+            //if (args[0] == "-i") indexing = true;
+            //FOFFull(args[args.Length - 1]);
 
             //foreach (string file in files)
             //    FOFFull(file);
@@ -49,7 +51,7 @@ namespace Prover
             //Console.WriteLine("Solved problems:");
             //Console.ResetColor();   
 
-            foreach(var x in solved)
+            foreach (var x in solved)
             {
                 Console.WriteLine(x);
             }
@@ -205,6 +207,9 @@ namespace Prover
 
         static void FOFFull(string Path)
         {
+
+            Console.WriteLine("\n\nЗадача " + Path);
+            Console.WriteLine();
             Clause.ResetCounter();
             string timeoutStatus = string.Empty;
             var param = new SearchParams()
@@ -231,7 +236,7 @@ namespace Prover
             var cnf = problem.Clausify();
             string ClausesStr = cnf.ToString();
 
-            var state = new ProofState(param, cnf, false, true);
+            var state = new ProofState(param, cnf, false, indexing);
 
             Stopwatch stopwatch = new Stopwatch();
 
@@ -683,7 +688,7 @@ namespace Prover
         {
             if (res.support.Count == 0)
             {
-                var s = res.Name + ": " + res.ToString() + " from: input";
+                var s = res.Name + ": " + res.ToString() + " [input]";
                 sq.Add(s);
                 return;
             }
@@ -692,7 +697,7 @@ namespace Prover
                 //Console.WriteLine(i++ + ". " + res.Name + ": " + res.ToString() + " from: " + res.support[0] + ", " + res.support[1]);
                 if (res.support.Count == 2)
                 {
-                    sq.Add(res.Name + ": " + res.ToString() + " from: " + res.support[0] + ", " + res.support[1]);
+                    sq.Add(res.Name + ": " + res.ToString() + "  [" + res.support[0] + ", " + res.support[1] +"]");
                     string Name1, Name2;
                     Name1 = res.support[0];
                     Name2 = res.support[1];
@@ -703,7 +708,7 @@ namespace Prover
                 }
                 if (res.support.Count == 1)
                 {
-                    sq.Add(res.Name + ": " + res.ToString() + " from: " + res.support[0]);
+                    sq.Add(res.Name + ": " + res.ToString() + " [" + res.support[0]+"]");
                     string Name1, Name2;
                     Name1 = res.support[0];
                     var q = state.processed.clauses.Where(x => x.Name == Name1).ToList()[0];

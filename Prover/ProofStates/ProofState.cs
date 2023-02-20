@@ -75,13 +75,13 @@ namespace Prover.ProofStates
             if (Params.delete_tautologies && given_clause.IsTautology)
             {
                 tautologies_deleted++;
-                //return null;
+                return null;
             }
 
             if (Params.forward_subsumption && Subsumption.Forward(processed, given_clause))
             {
                 forward_subsumed++;
-                //return null;
+                return null;
             }
 
             if (Params.backward_subsumption)
@@ -125,8 +125,8 @@ namespace Prover.ProofStates
             {
                 if (token.IsCancellationRequested) return null;
                 //unprocessed.clauses = unprocessed.clauses.Distinct().ToList();
-                unprocessed.Distinct();
-                processed.Distinct();
+                //unprocessed.Distinct();
+                //processed.Distinct();
                 Clause res = ProcessClause();
                 if (res is not null)
                 {

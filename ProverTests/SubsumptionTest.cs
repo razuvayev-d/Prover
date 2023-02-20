@@ -16,9 +16,13 @@ cnf(axiom, c2, p(a)).
 cnf(axiom, c3, p(X)).
 cnf(axiom, c4, p(a)|q(f(X))).
 cnf(axiom, c5, p(a)|q(f(b))|p(X)).
+cnf(axiom, c6, wise(geoff)).
+cnf(axiom, c7, wise(X)).
+cnf(axiom, c8, taller(jim,geoff)|wise(geoff)|taller(X,brother_of(X))		).
+cnf(axiom, c9, wise(Y)|taller(jim,Z)).
 ";
 
-        static Clause c1, c2, c3, c4, c5, c6, c7;
+        static Clause c1, c2, c3, c4, c5, c6, c7, c8, c9;
         static ClauseSet cset;
         static SubsumptionTest()
         {
@@ -28,6 +32,10 @@ cnf(axiom, c5, p(a)|q(f(b))|p(X)).
             c3 = Clause.ParseClause(lex);
             c4 = Clause.ParseClause(lex);
             c5 = Clause.ParseClause(lex);
+            c6 = Clause.ParseClause(lex);
+            c7 = Clause.ParseClause(lex);
+            c8 = Clause.ParseClause(lex);   
+            c9 = Clause.ParseClause(lex);
 
             cset = new ClauseSet();
             cset.AddClause(c2);
@@ -82,6 +90,15 @@ cnf(axiom, c5, p(a)|q(f(b))|p(X)).
         {
             Assert.IsTrue(Subsumption.Forward(cset, c2));
            // var tmp = Subsumption.Backward(c1, cset);
+
+        }
+
+        [TestMethod]
+        public void SubsumptionTest2()
+        {
+            Assert.IsTrue(Subsumption.Subsumes(c7, c6));
+            Assert.IsTrue(Subsumption.Subsumes(c9, c8));
+            // var tmp = Subsumption.Backward(c1, cset);
 
         }
     }

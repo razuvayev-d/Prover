@@ -207,7 +207,7 @@ namespace Prover.ResolutionMethod
         public int BacktrackToState((Substitution, int) btState)
         {
             var (substq, state) = btState;
-            if (substq != this) throw new Exception();
+            //if (substq != this) throw new Exception();
             int res = 0;
 
             while (subst.Count > state)
