@@ -1,0 +1,8 @@
+{
+  "profiles": {
+    "Prover": {
+      "commandName": "Project",
+      "commandLineArgs": "-f -p -s .\\Problems\\SYN918+1.p"
+    }
+  }
+}

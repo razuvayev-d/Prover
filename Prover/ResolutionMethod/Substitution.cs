@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text;
 
 namespace Prover.ResolutionMethod
 {
@@ -66,12 +67,12 @@ namespace Prover.ResolutionMethod
         /// <returns></returns>
         public Term Apply(Term term)
         {
-            if (term.Constant) return term;
+            if (term.IsConstant) return term;
 
             if (term.IsVar)
             {
-                //if (subst.ContainsKey(term))
-                if (ContainsKey(term))
+                if (subst.ContainsKey(term))
+                //if (ContainsKey(term))
                 {
                     return subst[term];
                 }
@@ -177,6 +178,20 @@ namespace Prover.ResolutionMethod
                 result.subst.Add(key.DeepCopy(), value.DeepCopy());
             }
             return result;
+        }
+
+        public override string ToString()
+        {
+            StringBuilder sb = new StringBuilder();
+
+            sb.Append("{ ");
+            foreach(var sub in subst)
+            {
+                sb.Append(string.Format("{1}/{0}, ", sub.Key, sub.Value));
+            }
+            sb[sb.Length - 2] = ' ';
+            sb[sb.Length -1] = '}';
+            return sb.ToString();
         }
     }
 

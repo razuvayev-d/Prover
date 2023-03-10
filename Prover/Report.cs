@@ -1,7 +1,6 @@
 ﻿using Prover.ProofStates;
-using System.Text.Json.Serialization;
 using System.Text;
-using System.Runtime.Intrinsics.X86;
+using System.Text.Json.Serialization;
 
 namespace Prover
 {
@@ -10,21 +9,22 @@ namespace Prover
     {
         public Report(ProofState state, int depth = 0)
         {
-            statistics = new Statistics();
-            statistics.initial_count = state.initial_clause_count;
-            statistics.proc_clause_cout = state.proc_clause_count;
-            statistics.resolvent_count = state.resolvent_count;
-            statistics.factor_count = state.factor_count;
-            statistics.forward_subsumed = state.forward_subsumed;
-            statistics.backward_subsumed = state.backward_subsumed;
-            statistics.tautologies_deleted = state.tautologies_deleted;
+            statistics = state.statistics;
             statistics.depth = depth;
+            //statistics.initial_count = state.initial_clause_count;
+            //statistics.proc_clause_cout = state.proc_clause_count;
+            //statistics.resolvent_count = state.resolvent_count;
+            //statistics.factor_count = state.factor_count;
+            //statistics.forward_subsumed = state.forward_subsumed;
+            //statistics.backward_subsumed = state.backward_subsumed;
+            //statistics.tautologies_deleted = state.tautologies_deleted;
+            //statistics.depth = depth;
         }
         public Report(RatingProofState state, int depth)
         {
             statistics = new Statistics();
             statistics.initial_count = state.initial_clause_count;
-            statistics.proc_clause_cout = state.proc_clause_count;
+            statistics.proc_clause_count = state.proc_clause_count;
             statistics.resolvent_count = state.resolvent_count;
             statistics.factor_count = state.factor_count;
             statistics.forward_subsumed = state.forward_subsumed;
@@ -32,19 +32,20 @@ namespace Prover
             statistics.tautologies_deleted = state.tautologies_deleted;
             statistics.depth = depth;
         }
+
         public class Statistics
         {
             [JsonPropertyName("Elapsed time")]
-            public double ElapsedTime { get; set; }
+            public double ElapsedTime { get; set; } = 0;
             [JsonPropertyName("Initial clauses")]
-            public int initial_count { get; set; }
-            public int proc_clause_cout { get; set; }
-            public int factor_count { get; set; }
-            public int resolvent_count { get; set; }
-            public int tautologies_deleted { get; set; }
-            public int forward_subsumed { get; set; }
-            public int backward_subsumed { get; set; }
-            public int depth { get; set; }
+            public int initial_count { get; set; } = 0;
+            public int proc_clause_count { get; set; } = 0;
+            public int factor_count { get; set; } = 0;
+            public int resolvent_count { get; set; } = 0;
+            public int tautologies_deleted { get; set; } = 0;
+            public int forward_subsumed { get; set; } = 0;
+            public int backward_subsumed { get; set; } = 0;
+            public int depth { get; set; } = 0;
 
             public override string ToString()
             {
@@ -52,8 +53,11 @@ namespace Prover
                 const int offset = 25;
                 sb.Append("Затрачено времени: ".PadRight(offset, ' ') + ElapsedTime);
                 sb.Append("\nНачальных клауз: ".PadRight(offset, ' ') + initial_count);
+                sb.Append("\nОбработано клауз: ".PadRight(offset, ' ') + proc_clause_count);
                 sb.Append("\nФакторизовано: ".PadRight(offset, ' ') + factor_count);
                 sb.Append("\nВычислено резольвент: ".PadRight(offset, ' ') + resolvent_count);
+                sb.Append("\nПрямое поглощение: ".PadRight(offset, ' ') + forward_subsumed);
+                sb.Append("\nОбратное поглощение: ".PadRight(offset, ' ') + backward_subsumed);
                 sb.Append("\nГлубина вывода: ".PadRight(offset, ' ') + depth);
 
                 return sb.ToString();

@@ -16,7 +16,7 @@ namespace Prover.Heuristics
         int current = 0;
         int currentCount = 0;
         string name = string.Empty;
-   
+
         /// <summary>
         /// Deprecated
         /// </summary>

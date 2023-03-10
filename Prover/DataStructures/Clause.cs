@@ -2,7 +2,6 @@
 using Prover.Tokenization;
 using System.Collections.Generic;
 using System.Linq;
-using System.Runtime.InteropServices;
 using System.Text;
 
 namespace Prover.DataStructures
@@ -14,12 +13,12 @@ namespace Prover.DataStructures
     /// - Тип ("простой", если не задан).
     /// - Имя(генерируется автоматически, если не задано)
     /// </summary>
-    public class Clause : Derivable
+    public class Clause : TransformNode//Derivable
     {
         List<Literal> literals = new List<Literal>();
         string type;
         string name;
-        
+
         public List<Literal> Literals => literals;
         public string Name => name;
         /// <summary>
@@ -98,7 +97,8 @@ namespace Prover.DataStructures
             lexer.AcceptTok(TokenType.FullStop);
 
             var res = new Clause(lits, type, name);
-            res.Derivation = new Derivation("input");
+            //res.Derivation = new Derivation("input");
+            res.SetTransform("input");
             return res;
         }
 
@@ -141,6 +141,19 @@ namespace Prover.DataStructures
             var res = 0;
             foreach (var literal in literals)
                 res += literal.Weight(fweight, vweight);
+            return res;
+        }
+
+        public int PositiveWeight(int fweight, int vweight, int pos_mult)
+        {
+            var res = 0;
+            foreach (var literal in literals)
+            {
+                if (literal.Negative)
+                    res += literal.Weight(fweight, vweight);
+                else
+                    res += pos_mult * literal.Weight(fweight, vweight);
+            }             
             return res;
         }
         public Clause()
@@ -195,14 +208,10 @@ namespace Prover.DataStructures
         /// <returns></returns>
         public Clause Substitute(Substitution subst)
         {
-
-            //System.out.println("INFO in Clause.instantiate(): " + subst);
-            //System.out.println("INFO in Clause.instantiate(): " + this);
             Clause newC = DeepCopy();
             newC.literals = new List<Literal>();
             for (int i = 0; i < literals.Count; i++)
                 newC.literals.Add(literals[i].SubstituteWithCopy(subst));
-            //System.out.println("INFO in Clause.instantiate(): " + newC);
             return newC;
         }
 
@@ -249,7 +258,8 @@ namespace Prover.DataStructures
 
             var lits = new List<Literal>();
             for (int i = 0; i < literals.Count; i++)
-                if (!TMP_CONTAINS_LITS(literals[i], lits))
+                //if (!TMP_CONTAINS_LITS(literals[i], lits))
+                if (!lits.Contains(literals[i]))
                     lits.Add(literals[i]);
             literals = lits;
 
@@ -291,13 +301,13 @@ namespace Prover.DataStructures
             return total;
         }
 
-        public PredicateAbstrArray PredicateAbstraction()
+        public PredicateAbstractionArray PredicateAbstraction()
         {
             List<PredicateAbstraction> abstr = new List<PredicateAbstraction>();
             var n = this.literals.Count;
             for (int i = 0; i < n; i++)
             {
-                abstr.Add(this.literals[i].PredicateAbstraction()); 
+                abstr.Add(this.literals[i].PredicateAbstraction());
             }
             abstr.Sort((x, y) =>
             {
@@ -309,4 +319,7 @@ namespace Prover.DataStructures
             return abstr;
         }
     }
+
+
+
 }

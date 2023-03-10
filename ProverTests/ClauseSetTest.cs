@@ -1,8 +1,7 @@
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using Prover.ClauseSets;
 using Prover.DataStructures;
 using Prover.Tokenization;
-using Prover;
-using Prover.ClauseSets;
 
 namespace ProverTests
 {
@@ -106,7 +105,7 @@ cnf(prove_neither_charles_nor_butler_did_it,negated_conjecture,
             var oldlen = clauses.Count;
             var c = clauses.clauses[0];
             clauses.ExtractClause(c);
-            Assert.AreEqual(clauses.Count, oldlen- 1);
+            Assert.AreEqual(clauses.Count, oldlen - 1);
         }
 
         [TestMethod]
@@ -136,6 +135,6 @@ cnf(prove_neither_charles_nor_butler_did_it,negated_conjecture,
 
             Assert.AreEqual(6, pos.Count);
         }
-   
+
     }
 }

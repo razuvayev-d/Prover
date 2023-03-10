@@ -7,7 +7,7 @@ using Prover.Tokenization;
 namespace ProverTests
 {
 
-    
+
     [TestClass]
     public class SubsumptionTest
     {
@@ -34,7 +34,7 @@ cnf(axiom, c9, wise(Y)|taller(jim,Z)).
             c5 = Clause.ParseClause(lex);
             c6 = Clause.ParseClause(lex);
             c7 = Clause.ParseClause(lex);
-            c8 = Clause.ParseClause(lex);   
+            c8 = Clause.ParseClause(lex);
             c9 = Clause.ParseClause(lex);
 
             cset = new ClauseSet();
@@ -89,7 +89,7 @@ cnf(axiom, c9, wise(Y)|taller(jim,Z)).
         public void SetSubsumptionTest()
         {
             Assert.IsTrue(Subsumption.Forward(cset, c2));
-           // var tmp = Subsumption.Backward(c1, cset);
+            // var tmp = Subsumption.Backward(c1, cset);
 
         }
 

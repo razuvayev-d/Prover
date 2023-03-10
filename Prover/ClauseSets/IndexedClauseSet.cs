@@ -1,10 +1,5 @@
 ﻿using Prover.DataStructures;
-using Prover.Tokenization;
-using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Prover.ClauseSets
 {
@@ -13,8 +8,8 @@ namespace Prover.ClauseSets
         ResolutionIndex ResIndex = new ResolutionIndex();
         SubsumptionIndex SubIndex = new SubsumptionIndex();
 
-        public IndexedClauseSet() { }   
-        public IndexedClauseSet(List<Clause> clauses):base(clauses) { }
+        public IndexedClauseSet() { }
+        public IndexedClauseSet(List<Clause> clauses) : base(clauses) { }
 
         public override void AddClause(Clause clause)
         {
@@ -23,7 +18,7 @@ namespace Prover.ClauseSets
             clauses.Add(clause);
         }
 
-        public override Clause ExtractClause(Clause clause) 
+        public override Clause ExtractClause(Clause clause)
         {
             ResIndex.RemoveClause(clause);
             SubIndex.RemoveClause(clause);

@@ -1,7 +1,7 @@
-﻿using Prover.DataStructures;
+﻿using Prover.ClauseSets;
+using Prover.DataStructures;
 using System.Collections.Generic;
 using System.IO;
-using Prover.ClauseSets;
 
 namespace Prover.Tokenization
 {
@@ -90,7 +90,6 @@ namespace Prover.Tokenization
 
         /// <summary>
         /// Преобразовывает все формулы в клаузы.
-        ///
         /// </summary>
         public ClauseSet Clausify()
         {

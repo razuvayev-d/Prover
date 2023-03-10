@@ -21,7 +21,7 @@ namespace Prover.ResolutionMethod
 
             res.name = NewSkolemSymbol();
             var n = varlist.Count;
-            if (n == 0) res.Constant = true;
+            if (n == 0) res.IsConstant = true;
             for (int i = 0; i < n; i++)
             {
                 Term v = varlist[i];

@@ -1,7 +1,7 @@
-﻿using Prover.DataStructures;
+﻿using Prover.ClauseSets;
+using Prover.DataStructures;
 using System.Collections.Generic;
 using System.Linq;
-using Prover.ClauseSets;
 
 namespace Prover.ResolutionMethod
 {
@@ -27,7 +27,7 @@ namespace Prover.ResolutionMethod
 
         public static bool Subsumes(Clause subsumer, Clause subsumed)
         {
-            if (subsumer.Length > subsumed.Length) return false; 
+            if (subsumer.Length > subsumed.Length) return false;
             var subst = new BTSubst();
             return SubsumeLitLists(subsumer.Literals, subsumed.Literals, subst);
         }

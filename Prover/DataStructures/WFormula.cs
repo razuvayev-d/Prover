@@ -1,6 +1,6 @@
-﻿using Prover.Tokenization;
+﻿using Prover.ClauseSets;
+using Prover.Tokenization;
 using System.Collections.Generic;
-using Prover.ClauseSets;
 
 namespace Prover.DataStructures
 {
@@ -8,7 +8,7 @@ namespace Prover.DataStructures
     ///  Datatype for the complete first-order formula, including
     ///meta-information like type and name.
     /// </summary>
-    public class WFormula : Derivable
+    public class WFormula : TransformNode// : Derivable
     {
         Formula formula;
         string type;
@@ -62,7 +62,8 @@ namespace Prover.DataStructures
             lexer.AcceptTok(TokenType.FullStop);
 
             var res = new WFormula(form, type, name);
-            res.Derivation = new Derivation("input");
+            //res.Derivation = new Derivation("input");
+            res.SetTransform("Исходная");
             return res;
         }
         /// <summary>
@@ -76,9 +77,13 @@ namespace Prover.DataStructures
             {
                 var negf = new Formula("~", formula);
                 var negW = new WFormula(negf, "negated_conjecture");
-                negW.Derivation = Derivation.FlatDerivation("assume_negation",
-                                          new List<IDerivable> { Derivation },
-                                          "status(cth)");
+                // TODO: Derivation 1
+                //negW.Derivation = Derivation.FlatDerivation("assume_negation",
+                //                          new List<IDerivable> { Derivation },
+                //                          "status(cth)");
+
+                negW.SetTransform("Добавление отрицания", this);
+                negW.SetFromConjectureFlag();
                 return negW;
             }
             return this;
@@ -94,7 +99,9 @@ namespace Prover.DataStructures
 
             foreach (var c in clauses)
             {
-                c.Derivation = Derivation.FlatDerivation("split_conjunct", new List<IDerivable> { wf.Derivation }); //!
+                //TODO: Derivation 2
+                //c.Derivation = Derivation.FlatDerivation("split_conjunct", new List<IDerivable> { wf.Derivation }); //!
+                c.SetTransform("Преобразование в клаузу", wf);
             }
             return clauses;
         }
@@ -112,7 +119,9 @@ namespace Prover.DataStructures
             if (m0 || m1)
             {
                 tmp = new WFormula(f, wf.type);
-                tmp.Derivation = Derivation.FlatDerivation("fof_simplification", new List<IDerivable> { wf });
+                // TODO: Derivation 3
+                //tmp.Derivation = Derivation.FlatDerivation("fof_simplification", new List<IDerivable> { wf });
+                tmp.SetTransform("Упрощение", wf);
                 wf = tmp;//!!!
             }
 
@@ -120,7 +129,9 @@ namespace Prover.DataStructures
             if (m)
             {
                 tmp = new WFormula(f, wf.type);
-                tmp.Derivation = Derivation.FlatDerivation("fof_nnf", new List<IDerivable> { wf });
+                // TODO: Derivation 4
+                //tmp.Derivation = Derivation.FlatDerivation("fof_nnf", new List<IDerivable> { wf });
+                tmp.SetTransform("Преобразование в нормальную форму отрицания", wf);
                 wf = tmp;
             }
 
@@ -128,15 +139,18 @@ namespace Prover.DataStructures
             if (m)
             {
                 tmp = new WFormula(f, wf.type);
-                tmp.Derivation = Derivation.FlatDerivation("shift_quantors", new List<IDerivable> { wf });
+                // TODO: Derivation 5
+                //tmp.Derivation = Derivation.FlatDerivation("shift_quantors", new List<IDerivable> { wf });
+                tmp.SetTransform("Сдвиг кванторов как можно ближе к связываемым формулам", wf);
                 wf = tmp;
             }
             // TODO: ошибка в FormulaVarRename 
-            // f = Formula.FormulaVarRename(f);
+            f = Formula.FormulaVarRename(f);
             if (!f.Equals(wf.Formula))
             {
                 tmp = new WFormula(f, wf.type);
-                tmp.Derivation = Derivation.FlatDerivation("variable_rename", new List<IDerivable> { wf });
+                //  tmp.Derivation = Derivation.FlatDerivation("variable_rename", new List<IDerivable> { wf });
+                tmp.SetTransform("Переименование переменных", wf);
                 wf = tmp;
             }
 
@@ -144,7 +158,8 @@ namespace Prover.DataStructures
             if (!f.Equals(wf.Formula))
             {
                 tmp = new WFormula(f, wf.type);
-                tmp.Derivation = Derivation.FlatDerivation("skolemize", new List<IDerivable> { wf }, "status(esa)");
+                //tmp.Derivation = Derivation.FlatDerivation("skolemize", new List<IDerivable> { wf }, "status(esa)");
+                tmp.SetTransform("Сколемизация", wf);
                 wf = tmp;
             }
 
@@ -152,7 +167,9 @@ namespace Prover.DataStructures
             if (!f.Equals(wf.Formula))
             {
                 tmp = new WFormula(f, wf.type);
-                tmp.Derivation = Derivation.FlatDerivation("shift_quantors", new List<IDerivable> { wf });
+                // tmp.Derivation = Derivation.FlatDerivation("shift_quantors", new List<IDerivable> { wf });
+
+                tmp.SetTransform("Вынос кванторов влево", wf);
                 wf = tmp;
             }
 
@@ -160,10 +177,16 @@ namespace Prover.DataStructures
             if (!f.Equals(wf.Formula))
             {
                 tmp = new WFormula(f, wf.type);
-                tmp.Derivation = Derivation.FlatDerivation("distribute", new List<IDerivable> { wf });
+                tmp.SetTransform("Приведение матрицы формулы к КНФ", wf);
+                //tmp.Derivation = Derivation.FlatDerivation("distribute", new List<IDerivable> { wf });
                 wf = tmp;
             }
             return wf;
+        }
+
+        public override string ToString()
+        {
+            return type + ": " + formula.ToString();
         }
     }
 }

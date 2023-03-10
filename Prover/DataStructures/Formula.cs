@@ -468,7 +468,7 @@ namespace Prover
             if (this.op != other.op) return false;
 
             if (this.IsLiteral) return Literal.Equals(this, other);  //(this as Literal).Equals(other as Literal);
-            
+
 
             //if (this.IsQuantified)
             //    return

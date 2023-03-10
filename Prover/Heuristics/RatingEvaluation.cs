@@ -1,6 +1,5 @@
-﻿using System;
+﻿using Prover.DataStructures;
 using System.Collections.Generic;
-using Prover.DataStructures;
 
 namespace Prover.Heuristics
 {

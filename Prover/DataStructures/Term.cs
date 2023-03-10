@@ -30,7 +30,7 @@ namespace Prover.DataStructures
             }
         }
 
-        public bool Constant
+        public bool IsConstant
         {
             get { return constant; }
             set { constant = value; }
@@ -189,7 +189,7 @@ namespace Prover.DataStructures
         public int Weight(int fweight, int vweight)
         {
             if (IsVar) return vweight;
-            if (Constant) return fweight;
+            if (IsConstant) return fweight;
 
             var res = fweight;
             foreach (var v in subterms)

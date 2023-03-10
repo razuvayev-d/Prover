@@ -16,7 +16,18 @@ namespace Prover.DataStructures
         public bool Negative { get; private set; }
         string name;
         public string Name => name;
-        // TODO: может оставить arguments null?
+        public bool HasVariables
+        {
+            get
+            {
+                foreach (var term in arguments)
+                {
+                    if (term.IsVar) return true;
+                }
+                return false;
+            }
+        }              
+   
         List<Term> arguments = new List<Term>();
 
         public List<Term> Arguments => arguments;
@@ -32,7 +43,7 @@ namespace Prover.DataStructures
             get
             {
                 int sum = 0;
-                for(int i = 0; i < arguments.Count; i++)
+                for (int i = 0; i < arguments.Count; i++)
                     sum += arguments[i].ConstCount;
                 return sum;
             }
@@ -75,7 +86,7 @@ namespace Prover.DataStructures
                 if (!res)
                     return false;
             }
-            if(res) 
+            if (res)
                 return true;
             ((BTSubst)subst).BacktrackToState((subst, btstate));
             return false;

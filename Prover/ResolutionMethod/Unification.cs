@@ -60,7 +60,7 @@ namespace Prover.ResolutionMethod
 
                     substitution.ComposeBinding(t2, t1);
                 }
-                else if (t2.Constant && t1.Constant)
+                else if (t2.IsConstant && t1.IsConstant)
                 {
                     //Сравниваем константы по имени, если совпадают то возвращаем текущую подстановку (not null)
                     if (!t1.name.Equals(t2.name))

@@ -1,20 +1,29 @@
-﻿using Prover.DataStructures;
+﻿using Prover.ClauseSets;
+using Prover.DataStructures;
 using Prover.Heuristics;
 using Prover.ResolutionMethod;
-using System;
 using System.Threading;
-using Prover.ClauseSets;
+using static Prover.Report;
 
 namespace Prover.ProofStates
 {
     internal class SearchParams
     {
-        public EvalStructure heuristics { get; set; }
-        public bool delete_tautologies { get; set; }
-        public bool forward_subsumption { get; set; }
-        public bool backward_subsumption { get; set; }
-        public object literal_selection { get; set; }
+        public EvalStructure heuristics { get; set; } = Prover.Heuristics.Heuristics.PickGiven5;
+        public bool delete_tautologies { get; set; } = false;
+        public bool forward_subsumption { get; set; } = false;
+        public bool backward_subsumption { get; set; } = false;
 
+        public bool index { get; set; } = false;
+        public object literal_selection { get; set; } = false;
+
+        public bool proof { get; set; } = false;
+
+        public bool simplify { get; set; } = false;
+
+        public int timeout { get; set; } = 100;
+
+        public string file { get; set; }
         public SearchParams()
         {
         }
@@ -31,6 +40,11 @@ namespace Prover.ProofStates
             this.backward_subsumption = backward_subsumption;
             this.literal_selection = literal_selection;
         }
+
+        //public override string ToString()
+        //{
+
+        //}
     }
 
 
@@ -42,18 +56,22 @@ namespace Prover.ProofStates
         public ClauseSet processed;
         public CancellationTokenSource token;
 
-        public int initial_clause_count;
-        public int proc_clause_count = 0;
-        public int factor_count = 0;
-        public int resolvent_count = 0;
-        public int tautologies_deleted = 0;
-        public int forward_subsumed = 0;
-        public int backward_subsumed = 0;
+        public Statistics statistics = new Statistics();
+        bool indexed = false;
+
+        //public int initial_clause_count;
+        //public int proc_clause_count = 0;
+        //public int factor_count = 0;
+        //public int resolvent_count = 0;
+        //public int tautologies_deleted = 0;
+        //public int forward_subsumed = 0;
+        //public int backward_subsumed = 0;
         bool silent;
         public ProofState(SearchParams Params, ClauseSet clauses, bool silent = false, bool indexed = false)
         {
             this.Params = Params;
             unprocessed = new HeuristicClauseSet(Params.heuristics);
+            this.indexed = indexed;
             if (indexed)
                 processed = new IndexedClauseSet();
             else
@@ -61,7 +79,7 @@ namespace Prover.ProofStates
             foreach (Clause clause in clauses.clauses)
                 unprocessed.AddClause(clause);
 
-            initial_clause_count = unprocessed.Count;
+            statistics.initial_count = unprocessed.Count;
             this.silent = silent;
         }
 
@@ -74,36 +92,41 @@ namespace Prover.ProofStates
 
             if (Params.delete_tautologies && given_clause.IsTautology)
             {
-                tautologies_deleted++;
+                statistics.tautologies_deleted++;
                 return null;
             }
 
             if (Params.forward_subsumption && Subsumption.Forward(processed, given_clause))
             {
-                forward_subsumed++;
+                statistics.forward_subsumed++;
                 return null;
             }
 
             if (Params.backward_subsumption)
             {
-                backward_subsumed += Subsumption.Backward(given_clause, processed);
+                statistics.backward_subsumed += Subsumption.Backward(given_clause, processed);
             }
 
             if (Params.literal_selection != null)
             {
-                // given_clause.SelectInferenceLits(Params.literal_selection);
+                //given_clause.SelectInferenceLits(Params.literal_selection);
             }
 
             ClauseSet newClauses = new ClauseSet();
             ClauseSet factors = ResControl.ComputeAllFactors(given_clause);
-            factor_count += factors.Count;
+            statistics.factor_count += factors.Count;
 
             newClauses.AddRange(factors);
-            ClauseSet resolvents = ResControl.ComputeAllResolvents(given_clause, processed);
+            ClauseSet resolvents;
 
-           
-            resolvent_count += resolvents.Count;
+            if (indexed)
+                resolvents = ResControl.ComputeAllResolventsIndexed(given_clause, processed as IndexedClauseSet);
+            else
+                resolvents = ResControl.ComputeAllResolvents(given_clause, processed);
 
+
+            statistics.resolvent_count += resolvents.Count;
+            statistics.proc_clause_count++;
             //resolvents.Distinct();
             newClauses.AddRange(resolvents);
 
@@ -137,23 +160,23 @@ namespace Prover.ProofStates
         }
 
 
-        public string StatisticsString()
-        {
-            return string.Format(
-                @"Initial clauses    : {0} 
-Processed clauses  : {1}
-Factors computed   : {2}
-Resolvents computed: {3}
-Tautologies deleted: {4}
-Forward subsumed   : {5}
-Backward subsumed  : {6}",
-                                     initial_clause_count,
-                                     proc_clause_count,
-                                     factor_count,
-                                     resolvent_count,
-                                     tautologies_deleted,
-                                     forward_subsumed,
-                                     backward_subsumed);
-        }
+        //        public string StatisticsString()
+        //        {
+        //            return string.Format(
+        //                @"Initial clauses    : {0} 
+        //Processed clauses  : {1}
+        //Factors computed   : {2}
+        //Resolvents computed: {3}
+        //Tautologies deleted: {4}
+        //Forward subsumed   : {5}
+        //Backward subsumed  : {6}",
+        //                                     initial_clause_count,
+        //                                     proc_clause_count,
+        //                                     factor_count,
+        //                                     resolvent_count,
+        //                                     tautologies_deleted,
+        //                                     forward_subsumed,
+        //                                     backward_subsumed);
+        //        }
     }
 }

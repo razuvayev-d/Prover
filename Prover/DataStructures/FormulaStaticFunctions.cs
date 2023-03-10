@@ -390,8 +390,6 @@ namespace Prover
             }
 
             return res;
-
-            throw new NotImplementedException();
         }
 
         public static Formula FormulaRekSkolemize(Formula f, List<Term> variables, Substitution subst)

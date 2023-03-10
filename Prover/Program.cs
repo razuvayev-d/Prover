@@ -1,5 +1,6 @@
-﻿using Prover.DataStructures;
-using Prover.Heuristics;
+﻿using Prover.ClauseSets;
+using Prover.DataStructures;
+using Prover.Genetic;
 using Prover.ProofStates;
 using Prover.Tokenization;
 using System;
@@ -13,8 +14,6 @@ using System.Text.Json;
 using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
-using Prover.Genetic;
-using Prover.ClauseSets;
 
 namespace Prover
 {
@@ -28,6 +27,7 @@ namespace Prover
 
 
         static bool indexing = false;
+        static bool statonly = false;
         static void Main(string[] args)
         {
             //GeneticBreeding();
@@ -37,25 +37,238 @@ namespace Prover
             //FOF(s);
             //FOFFull(problemsDirectory + "SYN966+1.p");
             // string path = Console.ReadLine();
-            string path = "SYN969+1.p";
-            FOFFull(path);
+            //string path = "SYN918+1.p";// "LCL664+1.001.p";// "SYN969 +1.p";
+            //FOFFull(path);
+
+            var param = IO.ParamsSplit(args);
+
+            FOFFull(param.file, param);
+
             //if (args[0] == "-i") indexing = true;
+            //////if (args[1] == "-so") statonly = true;
             //FOFFull(args[args.Length - 1]);
+
 
             //foreach (string file in files)
             //    FOFFull(file);
-            //Rating(file);
+            ////Rating(file);
 
             //Console.ForegroundColor = ConsoleColor.Green;
             //Console.WriteLine("Solved: {0} / {1}", Count, files.Length);
             //Console.WriteLine("Solved problems:");
-            //Console.ResetColor();   
+            //Console.ResetColor();
 
             foreach (var x in solved)
             {
                 Console.WriteLine(x);
             }
         }
+
+
+
+        static void FOFFull(string Path, SearchParams param = null)
+        {
+
+            Console.WriteLine("\n\nЗадача " + Path);
+            Console.WriteLine();
+            Clause.ResetCounter();
+            string timeoutStatus = string.Empty;
+            param ??= new SearchParams()
+            {
+                //backward_subsumption= true,
+                forward_subsumption = true,
+                heuristics = Heuristics.Heuristics.PickGiven5,
+                //delete_tautologies= true
+            };
+            //param.heuristics = Heuristics.Heuristics.PickGiven5;
+            string TPTPStatus;
+            using (StreamReader sr = new StreamReader(Path))
+            {
+                string text = sr.ReadToEnd();
+                var rg = new Regex("(Status).+(\n)");
+                TPTPStatus = rg.Match(text).Value;
+            }
+
+            var problem = new FOFSpec();
+            problem.Parse(Path);
+
+
+            string formulastr = CreateFormulaList(problem.formulas);
+
+            var cnf = problem.Clausify();
+            string ClausesStr = cnf.ToString();
+
+            var state = new ProofState(param, cnf, false, indexing);
+
+            Stopwatch stopwatch = new Stopwatch();
+
+            CancellationTokenSource token = new CancellationTokenSource();
+            state.token = token;
+            var tsk = new Task<Clause>(() => state.Saturate());
+
+            stopwatch.Restart();
+            tsk.Start();
+            bool complete = tsk.Wait(param.timeout);
+            stopwatch.Stop();
+            token.Cancel();
+
+
+            Clause res;
+            if (complete)
+            {
+                res = tsk.Result;
+
+            }
+            else
+            {
+                res = null;
+                timeoutStatus = " Время истекло";
+            }
+
+            if (res is null)
+            {
+                Console.WriteLine("Доказательство не найдено.", ConsoleColor.Red);
+                Console.WriteLine(timeoutStatus);
+
+                var R = new Report(state, -1)
+                {
+                    Result = "Не теорема. " + timeoutStatus,
+                    //HeuristicName = param.heuristics.ToString()
+                };
+
+                Console.WriteLine("\nСтатистика: \n");
+                R.statistics.ElapsedTime = stopwatch.Elapsed.TotalMilliseconds;
+                Console.WriteLine(R.statistics.ToString());
+
+                string jsn = JsonSerializer.Serialize(R,
+              new JsonSerializerOptions()
+              {
+                  WriteIndented = true,
+                  Encoder = JavaScriptEncoder.UnsafeRelaxedJsonEscaping //JavaScriptEncoder.Create(UnicodeRanges.All) 
+              });
+                using (StreamWriter sw = new StreamWriter(answersDirectory + System.IO.Path.GetFileNameWithoutExtension(Path) + ".json"))
+                {
+
+                    sw.WriteLine(jsn);
+                }
+                return;
+            }
+            else if (res.IsEmpty)
+            {
+                Count++;
+                string verdict = res.IsEmpty ? "STATUS: THEOREM" : "STATUS: NOT THEOREM";
+                var str = new List<string>();
+                //Console.WriteLine(Path);
+                Print(state, res, str);
+
+                str.Reverse();
+                str = str.Distinct().ToList();
+                int i = 1;
+                //Console.WriteLine("\nPROOF: ");
+                //foreach (string s in str)
+                //    Console.WriteLine(i++ + ". " + s);
+
+
+                i = 1;
+                StringBuilder initialCl = new StringBuilder();
+                foreach (var s in cnf.clauses)
+                    initialCl.Append(i++ + ". " + s.ToString() + "\n");
+
+                i = 1;
+                StringBuilder proof = new StringBuilder();
+                foreach (string s in str)
+                    proof.Append(i++ + ". " + s + "\n");
+
+                var report = new Report(state, res.depth)
+                {
+                    ProblemName = System.IO.Path.GetFileName(Path),
+                    Formula = formulastr,
+                    Result = verdict,
+                    TPTPResult = TPTPStatus,
+                    InitialClauses = initialCl.ToString(),
+                    Proof = proof.ToString(),
+                    HeuristicName = param.heuristics.ToString()
+                };
+                report.statistics.ElapsedTime = stopwatch.Elapsed.TotalMilliseconds;
+
+
+                Console.WriteLine("Доказательство найдено!\n", ConsoleColor.Green);
+
+                Console.WriteLine("Прочитанная формула: ");
+                Console.WriteLine(formulastr);
+
+                if (param.simplify)
+                {
+                    var CnfForms = problem.clauses.Select(clause => clause.Parent1).Distinct().ToList();
+
+                    Console.WriteLine("Преобразования в клаузы: ");
+                    for (int j = 0; j < CnfForms.Count; j++)
+                    {
+                        Console.WriteLine("   Формула " + (j + 1));
+                        Console.WriteLine("\n" + CnfForms[j].TransformationPath());
+                        Console.WriteLine();
+                    }
+                }
+
+
+                Console.WriteLine("\nПосле преобразований получены следующие клаузы: ");
+                Console.WriteLine(ClausesStr);
+                if (param.proof)
+                {
+                    Console.WriteLine("\nДоказательство: ");
+                    var str1 = new List<string>();
+                    Print(state, res, str1);
+
+                    str1.Reverse();
+                    str1 = str1.Distinct().ToList();
+                    int k = 1;
+                    foreach (string s in str1)
+                        Console.WriteLine((Convert.ToString(k++)).PadLeft(3) + ". " + s);
+                    Console.WriteLine("Найдена пустая клауза. Доказательство завершено.\n");
+
+                }
+                Console.WriteLine("\nСтатистика: ");
+                Console.WriteLine(report.statistics.ToString());
+            }
+
+
+
+
+
+
+            //string json = JsonSerializer.Serialize(report,
+            //    new JsonSerializerOptions()
+            //    {
+            //        WriteIndented = true,
+            //        Encoder = JavaScriptEncoder.UnsafeRelaxedJsonEscaping //JavaScriptEncoder.Create(UnicodeRanges.All) 
+            //    });
+
+
+
+            //using (StreamWriter sw = new StreamWriter(answersDirectory + System.IO.Path.GetFileNameWithoutExtension(Path) + ".json"))
+            //{
+            //    sw.WriteLine(json);
+            //    //sw.WriteLine("Read formula: ");
+            //    //sw.WriteLine(formulastr);
+            //    //sw.WriteLine("Result: " + verdict);
+            //    //sw.WriteLine("TPTP  : " + TPTPStatus);
+
+            //    //sw.WriteLine("\nStatistics: ");
+            //    //sw.WriteLine("Elapsed time: " + stopwatch.Elapsed.TotalMilliseconds);
+            //    //sw.WriteLine(state.StatisticsString());
+            //    //sw.WriteLine("\nInitial Clauses: ");
+            //    //i = 1;
+            //    //foreach (var s in cnf.clauses)
+            //    //    sw.WriteLine(i++ + ". " + s.ToString());
+
+            //    //sw.WriteLine("\nProof: \n");
+            //    //i = 1;
+            //    //foreach (string s in str)
+            //    //    sw.WriteLine(i++ + ". " + s);
+            //}
+        }
+
+        #region Остальное
 
         static void GeneticBreeding()
         {
@@ -97,7 +310,7 @@ namespace Prover
 
             ClauseSet cnf = problem.Clausify();
 
-            
+
 
             var state = new RatingProofState(param, cnf);
 
@@ -105,14 +318,14 @@ namespace Prover
             Stopwatch stopwatch = new Stopwatch();
             CancellationTokenSource token = new CancellationTokenSource();
             state.token = token;
-            var tsk = new Task<Clause>(()=>state.Saturate());
+            var tsk = new Task<Clause>(() => state.Saturate());
             stopwatch.Restart();
             tsk.Start();
             //var res = state.Saturate();
             bool complete = tsk.Wait(5000);
             stopwatch.Stop();
             token.Cancel();
-           
+
             Clause res;
             if (complete)
             {
@@ -150,7 +363,7 @@ namespace Prover
             {
                 Count++;
                 Console.WriteLine("STATUS: THEOREM");
-            }             
+            }
             else
                 Console.WriteLine("STATUS: NOT THEOREM");
 
@@ -204,190 +417,8 @@ namespace Prover
                 sw.WriteLine(json);
             }
         }
-
-        static void FOFFull(string Path)
-        {
-
-            Console.WriteLine("\n\nЗадача " + Path);
-            Console.WriteLine();
-            Clause.ResetCounter();
-            string timeoutStatus = string.Empty;
-            var param = new SearchParams()
-            { 
-                //backward_subsumption= true,
-                forward_subsumption= true
-                //delete_tautologies= true
-            };
-            param.heuristics = Heuristics.Heuristics.PickGiven5;
-            string TPTPStatus;
-            using (StreamReader sr = new StreamReader(Path))
-            {
-                string text = sr.ReadToEnd();
-                var rg = new Regex("(Status).+(\n)");
-                TPTPStatus = rg.Match(text).Value;
-            }
-
-            var problem = new FOFSpec();
-            problem.Parse(Path);
-
-           
-            string formulastr = CreateFormulaList(problem.formulas);
-
-            var cnf = problem.Clausify();
-            string ClausesStr = cnf.ToString();
-
-            var state = new ProofState(param, cnf, false, indexing);
-
-            Stopwatch stopwatch = new Stopwatch();
-
-            CancellationTokenSource token = new CancellationTokenSource();
-            state.token = token;
-            var tsk = new Task<Clause>(() => state.Saturate());
-
-            stopwatch.Restart();
-            tsk.Start();
-            bool complete = tsk.Wait(500000);
-            stopwatch.Stop();
-            token.Cancel();
-
-
-            Clause res;
-            if (complete)
-            {
-                res = tsk.Result;
-            
-            }
-            else
-            {
-                res = null;
-                timeoutStatus = " Время истекло";
-            }
-
-            if (res is null)
-            {
-                Console.WriteLine("Доказательство не найдено.", ConsoleColor.Red);
-                Console.WriteLine("Не теорема." + timeoutStatus);
-                var R = new Report(state, -1)
-                {
-                    Result = "Не теорема. " + timeoutStatus,
-                    //HeuristicName = param.heuristics.ToString()
-                };
-                string jsn = JsonSerializer.Serialize(R,
-              new JsonSerializerOptions()
-              {
-                  WriteIndented = true,
-                  Encoder = JavaScriptEncoder.UnsafeRelaxedJsonEscaping //JavaScriptEncoder.Create(UnicodeRanges.All) 
-              });
-                using (StreamWriter sw = new StreamWriter(answersDirectory + System.IO.Path.GetFileNameWithoutExtension(Path) + ".json"))
-                {
-
-                    sw.WriteLine(jsn);
-                }
-                return;
-            }
-            else if ( res.IsEmpty)
-            {
-                string verdict = res.IsEmpty ? "STATUS: THEOREM" : "STATUS: NOT THEOREM";
-                var str = new List<string>();
-                //Console.WriteLine(Path);
-                Print(state, res, str);
-
-                str.Reverse();
-                str = str.Distinct().ToList();
-                int i = 1;
-                //Console.WriteLine("\nPROOF: ");
-                //foreach (string s in str)
-                //    Console.WriteLine(i++ + ". " + s);
-
-
-                i = 1;
-                StringBuilder initialCl = new StringBuilder();
-                foreach (var s in cnf.clauses)
-                    initialCl.Append(i++ + ". " + s.ToString() + "\n");
-
-                i = 1;
-                StringBuilder proof = new StringBuilder();
-                foreach (string s in str)
-                    proof.Append(i++ + ". " + s + "\n");
-
-                var report = new Report(state, res.depth)
-                {
-                    ProblemName = System.IO.Path.GetFileName(Path),
-                    Formula = formulastr,
-                    Result = verdict,
-                    TPTPResult = TPTPStatus,
-                    InitialClauses = initialCl.ToString(),
-                    Proof = proof.ToString(),
-                    HeuristicName = param.heuristics.ToString()
-                };
-                report.statistics.ElapsedTime = stopwatch.Elapsed.TotalMilliseconds;
-
-
-                Console.WriteLine("Доказательство найдено!\n", ConsoleColor.Green);
-
-                Console.WriteLine("Прочитанная формула: ");
-                Console.WriteLine(formulastr);
-                Console.WriteLine("\nПосле преобразований получены следующие клаузы: ");
-                Console.WriteLine(ClausesStr);
-                Console.WriteLine("\nДоказательство: ");
-                var str1 = new List<string>();
-                Print(state, res, str1);
-
-                str1.Reverse();
-                str1 = str1.Distinct().ToList();
-                int k = 1;
-                foreach (string s in str1)
-                    Console.WriteLine(k++ + ". " + s);
-                Console.WriteLine("Найдена пустая клауза. Доказательство завершено.\n");
-
-
-                Console.WriteLine("\nСтатистика: ");
-                Console.WriteLine(report.statistics.ToString());
-
-
-
-
-            }
-
-
-
-
-
-
-            //string json = JsonSerializer.Serialize(report,
-            //    new JsonSerializerOptions()
-            //    {
-            //        WriteIndented = true,
-            //        Encoder = JavaScriptEncoder.UnsafeRelaxedJsonEscaping //JavaScriptEncoder.Create(UnicodeRanges.All) 
-            //    });
-
-
-
-            //using (StreamWriter sw = new StreamWriter(answersDirectory + System.IO.Path.GetFileNameWithoutExtension(Path) + ".json"))
-            //{
-            //    sw.WriteLine(json);
-            //    //sw.WriteLine("Read formula: ");
-            //    //sw.WriteLine(formulastr);
-            //    //sw.WriteLine("Result: " + verdict);
-            //    //sw.WriteLine("TPTP  : " + TPTPStatus);
-
-            //    //sw.WriteLine("\nStatistics: ");
-            //    //sw.WriteLine("Elapsed time: " + stopwatch.Elapsed.TotalMilliseconds);
-            //    //sw.WriteLine(state.StatisticsString());
-            //    //sw.WriteLine("\nInitial Clauses: ");
-            //    //i = 1;
-            //    //foreach (var s in cnf.clauses)
-            //    //    sw.WriteLine(i++ + ". " + s.ToString());
-
-            //    //sw.WriteLine("\nProof: \n");
-            //    //i = 1;
-            //    //foreach (string s in str)
-            //    //    sw.WriteLine(i++ + ". " + s);
-            //}
-        }
-
         static void FOFFull1(string Path)
-        {   
+        {
             Clause.ResetCounter();
             string timeoutStatus = string.Empty;
             var param = new SearchParams();
@@ -688,7 +719,7 @@ namespace Prover
         {
             if (res.support.Count == 0)
             {
-                var s = res.Name + ": " + res.ToString() + " [input]";
+                var s = ((res.Name + ": ").PadRight(7) + res.ToString()).PadRight(50) + " [input]";
                 sq.Add(s);
                 return;
             }
@@ -697,7 +728,7 @@ namespace Prover
                 //Console.WriteLine(i++ + ". " + res.Name + ": " + res.ToString() + " from: " + res.support[0] + ", " + res.support[1]);
                 if (res.support.Count == 2)
                 {
-                    sq.Add(res.Name + ": " + res.ToString() + "  [" + res.support[0] + ", " + res.support[1] +"]");
+                    sq.Add(((res.Name + ": ").PadRight(7) + res.ToString()).PadRight(50) + " [" + res.support[0] + ", " + res.support[1] + "]");
                     string Name1, Name2;
                     Name1 = res.support[0];
                     Name2 = res.support[1];
@@ -708,7 +739,7 @@ namespace Prover
                 }
                 if (res.support.Count == 1)
                 {
-                    sq.Add(res.Name + ": " + res.ToString() + " [" + res.support[0]+"]");
+                    sq.Add((res.Name + ": " + res.ToString()).PadRight(50) + " [" + res.support[0] + "]");
                     string Name1, Name2;
                     Name1 = res.support[0];
                     var q = state.processed.clauses.Where(x => x.Name == Name1).ToList()[0];
@@ -761,5 +792,7 @@ namespace Prover
             }
             return sb.ToString();
         }
+
+        #endregion
     }
 }

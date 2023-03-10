@@ -1,14 +1,10 @@
 ﻿using Prover.DataStructures;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Prover.Heuristics
 {
-    public enum HeuristicsFunctions 
-    { 
+    public enum HeuristicsFunctions
+    {
         FIFO,
         NegatePrio,
         SymbolCount,
@@ -109,4 +105,107 @@ namespace Prover.Heuristics
             hEval = (clause) => clause.Weight(fweight, vweight);
         }
     }
+
+    internal class ClauseWeight : ClauseEvaluationFunction
+    {
+        public override int ParamsCount => 3;
+        int fweight;
+        int vweight;
+        public ClauseWeight(Predicate<Clause> prio, int fweight, int vweight, int pos_mult)
+        {
+            this.fweight = fweight;
+            this.vweight = vweight;
+            name = string.Format("ClauseEvalFun(%s, %s)", fweight, vweight);
+            hEval = (clause) =>
+            {
+                if (prio(clause))  
+                    return clause.PositiveWeight(fweight, vweight, pos_mult); 
+                return int.MaxValue;
+            };
+        }
+    }
+
+
+    internal class LIFOEvaluationPrio : ClauseEvaluationFunction
+    {
+        public override int ParamsCount => 1;
+        int FIFOCounter;
+        public LIFOEvaluationPrio(Predicate<Clause> prio)
+        {
+            name = "FIFOEval";
+            FIFOCounter = 0;
+            hEval = (clause) => {
+                if (prio(clause)) 
+                    return --FIFOCounter;
+                return int.MaxValue;
+            };
+        }
+    }
+
+    internal class FIFOEvaluationPrio : ClauseEvaluationFunction
+    {
+        public override int ParamsCount { get { return 0; } }
+        int FIFOCounter;
+        public FIFOEvaluationPrio(Predicate<Clause> prio)
+        {
+            name = "FIFOEval";
+            FIFOCounter = 0;
+            hEval = (clause) => 
+            {
+                if (prio(clause)) 
+                    return ++FIFOCounter;
+                return int.MaxValue;
+            };
+        }
+    }
+
+    internal class ByLiteralNumber : ClauseEvaluationFunction
+    {
+        public override int ParamsCount => 0;
+
+        public ByLiteralNumber(Predicate<Clause> prio)
+        {
+            hEval = (clause) =>
+            {
+                if (prio(clause))
+                    return clause.Length;
+                return int.MaxValue;
+            };
+        }
+    }
+    /// <summary>
+    /// Отдаем предпочление самым длинным выводам
+    /// </summary>
+    internal class ByDerivationDepth: ClauseEvaluationFunction
+    {
+        public override int ParamsCount => 0;
+        public ByDerivationDepth(Predicate<Clause> prio)
+        {
+            hEval = (clause) =>
+            {
+                if (prio(clause))
+                    return int.MaxValue - clause.depth; //так как меньше -- лучше. 
+                return int.MaxValue;
+            };
+        }
+    }
+    /// <summary>
+    /// Отдаем предпочление самым коротким выводам
+    /// </summary>
+    internal class ByDerivationSize : ClauseEvaluationFunction
+    {
+        public override int ParamsCount => 0;
+        public ByDerivationSize(Predicate<Clause> prio)
+        {
+            hEval = (clause) =>
+            {
+                if (prio(clause))
+                    return clause.depth; 
+                return int.MaxValue;
+            };
+        }
+    }
+
+
+
 }

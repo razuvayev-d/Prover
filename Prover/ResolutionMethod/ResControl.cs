@@ -1,7 +1,7 @@
-﻿using Prover.DataStructures;
+﻿using Prover.ClauseSets;
+using Prover.DataStructures;
 using System.Collections.Generic;
 using System.Diagnostics;
-using Prover.ClauseSets;
 
 namespace Prover.ResolutionMethod
 {
@@ -20,6 +20,25 @@ namespace Prover.ResolutionMethod
                 for (int i = 0; i < clauseres.Count; i++)
                 {
                     Clause resolvent = Resolution.Apply(clause, lit, clauseres[i], indices[i]);
+                    if (resolvent is not null)
+                        res.AddClause(resolvent);
+                }
+            }
+            return res;
+        }
+
+
+        public static ClauseSet ComputeAllResolventsIndexed(Clause clause, IndexedClauseSet clauseSet)
+        {
+            ClauseSet res = new ClauseSet();
+            for (int lit = 0; lit < clause.Length; lit++)
+            {
+
+                var partners = clauseSet.GetResolutionLiterals(clause[lit]);
+
+                foreach (var p in partners)
+                {
+                    var resolvent = Resolution.Apply(clause, lit, p.Clause, p.Position);
                     if (resolvent is not null)
                         res.AddClause(resolvent);
                 }

@@ -1,6 +1,5 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Prover.Genetic;
-using Prover;
 
 namespace ProverTests
 {
@@ -23,7 +22,7 @@ cnf(dup, axiom, p(a)|q(a)|p(a)).
             c2 = Individual.GreateRandom(6);
             c3 = Individual.GreateRandom(6);
             c4 = Individual.GreateRandom(6);
-            c5 =   Individual.GreateRandom(6);
+            c5 = Individual.GreateRandom(6);
         }
         [TestMethod]
         public void InsignificantOuterBrackets()

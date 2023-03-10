@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Text;
 
 namespace Prover.DataStructures
 {
@@ -73,9 +74,14 @@ namespace Prover.DataStructures
     public class Derivation : IDerivable
     {
         string op;
+        List<IDerivable> parentsList;
+        string status;
+
         public Derivation(string op, List<IDerivable> parents = null, string status = "status(thm)")
         {
             this.op = op;
+            this.parentsList = parents;
+            this.status = status;
         }
 
         public static Derivation FlatDerivation(string op, List<IDerivable> parents, string status = "status(thm)")
@@ -85,6 +91,17 @@ namespace Prover.DataStructures
                 parentList.Add(new Derivation("reference", new List<IDerivable> { p }));
 
             return new Derivation(op, parentList, status);
+        }
+
+        public string TransformPath()
+        {
+            StringBuilder sb = new StringBuilder();
+            var list = new List<string>();
+
+            while (true)
+            {
+                //list.Add();
+            }
         }
     }
 

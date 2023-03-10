@@ -3,7 +3,6 @@ using Prover.Tokenization;
 using System;
 using System.Collections.Generic;
 using System.Text;
-using Prover.ClauseSets;
 
 namespace Prover.ClauseSets
 {

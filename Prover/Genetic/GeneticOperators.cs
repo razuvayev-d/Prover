@@ -1,10 +1,7 @@
 ﻿//using Porver.Genetic;
-using Prover.Heuristics;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Prover.Genetic
 {
@@ -28,7 +25,7 @@ namespace Prover.Genetic
                         {
                             individual.InvalidFitness = true;
                             if (param is string)
-                            {                               
+                            {
                                 param = Fitness.GetRandomString();
                             }
                             else if (param is double)
@@ -72,7 +69,7 @@ namespace Prover.Genetic
             //nonmatches.AddRange(individual2.genes);
 
             //Для всех совпадений перемешиваем гены
-            foreach(var match in matches)
+            foreach (var match in matches)
                 newInd.genes.Add(cxParams(match, favor));
             Random r = new Random();
             while (newInd.genes.Count < individual1.genes.Count)
@@ -108,10 +105,10 @@ namespace Prover.Genetic
 
             int selectset = (int)Math.Round((double)n * elitism);
             List<Individual> pop = new List<Individual>();
-            while(pop.Count < n)
+            while (pop.Count < n)
             {
                 var set = SelectRandomExt(population.individuals, selectset);
-                pop.Add(set.MaxBy(x=>x.Fitness));
+                pop.Add(set.MaxBy(x => x.Fitness));
             }
             return new Population(pop);
         }
@@ -120,7 +117,7 @@ namespace Prover.Genetic
         {
             int end = list.Count;
             var res = new List<Individual>();
-            while(res.Count < n)    
+            while (res.Count < n)
                 res.Add(list[rand.Next(0, end)]);
             return res;
         }

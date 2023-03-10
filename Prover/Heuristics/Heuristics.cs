@@ -1,5 +1,4 @@
-﻿using Prover.DataStructures;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 
 namespace Prover.Heuristics
 {
@@ -59,9 +58,9 @@ namespace Prover.Heuristics
     //    }
     //}
 
-    static class Heuristics
+    public static class Heuristics
     {
-        public static EvalStructure FIFOEval { get; } =  new EvalStructure(new FIFOEvaluation(), 1);
+        public static EvalStructure FIFOEval { get; } = new EvalStructure(new FIFOEvaluation(), 1);
         /// <summary>
         /// Стратегия предпочтения более коротких дизъюнктов. Меньше символов -- лучше. Требует чтобы была включена подстановка.
         /// </summary>

@@ -1,10 +1,7 @@
 ﻿//using Porver.Genetic;
-using Prover.Heuristics;
 using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
-using System.Text;
 using System.Text.Encodings.Web;
 using System.Text.Json;
 
@@ -40,7 +37,7 @@ namespace Prover.Genetic
         public static Population CreateRandom(int n = 100, int genesLength = 5)
         {
             var ret = new Population();
-            for(int i = 0; i < n;i++)
+            for (int i = 0; i < n; i++)
             {
                 ret.individuals.Add(Individual.GreateRandom(genesLength));
             }
@@ -68,6 +65,6 @@ namespace Prover.Genetic
 
             var popul = JsonSerializer.Deserialize<Population>(jsn);
             return popul;
-        }    
+        }
     }
 }

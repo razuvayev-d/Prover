@@ -1,8 +1,6 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
-using Prover.ClauseSets;
 using Prover.DataStructures;
 using Prover.ResolutionMethod;
-using Prover.Tokenization;
 
 namespace ProverTests
 {

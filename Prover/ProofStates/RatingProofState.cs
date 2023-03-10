@@ -1,12 +1,9 @@
-﻿using Prover.DataStructures;
+﻿using Prover.ClauseSets;
+using Prover.DataStructures;
 using Prover.Heuristics;
-using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Threading;
-using System.Threading.Tasks;
-using Prover.ClauseSets;
 
 
 namespace Prover.ProofStates
@@ -125,7 +122,7 @@ namespace Prover.ProofStates
 
             var M = unprocessed;
             List<Clause> resolvents = new List<Clause>();
-   
+
             List<Clause> Skplus = new List<Clause>();
             //List<List<Clause>> S = new List<List<Clause>>();
 
@@ -144,7 +141,7 @@ namespace Prover.ProofStates
                 n = unprocessed.Count;
                 i = 0;
                 j = n - 1;
-                
+
             step32:
                 if (ClauseArray.Count < 2) return null;
                 Clause resolvent = ResolutionMethod.Resolution.Apply(ClauseArray[i], ClauseArray[j]);
@@ -172,8 +169,9 @@ namespace Prover.ProofStates
                             }
                             else
                             {
-                          
-                                if (unprocessed.Count > 0) {
+
+                                if (unprocessed.Count > 0)
+                                {
                                     var a = ClauseArray[i];
                                     var b = ClauseArray[j];
 

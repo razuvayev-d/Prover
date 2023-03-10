@@ -1,5 +1,4 @@
-﻿using Prover.Genetic;
-using Prover.DataStructures;
+﻿using Prover.DataStructures;
 using Prover.Heuristics;
 using Prover.ProofStates;
 using Prover.Tokenization;
@@ -8,7 +7,6 @@ using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
@@ -53,7 +51,7 @@ namespace Prover.Genetic
             {
                 if (TrySolve(file, individual, timeout)) Interlocked.Increment(ref result);
             }
-            
+
             return result;
         }
 
@@ -104,7 +102,7 @@ namespace Prover.Genetic
                 //    Console.WriteLine("Solved: " + Path);
                 //    Console.ResetColor(); // сбрасываем в стандарт
                 //}
-             
+
             }
             else
             {
@@ -117,7 +115,7 @@ namespace Prover.Genetic
                 //    Console.WriteLine("Timeout: " + Path);
                 //    Console.ResetColor(); // сбрасываем в стандарт
                 //}
-                
+
             }
 
             if (res is null)
@@ -139,7 +137,7 @@ namespace Prover.Genetic
         public int Size { get; set; } = 100;
         public int GenesLengts { get; set; } = 5;
         public GeneticMode Mode { get; set; } = GeneticMode.CreateNewPopulation;
-        public string PopulationFileName {get; set;} = null;
+        public string PopulationFileName { get; set; } = null;
         public double Favor { get; set; } = 0.7;
 
         public double probWeight { get; set; } = 0.5;
@@ -218,7 +216,7 @@ namespace Prover.Genetic
                     {
                         newIndividuals.Add(GeneticOperators.Crossover(population.individuals[i], population.individuals[j], Options.Favor));
                     }
-                
+
                 newIndividuals.Distinct();
                 List<int> fitness = new List<int>();
 
@@ -227,7 +225,7 @@ namespace Prover.Genetic
                 //{
                 //    newIndividuals[i].Fitness = Fitness.Calculate(newIndividuals[i]);
                 //}
-               
+
 
                 Parallel.For(0, newIndividuals.Count, poptions, i =>
                 {
@@ -244,7 +242,7 @@ namespace Prover.Genetic
                 population.MinFitness = newIndividuals.Select(x => x.Fitness).Min();
                 population.MaxFitness = newIndividuals.Select(x => x.Fitness).Max();
 
-                using (StreamWriter wr = new StreamWriter("averF.txt", append : true)) 
+                using (StreamWriter wr = new StreamWriter("averF.txt", append: true))
                 {
                     wr.WriteLine(generation + " : " + population.AverageFitness);
                 }

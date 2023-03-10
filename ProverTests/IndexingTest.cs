@@ -1,9 +1,8 @@
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using Prover.ClauseSets;
 using Prover.DataStructures;
 using Prover.Tokenization;
-using Prover;
 using System.Collections.Generic;
-using Prover.ResolutionMethod;
 
 namespace ProverTests
 {
@@ -38,7 +37,7 @@ cnf(c9,axiom, p(X,Y)).
             c9 = Clause.ParseClause(lex);
         }
 
-         
+
         [TestMethod]
         public void TestResolutionInsertRemove()
         {
@@ -83,7 +82,7 @@ cnf(c9,axiom, p(X,Y)).
             var cands = index.GetResolutionLiterals(lit);
 
             Assert.AreEqual(cands.Count, 8);
-            
+
             foreach (var cand in cands)
             {
                 var l = cand.Clause.Literals[cand.Position];

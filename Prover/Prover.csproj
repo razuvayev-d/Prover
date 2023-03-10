@@ -7,6 +7,8 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="DataStructures\Class1.cs" />
+    <Compile Remove="DataStructures\NodeTransform.cs" />
     <Compile Remove="Heuristics\FIFOEvaluation.cs" />
   </ItemGroup>
 
