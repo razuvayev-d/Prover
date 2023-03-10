@@ -728,7 +728,8 @@ namespace Prover
                 //Console.WriteLine(i++ + ". " + res.Name + ": " + res.ToString() + " from: " + res.support[0] + ", " + res.support[1]);
                 if (res.support.Count == 2)
                 {
-                    sq.Add(((res.Name + ": ").PadRight(7) + res.ToString()).PadRight(50) + " [" + res.support[0] + ", " + res.support[1] + "]");
+                    string substStr = res.Sbst is null||res.Sbst.subst.Count==0? "" : " использована подстановка " + res.Sbst.ToString();
+                    sq.Add(((res.Name + ": ").PadRight(7) + res.ToString()).PadRight(50) + (" [" + (res.Parent1 as Clause).Name + ", " + (res.Parent2 as Clause).Name + "]").PadRight(15) + substStr);
                     string Name1, Name2;
                     Name1 = res.support[0];
                     Name2 = res.support[1];

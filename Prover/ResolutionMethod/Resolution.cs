@@ -23,16 +23,16 @@ namespace Prover.ResolutionMethod
         {
             var l1 = clause1[lit1];
             var l2 = clause2[lit2];
-            if (l1 == null || l2 == null)
+            if (l1 is null || l2 is null)
                 throw new Exception("Error in Resolution.Apply: literals are null.");
 
             if (l1.Negative == l2.Negative) return null;
 
-            //TODO: Разобраться почему этого не было
-            //if (l1.Name != l2.Name) return null;
+            //TODO: Разобраться почему этого не было (потому что спрятано в MGU)
+            //if (l1.Name != l2.Name)              return null;
 
             Substitution sigma = Unification.MGU(l1, l2);
-            if (sigma == null) return null;
+            if (sigma is null) return null;
 
             List<Literal> lits1 = new List<Literal>();
 
@@ -65,6 +65,7 @@ namespace Prover.ResolutionMethod
             res.AddRange(lits1);
             res.RemoveDupLits();
             res.rationale = "resolution";
+            //TODO: убрать, так как эта функциональность поддерживается через TransformNode
             res.support.Add(clause1.Name);
             res.support.Add(clause2.Name);
 
@@ -73,7 +74,7 @@ namespace Prover.ResolutionMethod
 
             res.depth = Math.Max(clause1.depth, clause2.depth) + 1;
             res.subst.AddAll(sigma);
-
+            res.SetTransform("resolution", clause1, clause2, sigma);
             return res;
         }
 

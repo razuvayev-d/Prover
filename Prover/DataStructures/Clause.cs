@@ -247,6 +247,10 @@ namespace Prover.DataStructures
                 result.literals.Add(literals[i].DeepCopy());
             if (subst != null)
                 result.subst = subst.DeepCopy();
+            result.Parent1 = Parent1;
+            result.Parent2 = Parent2;
+            if (Sbst != null)
+                result.Sbst = Sbst.DeepCopy();
             return result;
         }
 
