@@ -3,14 +3,29 @@ using System;
 
 namespace Prover.Heuristics
 {
+
+    /// <summary>
+    /// Старая версия -- не поддерживает функции приоритетов
+    /// </summary>
+    //public enum HeuristicsFunctions
+    //{
+    //    FIFO,
+    //    NegatePrio,
+    //    SymbolCount,
+    //    LIFO,
+    //    ConstPrio
+    //}
     public enum HeuristicsFunctions
     {
-        FIFO,
-        NegatePrio,
-        SymbolCount,
-        LIFO,
-        ConstPrio
+        FIFOPrio,
+        ClauseWeight,
+        LIFOPrio,
+        ByLiteralNumber,
+        ByDerivationDepth,
+        ByDerivationSize
     }
+
+
     public delegate int Heuristic(Clause clause);
     public abstract class ClauseEvaluationFunction
     {

@@ -1,4 +1,5 @@
 ﻿//using Porver.Genetic;
+using Prover.Heuristics;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -15,7 +16,7 @@ namespace Prover.Genetic
 
             for (int i = 0; i < individual.genes.Count; i++)
             {
-                if (random.NextDouble() < probWeightMutates)
+                if (random.NextDouble() < probWeightMutates) //мутация весовой функции
                 {
                     int n = individual.genes[i].Count;
                     for (int j = 0; j < n; j++)
@@ -26,7 +27,7 @@ namespace Prover.Genetic
                             individual.InvalidFitness = true;
                             if (param is string)
                             {
-                                param = Fitness.GetRandomString();
+                                param = PriorityFunctions.GetRandomFunctionName(); // Fitness.GetRandomString();
                             }
                             else if (param is double)
                             {

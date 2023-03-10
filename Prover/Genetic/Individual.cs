@@ -1,4 +1,5 @@
-﻿using Prover.Heuristics;
+﻿using Prover.DataStructures;
+using Prover.Heuristics;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -35,9 +36,11 @@ namespace Prover.Genetic
             Random r = new Random();
             string name = ((HeuristicsFunctions)r.Next(MemberCount)).ToString();
             int weight = r.Next(5, 10);
+            string prio = PriorityFunctions.GetRandomFunctionName();
             int par1 = r.Next(0, 10);
             int par2 = r.Next(1000, 2000) % 10;
-            return new List<object> { name, weight, par1, par2 };
+            int par3 = r.Next(0, 10);
+            return new List<object> { name, weight, prio, par1, par2, par3};
         }
         [Serializable]
         public class FunctionWithParams
@@ -86,23 +89,60 @@ namespace Prover.Genetic
         //	LIFO,
         //	ConstPrio
         //}
+
+        //public enum HeuristicsFunctions
+        //{
+        //    FIFOPrio,
+        //    ClauseWeight,
+        //    SymbolCountPrio,
+        //    LIFOPrio,
+        //    ByLiteralNumber,
+        //    ByDerivationDepth,
+        //    ByDerivationSize
+        //}
         private (ClauseEvaluationFunction, int) CreateEvalFunct(List<object> param)
         {
+            //switch ((string)param[0])
+            //{
+            //    case "FIFO":
+            //        return (new FIFOEvaluation(), (int)param[1]);
+            //    case "LIFO":
+            //        return (new LIFOEvaluation(), (int)param[1]);
+            //    case "NegatePrio":
+            //        return (new NegatePrio((int)param[2]), (int)param[1]);
+            //    case "ConstPrio":
+            //        return (new ConstPrio((int)param[2]), (int)param[1]);
+            //    case "SymbolCount":
+            //        return /*(new FIFOEvaluation(), (int)param[1]); //*/(new SymbolCountEvaluation((int)param[2], (int)param[3]), (int)param[1]);
+            //    default: throw new ArgumentException(param[0].ToString());
+            //}
+            Predicate<Clause> priof = PriorityFunctions.PriorityFunctionSwitch(param[2] as string);
             switch ((string)param[0])
-            {
-                case "FIFO":
-                    return (new FIFOEvaluation(), (int)param[1]);
-                case "LIFO":
-                    return (new LIFOEvaluation(), (int)param[1]);
-                case "NegatePrio":
-                    return (new NegatePrio((int)param[2]), (int)param[1]);
-                case "ConstPrio":
-                    return (new ConstPrio((int)param[2]), (int)param[1]);
-                case "SymbolCount":
-                    return /*(new FIFOEvaluation(), (int)param[1]); //*/(new SymbolCountEvaluation((int)param[2], (int)param[3]), (int)param[1]);
+            {             
+                case "FIFOPrio":
+                    return (new FIFOEvaluationPrio(priof), (int)param[1]);
+                case "LIFOPrio":
+                    return (new LIFOEvaluationPrio(priof), (int)param[1]);
+                case "ClauseWeight":
+                    return (new ClauseWeight(priof, (int)param[3], (int)param[4], (int)param[5]), (int)param[1]);
+                case "ByDerivationDepth":
+                    return (new ByDerivationDepth(priof), (int)param[1]);
+                case "ByLiteralNumber":
+                    return /*(new FIFOEvaluation(), (int)param[1]); //*/(new ByLiteralNumber(priof), (int)param[1]);
+                case "ByDerivationSize":
+                    return (new ByDerivationSize(priof), (int)param[1]);
                 default: throw new ArgumentException(param[0].ToString());
             }
+
         }
+
+
+        //    FIFOPrio,
+        //    ClauseWeight,
+        //    LIFOPrio,
+        //    ByLiteralNumber,
+        //    ByDerivationDepth,
+        //    ByDerivationSize
 
         public override string ToString()
         {

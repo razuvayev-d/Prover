@@ -66,14 +66,14 @@ namespace Prover.ResolutionMethod
             res.RemoveDupLits();
             res.rationale = "resolution";
             //TODO: убрать, так как эта функциональность поддерживается через TransformNode
-            res.support.Add(clause1.Name);
-            res.support.Add(clause2.Name);
+            //res.support.Add(clause1.Name);
+            //res.support.Add(clause2.Name);
 
-            clause1.supportsClauses.Add(res.Name);
-            clause2.supportsClauses.Add(res.Name);
+            //clause1.supportsClauses.Add(res.Name);
+            //clause2.supportsClauses.Add(res.Name);
 
             res.depth = Math.Max(clause1.depth, clause2.depth) + 1;
-            res.subst.AddAll(sigma);
+            //res.subst.AddAll(sigma);
             res.SetTransform("resolution", clause1, clause2, sigma);
             return res;
         }

@@ -9,11 +9,42 @@ namespace Prover.Heuristics
 {
     internal static class PriorityFunctions
     {
+
+        public static List<string> PriorityFunctionsList = new List<string> { "PreferHorn", "PreferNonHorn", "PreferGround",
+            "PreferNonGround", "PreferGoals", "PreferNonGoals", "PreferUnits",
+            "PreferNonUnits", "PreferAll", "SimulateSOS" };
+        static Random r = new Random();
+        public static string GetRandomFunctionName()
+        {
+            return PriorityFunctionsList[r.Next(PriorityFunctionsList.Count)];
+        }
+
+
+        public static Predicate<Clause> PriorityFunctionSwitch(string name)
+        {
+            switch (name)
+            {
+                case "PreferHorn": return PreferHorn;
+                case "PreferNonHorn": return PreferNonHorn;
+                case "PreferGround": return PreferGround;
+                case "PreferNonGround": return PreferNonGround;
+                case "PreferGoals": return PreferGoals;
+                case "PreferNonGoals": return PreferNonGoals;
+                case "PreferUnits": return PreferUnits;
+                case "PreferNonUnits": return PreferNonUnits;
+                case "PreferAll": return PreferAll;
+                case "SimulateSOS": return SimulateSOS;
+                default: 
+                    throw new Exception("Ошибка имени функции приоритета.");
+
+            }
+        }
         /// <summary>
         /// Предпочитать хорновский дизъюнкты (не более 1 положительного литерала)
         /// </summary>
         /// <param name="clause"></param>
         /// <returns></returns>
+        /// 
         public static bool PreferHorn(Clause clause)
         {
             int countPositive = 0;

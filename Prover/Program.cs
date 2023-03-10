@@ -30,7 +30,7 @@ namespace Prover
         static bool statonly = false;
         static void Main(string[] args)
         {
-            //GeneticBreeding();
+            GeneticBreeding();
 
             string[] files = Directory.GetFiles(problemsDirectory);
             var s = problemsDirectory + "SYN941+1.p";
@@ -717,34 +717,34 @@ namespace Prover
 
         static void Print(ProofState state, Clause res, List<string> sq)
         {
-            if (res.support.Count == 0)
-            {
-                var s = ((res.Name + ": ").PadRight(7) + res.ToString()).PadRight(50) + " [input]";
-                sq.Add(s);
-                return;
-            }
-            else
+            //if (res.support.Count == 0)
+            //{
+            //    var s = ((res.Name + ": ").PadRight(7) + res.ToString()).PadRight(50) + " [input]";
+            //    sq.Add(s);
+            //    return;
+            //}
+            //else
             {
                 //Console.WriteLine(i++ + ". " + res.Name + ": " + res.ToString() + " from: " + res.support[0] + ", " + res.support[1]);
-                if (res.support.Count == 2)
+                if (res.Parent1 is not null && res.Parent2 is not null)
                 {
-                    string substStr = res.Sbst is null||res.Sbst.subst.Count==0? "" : " использована подстановка " + res.Sbst.ToString();
+                    string substStr = res.Sbst is null||res.Sbst.subst.Count == 0? "" : " использована подстановка " + res.Sbst.ToString();
                     sq.Add(((res.Name + ": ").PadRight(7) + res.ToString()).PadRight(50) + (" [" + (res.Parent1 as Clause).Name + ", " + (res.Parent2 as Clause).Name + "]").PadRight(15) + substStr);
-                    string Name1, Name2;
-                    Name1 = res.support[0];
-                    Name2 = res.support[1];
-                    var q = state.processed.clauses.Where(x => x.Name == Name1).ToList()[0];
-                    Print(state, q, sq);
-                    q = state.processed.clauses.Where(x => x.Name == Name2).ToList()[0];
-                    Print(state, q, sq);
+                    //string Name1, Name2;
+                    //Name1 = res.support[0];
+                    //Name2 = res.support[1];
+                    //var q = state.processed.clauses.Where(x => x.Name == Name1).ToList()[0];
+                    Print(state, res.Parent1 as Clause, sq);
+                    //q = state.processed.clauses.Where(x => x.Name == Name2).ToList()[0];
+                    Print(state, res.Parent2 as Clause, sq);
                 }
-                if (res.support.Count == 1)
+                else
                 {
-                    sq.Add((res.Name + ": " + res.ToString()).PadRight(50) + " [" + res.support[0] + "]");
-                    string Name1, Name2;
-                    Name1 = res.support[0];
-                    var q = state.processed.clauses.Where(x => x.Name == Name1).ToList()[0];
-                    Print(state, q, sq);
+                    sq.Add((res.Name + ": " + res.ToString()).PadRight(50) + " [input]");// " [" + res.Parent1 + "]");
+                    //string Name1, Name2;
+                    //Name1 = res.support[0];
+                    //var q = state.processed.clauses.Where(x => x.Name == Name1).ToList()[0];
+                    //Print(state, res.Parent1 as Clause, sq);
 
                 }
 
