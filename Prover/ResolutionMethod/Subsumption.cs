@@ -3,7 +3,7 @@ using Prover.DataStructures;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace Prover.ResolutionMethod
+namespace Prover.ResolutionMethod 
 {
     public static class Subsumption
     {

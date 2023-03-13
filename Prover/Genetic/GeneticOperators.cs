@@ -6,8 +6,6 @@ using System.Linq;
 
 namespace Prover.Genetic
 {
-
-
     public static class GeneticOperators
     {
         public static void Mutation(Individual individual, double probWeightMutates, double probParamMutates)
@@ -35,12 +33,25 @@ namespace Prover.Genetic
                             }
                             else if (param is int)
                             {
-                                param = random.Next(1, (int)param / 2 > 2 ? (int)param / 2 + 1 : 2);
+                                param = random.NextDouble() > 0.5? (int)param + 2 : (int)param - 2;//RandomNormalDistribution((int)param, 1 + (int)param / 5);//random.Next(1, (int)param / 2 > 2 ? (int)param / 2 + 1 : 2);
+
                             }
                         }
                     }
                 }
             }
+        }
+
+        public static int RandomNormalDistribution(int mean, int std)
+        {
+            Random rand = new Random(); //reuse this if you are generating many
+            double u1 = 1.0 - rand.NextDouble(); //uniform(0,1] random doubles
+            double u2 = 1.0 - rand.NextDouble();
+            double randStdNormal = Math.Sqrt(-2.0 * Math.Log(u1)) *
+                         Math.Sin(2.0 * Math.PI * u2); //random normal(0,1)
+            double randNormal =
+                         mean + std * randStdNormal; //random normal(mean,stdDev^2)
+            return Convert.ToInt32(randNormal);
         }
 
         public static Individual Crossover(Individual individual1, Individual individual2, double favor)

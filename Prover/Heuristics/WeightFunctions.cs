@@ -48,7 +48,8 @@ namespace Prover.Heuristics
         }
     }
 
-
+    #region obsolete clause evaluetion classes (without priority function support)
+    [Obsolete]
     internal class NegatePrio : ClauseEvaluationFunction
     {
         public override int ParamsCount { get { return 1; } }
@@ -66,6 +67,7 @@ namespace Prover.Heuristics
         }
     }
 
+    [Obsolete]
     internal class ConstPrio : ClauseEvaluationFunction
     {
         public override int ParamsCount { get { return 1; } }
@@ -83,6 +85,7 @@ namespace Prover.Heuristics
         }
     }
 
+    [Obsolete]
     internal class FIFOEvaluation : ClauseEvaluationFunction
     {
         public override int ParamsCount { get { return 0; } }
@@ -95,6 +98,7 @@ namespace Prover.Heuristics
         }
     }
 
+    [Obsolete]
     internal class LIFOEvaluation : ClauseEvaluationFunction
     {
         public override int ParamsCount { get { return 0; } }
@@ -107,6 +111,7 @@ namespace Prover.Heuristics
         }
     }
 
+    [Obsolete]
     internal class SymbolCountEvaluation : ClauseEvaluationFunction
     {
         public override int ParamsCount { get { return 2; } }
@@ -121,106 +126,128 @@ namespace Prover.Heuristics
         }
     }
 
-    internal class ClauseWeight : ClauseEvaluationFunction
+    #endregion
+
+
+    [Serializable]
+    public abstract class ClauseEvaluationFunctionWithPrio : ClauseEvaluationFunction
+    {
+        public Predicate<Clause> prio { get; protected set; }
+    }
+
+    [Serializable]
+    internal class ClauseWeight : ClauseEvaluationFunctionWithPrio
     {
         public override int ParamsCount => 3;
-        int fweight;
-        int vweight;
+        public int fweight { get; }
+        public int vweight { get; }
+        public int pos_mult { get; }
+
         public ClauseWeight(Predicate<Clause> prio, int fweight, int vweight, int pos_mult)
         {
+            this.prio = prio;
             this.fweight = fweight;
             this.vweight = vweight;
+            this.pos_mult = pos_mult;
+
             name = string.Format("ClauseEvalFun(%s, %s)", fweight, vweight);
             hEval = (clause) =>
             {
-                if (prio(clause))  
-                    return clause.PositiveWeight(fweight, vweight, pos_mult); 
+                if (prio(clause))
+                    return clause.PositiveWeight(fweight, vweight, pos_mult);
                 return int.MaxValue;
             };
         }
     }
 
-
-    internal class LIFOEvaluationPrio : ClauseEvaluationFunction
+    [Serializable]
+    internal class LIFOEvaluationPrio : ClauseEvaluationFunctionWithPrio
     {
         public override int ParamsCount => 1;
         int FIFOCounter;
         public LIFOEvaluationPrio(Predicate<Clause> prio)
         {
+            this.prio = prio;
             name = "FIFOEval";
             FIFOCounter = 0;
-            hEval = (clause) => {
-                if (prio(clause)) 
+            hEval = (clause) =>
+            {
+                if (prio(clause))
                     return --FIFOCounter;
-                return int.MaxValue;
+                return 10000 + --FIFOCounter;
             };
         }
     }
 
-    internal class FIFOEvaluationPrio : ClauseEvaluationFunction
+    [Serializable]
+    internal class FIFOEvaluationPrio : ClauseEvaluationFunctionWithPrio
     {
         public override int ParamsCount { get { return 0; } }
         int FIFOCounter;
         public FIFOEvaluationPrio(Predicate<Clause> prio)
         {
+            this.prio = prio;
             name = "FIFOEval";
             FIFOCounter = 0;
-            hEval = (clause) => 
+            hEval = (clause) =>
             {
-                if (prio(clause)) 
+                if (prio(clause))
                     return ++FIFOCounter;
-                return int.MaxValue;
+                return 10000 + ++FIFOCounter;
             };
         }
     }
-
-    internal class ByLiteralNumber : ClauseEvaluationFunction
+    [Serializable]
+    internal class ByLiteralNumber : ClauseEvaluationFunctionWithPrio
     {
         public override int ParamsCount => 0;
 
         public ByLiteralNumber(Predicate<Clause> prio)
         {
+            this.prio = prio;
             hEval = (clause) =>
             {
                 if (prio(clause))
                     return clause.Length;
-                return int.MaxValue;
+                return 10000 + clause.Length;
             };
         }
     }
     /// <summary>
     /// Отдаем предпочление самым длинным выводам
     /// </summary>
-    internal class ByDerivationDepth: ClauseEvaluationFunction
+    [Serializable]
+    internal class ByDerivationDepth : ClauseEvaluationFunctionWithPrio
     {
         public override int ParamsCount => 0;
         public ByDerivationDepth(Predicate<Clause> prio)
         {
+            this.prio = prio;
             hEval = (clause) =>
             {
                 if (prio(clause))
-                    return int.MaxValue - clause.depth; //так как меньше -- лучше. 
-                return int.MaxValue;
+                    return int.MaxValue / 2 - clause.depth; //так как меньше -- лучше. 
+                    return 10000 + int.MaxValue / 2 - clause.depth;
             };
         }
     }
     /// <summary>
     /// Отдаем предпочление самым коротким выводам
     /// </summary>
-    internal class ByDerivationSize : ClauseEvaluationFunction
+    [Serializable]
+    internal class ByDerivationSize : ClauseEvaluationFunctionWithPrio
     {
         public override int ParamsCount => 0;
         public ByDerivationSize(Predicate<Clause> prio)
         {
+            this.prio = prio;
             hEval = (clause) =>
             {
                 if (prio(clause))
-                    return clause.depth; 
-                return int.MaxValue;
+                    return clause.depth;
+                return 10000 + clause.depth;
             };
         }
     }
-
-
-
 }
+

@@ -35,7 +35,7 @@ namespace Prover.Genetic
             var MemberCount = Enum.GetNames(typeof(HeuristicsFunctions)).Length;
             Random r = new Random();
             string name = ((HeuristicsFunctions)r.Next(MemberCount)).ToString();
-            int weight = r.Next(5, 10);
+            int weight = r.Next(1, 6);
             string prio = PriorityFunctions.GetRandomFunctionName();
             int par1 = r.Next(0, 10);
             int par2 = r.Next(1000, 2000) % 10;

@@ -40,9 +40,9 @@ namespace Prover
             //string path = "SYN918+1.p";// "LCL664+1.001.p";// "SYN969 +1.p";
             //FOFFull(path);
 
-            var param = IO.ParamsSplit(args);
+            //var param = IO.ParamsSplit(args);
 
-            FOFFull(param.file, param);
+            //FOFFull(param.file, param);
 
             //if (args[0] == "-i") indexing = true;
             //////if (args[1] == "-so") statonly = true;
@@ -74,8 +74,8 @@ namespace Prover
             Clause.ResetCounter();
             string timeoutStatus = string.Empty;
             param ??= new SearchParams()
-            {
-                //backward_subsumption= true,
+            {              
+                backward_subsumption= true,
                 forward_subsumption = true,
                 heuristics = Heuristics.Heuristics.PickGiven5,
                 //delete_tautologies= true
@@ -273,7 +273,7 @@ namespace Prover
         static void GeneticBreeding()
         {
             GeneticOptions options = new GeneticOptions();
-            options.Size = 25;
+            options.Size = 35;
             options.MaxNumberOfGeneration = 50;
             options.GenerationTimeOutThreshold = 100;
             options.probWeight = 0.5;
@@ -283,6 +283,7 @@ namespace Prover
 
             GeneticAlgorithm algorithm = new GeneticAlgorithm(options);
 
+            Console.WriteLine("Начато в {0}", DateTime.Now);
             algorithm.Evolution();
 
         }

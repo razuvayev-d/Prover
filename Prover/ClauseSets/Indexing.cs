@@ -101,8 +101,6 @@ namespace Prover.ClauseSets
 
     public class SubsumptionIndex
     {
-
-
         public class ArrayElement
         {
             public int LenPA;
