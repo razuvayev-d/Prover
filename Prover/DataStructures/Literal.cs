@@ -109,6 +109,25 @@ namespace Prover.DataStructures
             return false;
         }
         /// <summary>
+        /// True, елсли литералы одинаковы во всем, за исключением знака
+        /// </summary>
+        /// <param name="other"></param>
+        /// <returns></returns>
+        public bool IsOpposite(Literal other)
+        {
+            return this.Negative != other.Negative &&
+                this.AtomEquals(other);
+        }
+
+        public static bool OppositeInLitList(Literal lit, List<Literal> litList)
+        {
+            foreach (var l in litList)
+                if (l.IsOpposite(lit))
+                    return true;
+            return false;
+        }
+
+        /// <summary>
         /// Сравнивает литералы без учета знака
         /// </summary>
         /// <param name="other"></param>

@@ -40,8 +40,8 @@ namespace Prover
             //string path = "SYN918+1.p";// "LCL664+1.001.p";// "SYN969 +1.p";
             //FOFFull(path);
 
-            //var param = IO.ParamsSplit(args);
-
+            var param = IO.ParamsSplit(args);
+            param.delete_tautologies = true;
             //FOFFull(param.file, param);
 
             //if (args[0] == "-i") indexing = true;
@@ -50,7 +50,7 @@ namespace Prover
 
 
             foreach (string file in files)
-                FOFFull1(file);
+                FOFFull(file);
             ////Rating(file);
 
             Console.ForegroundColor = ConsoleColor.Green;

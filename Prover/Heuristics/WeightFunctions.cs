@@ -128,7 +128,6 @@ namespace Prover.Heuristics
 
     #endregion
 
-
     [Serializable]
     public abstract class ClauseEvaluationFunctionWithPrio : ClauseEvaluationFunction
     {

@@ -91,11 +91,11 @@ namespace Prover.ProofStates
 
             if (given_clause.IsEmpty) return given_clause;
 
-            //if (Params.delete_tautologies && given_clause.IsTautology)
-            //{
-            //    statistics.tautologies_deleted++;
-            //    return null;
-            //}
+            if (Params.delete_tautologies && given_clause.IsTautology)
+            {
+                statistics.tautologies_deleted++;
+                return null;
+            }
 
             if (Params.forward_subsumption && Subsumption.Forward(processed, given_clause))
             {
