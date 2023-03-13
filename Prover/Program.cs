@@ -20,7 +20,7 @@ namespace Prover
     class Program
     {
         static int Count = 0;
-        static string problemsDirectory = @"./problems/";
+        static string problemsDirectory = @"./TrainTask"; //@"./problems/";
         static string answersDirectory = @"./answers/";
 
         static List<string> solved = new List<string>();
@@ -30,7 +30,7 @@ namespace Prover
         static bool statonly = false;
         static void Main(string[] args)
         {
-            GeneticBreeding();
+            //GeneticBreeding();
 
             string[] files = Directory.GetFiles(problemsDirectory);
             var s = problemsDirectory + "SYN941+1.p";
@@ -40,8 +40,8 @@ namespace Prover
             //string path = "SYN918+1.p";// "LCL664+1.001.p";// "SYN969 +1.p";
             //FOFFull(path);
 
-            //var param = IO.ParamsSplit(args);
-
+            var param = IO.ParamsSplit(args);
+            param.delete_tautologies = true;
             //FOFFull(param.file, param);
 
             //if (args[0] == "-i") indexing = true;
@@ -53,10 +53,10 @@ namespace Prover
             //    FOFFull(file);
             //////Rating(file);
 
-            //Console.ForegroundColor = ConsoleColor.Green;
-            //Console.WriteLine("Solved: {0} / {1}", Count, files.Length);
-            //Console.WriteLine("Solved problems:");
-            //Console.ResetColor();
+            Console.ForegroundColor = ConsoleColor.Green;
+            Console.WriteLine("Solved: {0} / {1}", Count, files.Length);
+            Console.WriteLine("Solved problems:");
+            Console.ResetColor();
 
             foreach (var x in solved)
             {
@@ -118,7 +118,7 @@ namespace Prover
             if (complete)
             {
                 res = tsk.Result;
-
+                
             }
             else
             {
@@ -422,9 +422,17 @@ namespace Prover
         }
         static void FOFFull1(string Path)
         {
+
+            Console.WriteLine("===================================================");
+            Console.WriteLine(Path);
             Clause.ResetCounter();
             string timeoutStatus = string.Empty;
-            var param = new SearchParams();
+            var param = new SearchParams()
+            {
+               // delete_tautologies = true,
+                forward_subsumption = true,
+                //backward_subsumption = true
+            };
             param.heuristics = Heuristics.Heuristics.PickGiven5;
             string TPTPStatus;
             using (StreamReader sr = new StreamReader(Path))
@@ -453,8 +461,9 @@ namespace Prover
             var tsk = new Task<Clause>(() => state.Saturate());
             stopwatch.Restart();
             tsk.Start();
+           // Thread.Sleep(500000);
             //var res = state.Saturate();
-            bool complete = tsk.Wait(500000);
+            bool complete = tsk.Wait(5000);
             stopwatch.Stop();
             token.Cancel();
             Clause res;

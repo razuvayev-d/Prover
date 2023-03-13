@@ -2,6 +2,7 @@
 using Prover.DataStructures;
 using Prover.Heuristics;
 using Prover.ResolutionMethod;
+using System;
 using System.Threading;
 using static Prover.Report;
 
@@ -144,6 +145,8 @@ namespace Prover.ProofStates
 
         public Clause Saturate()
         {
+
+            Console.WriteLine("SATURATE");
             while (unprocessed.Count > 0)
             {
                 if (token.IsCancellationRequested) return null;

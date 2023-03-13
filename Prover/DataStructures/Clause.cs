@@ -49,16 +49,23 @@ namespace Prover.DataStructures
         {
             get
             {
-                var groups = literals.GroupBy((x) => x.Name);
-                foreach (var group in groups)
-                {
-                    bool f = group.First().Negative;
+                //var groups = literals.GroupBy((x) => x.Name);
+                //foreach (var group in groups)
+                //{
+                //    bool f = group.First().Negative;
 
-                    foreach (var el in group)
-                    {
-                        f ^= el.Negative;
-                    }
-                    if (f) return true;
+                //    foreach (var el in group)
+                //    {
+                //        f ^= el.Negative;
+                //    }
+                //    if (f) return true;
+                //}
+                //return false;
+
+                for(int i =0; i< literals.Count; i++)
+                {
+                    if (Literal.OppositeInLitList(literals[i], literals.Skip(i + 1).ToList())) 
+                        return true;
                 }
                 return false;
             }
