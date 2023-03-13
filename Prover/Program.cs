@@ -51,7 +51,7 @@ namespace Prover
 
             //foreach (string file in files)
             //    FOFFull(file);
-            ////Rating(file);
+            //////Rating(file);
 
             //Console.ForegroundColor = ConsoleColor.Green;
             //Console.WriteLine("Solved: {0} / {1}", Count, files.Length);
@@ -77,8 +77,9 @@ namespace Prover
             {              
                 backward_subsumption= true,
                 forward_subsumption = true,
-                heuristics = Heuristics.Heuristics.PickGiven5,
+                heuristics = Heuristics.Heuristics.BreedingBest,
                 //delete_tautologies= true
+                timeout = 10000
             };
             //param.heuristics = Heuristics.Heuristics.PickGiven5;
             string TPTPStatus;
@@ -278,6 +279,7 @@ namespace Prover
             options.GenerationTimeOutThreshold = 100;
             options.probWeight = 0.5;
             options.LightTimeOut = 3000;
+            options.probParam = 0.4;
             //options.Mode = GeneticOptions.GeneticMode.LoadExistingPopulation;
             //options.PopulationFileName = "InitialPopulation1.txt";
 

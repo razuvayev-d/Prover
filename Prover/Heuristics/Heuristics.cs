@@ -95,6 +95,14 @@ namespace Prover.Heuristics
                                                                                   (new SymbolCountEvaluation(1,5), 9),
                                                                                   (new FIFOEvaluation(), 5)
                                                                                                                });
+
+        public static EvalStructure BreedingBestPrio { get; } = new EvalStructure(new List<(ClauseEvaluationFunction, int)> {
+                                                                                 (new ByLiteralNumber(PriorityFunctions.PreferGoals), 5),
+                                                                                 (new FIFOEvaluationPrio(PriorityFunctions.PreferNonGoals), 4),
+                                                                                 (new ByLiteralNumber(PriorityFunctions.PreferNonGround), 5),
+                                                                                 (new ClauseWeight(PriorityFunctions.PreferHorn, 1, 6, 6), 2),
+                                                                                 (new ByDerivationDepth(PriorityFunctions.PreferNonHorn), 4)
+                                                                                                                                       });
     }
 
 }

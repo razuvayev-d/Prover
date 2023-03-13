@@ -186,9 +186,9 @@ namespace Prover.Genetic
             {
                 population.individuals[i].Fitness = Fitness.Calculate(population.individuals[i], Options.LightTimeOut);
             });
-            population.AverageFitness = population.individuals.Select(x => x.Fitness).Average();
-            population.MinFitness = population.individuals.Select(x => x.Fitness).Min();
-            population.MaxFitness = population.individuals.Select(x => x.Fitness).Max();
+            //population.AverageFitness = population.individuals.Select(x => x.Fitness).Average();
+            //population.MinFitness = population.individuals.Select(x => x.Fitness).Min();
+            //population.MaxFitness = population.individuals.Select(x => x.Fitness).Max();
 
             Console.WriteLine("Average fitness of generation {0}: {1}", -1, population.AverageFitness);
             Console.WriteLine("Max fitness of generation {0}: {1}", -1, population.MaxFitness);
@@ -255,9 +255,12 @@ namespace Prover.Genetic
 
                 population = GeneticOperators.Select(newPopulation, Options.Size, Options.elitism);
 
-                population.AverageFitness = newIndividuals.Select(x => x.Fitness).Average();
-                population.MinFitness = newIndividuals.Select(x => x.Fitness).Min();
-                population.MaxFitness = newIndividuals.Select(x => x.Fitness).Max();
+                //population.AverageFitness = newIndividuals.Select(x => x.Fitness).Average();
+                //population.MinFitness = newIndividuals.Select(x => x.Fitness).Min();
+                //population.MaxFitness = newIndividuals.Select(x => x.Fitness).Max();
+
+                //population.AverageFitness = population.
+
 
                 using (StreamWriter wr = new StreamWriter("averF.txt", append: true))
                 {

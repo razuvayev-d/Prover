@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Text.Encodings.Web;
 using System.Text.Json;
 
@@ -20,9 +21,9 @@ namespace Prover.Genetic
         }
         public List<Individual> individuals { get; set; }
 
-        public double AverageFitness { get; set; }
-        public double MaxFitness { get; set; }
-        public double MinFitness { get; set; }
+        public double AverageFitness => individuals.Select(x => x.Fitness).Average();
+        public double MaxFitness => individuals.Select(x => x.Fitness).Max();
+        public double MinFitness => individuals.Select(x => x.Fitness).Min();
 
         public Population(List<Individual> inds)
         {
