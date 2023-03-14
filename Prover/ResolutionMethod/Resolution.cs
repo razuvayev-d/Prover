@@ -74,7 +74,7 @@ namespace Prover.ResolutionMethod
 
             res.depth = Math.Max(clause1.depth, clause2.depth) + 1;
             //res.subst.AddAll(sigma);
-            res.SetTransform("resolution", clause1, clause2, sigma);
+            res.SetTransform("resolution", clause1, clause2, sigma, l1.Name);
             return res;
         }
 

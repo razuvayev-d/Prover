@@ -153,7 +153,7 @@ namespace Prover.ResolutionMethod
 
         public void AddAll(Substitution s)
         {
-            var it = subst.Keys.GetEnumerator();
+            var it = s.subst.Keys.GetEnumerator();
 
             while (it.MoveNext())
             {
@@ -166,7 +166,7 @@ namespace Prover.ResolutionMethod
         public static Term FreshVar()
         {
             freshVarCounter++;
-            return new Term("X" + freshVarCounter.ToString());
+            return new Term(string.Format("X{0}", freshVarCounter));
         }
 
         public Substitution DeepCopy()

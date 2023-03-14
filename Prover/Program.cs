@@ -42,7 +42,9 @@ namespace Prover
 
             var param = IO.ParamsSplit(args);
             param.delete_tautologies = true;
-            //FOFFull(param.file, param);
+            param.forward_subsumption = true;
+            param.delete_tautologies = true;
+            FOFFull(param.file, param);
 
             //if (args[0] == "-i") indexing = true;
             //////if (args[1] == "-so") statonly = true;
@@ -102,34 +104,47 @@ namespace Prover
             var state = new ProofState(param, cnf, false, indexing);
 
             Stopwatch stopwatch = new Stopwatch();
-
+            Clause res;
             CancellationTokenSource token = new CancellationTokenSource();
             state.token = token;
-            var tsk = new Task<Clause>(() => state.Saturate());
+            if (param.timeout != 0)
+            {         
+                var tsk = new Task<Clause>(() => state.Saturate());
 
-            stopwatch.Restart();
-            tsk.Start();
-            bool complete = tsk.Wait(param.timeout);
-            stopwatch.Stop();
-            token.Cancel();
+                stopwatch.Restart();
+                tsk.Start();
+                bool complete = tsk.Wait(param.timeout);
+                stopwatch.Stop();
+                token.Cancel();
 
 
-            Clause res;
-            if (complete)
-            {
-                res = tsk.Result;
-                
+
+                if (complete)
+                {
+                    res = tsk.Result;
+
+                }
+                else
+                {
+                    res = null;
+                    timeoutStatus = " Время истекло";
+                }
             }
             else
             {
-                res = null;
-                timeoutStatus = " Время истекло";
+                stopwatch.Restart();
+                res = state.Saturate();
+                stopwatch.Stop();
             }
 
             if (res is null)
             {
                 Console.WriteLine("Доказательство не найдено.", ConsoleColor.Red);
                 Console.WriteLine(timeoutStatus);
+
+
+                Console.WriteLine("\nПосле преобразований получены следующие клаузы: ");
+                Console.WriteLine(ClausesStr);
 
                 var R = new Report(state, -1)
                 {
@@ -740,7 +755,7 @@ namespace Prover
                 //Console.WriteLine(i++ + ". " + res.Name + ": " + res.ToString() + " from: " + res.support[0] + ", " + res.support[1]);
                 if (res.Parent1 is not null && res.Parent2 is not null)
                 {
-                    string substStr = res.Sbst is null||res.Sbst.subst.Count == 0? "" : " использована подстановка " + res.Sbst.ToString();
+                    string substStr = res.Sbst is null||res.Sbst.subst.Count == 0? "" : " использована подстановка " + res.Sbst.ToString() +" по " + res.LiteralStr;
                     sq.Add(((res.Name + ": ").PadRight(7) + res.ToString()).PadRight(50) + (" [" + (res.Parent1 as Clause).Name + ", " + (res.Parent2 as Clause).Name + "]").PadRight(15) + substStr);
                     //string Name1, Name2;
                     //Name1 = res.support[0];

@@ -58,6 +58,7 @@ namespace Prover
                 sb.Append("\nВычислено резольвент: ".PadRight(offset, ' ') + resolvent_count);
                 sb.Append("\nПрямое поглощение: ".PadRight(offset, ' ') + forward_subsumed);
                 sb.Append("\nОбратное поглощение: ".PadRight(offset, ' ') + backward_subsumed);
+                sb.Append("\nУдалено тавтологий: ".PadRight(offset, ' ') + tautologies_deleted);
                 sb.Append("\nГлубина вывода: ".PadRight(offset, ' ') + depth);
 
                 return sb.ToString();

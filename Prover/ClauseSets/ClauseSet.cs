@@ -167,5 +167,15 @@ namespace Prover.ClauseSets
                 }
             }
         }
+
+        public virtual List<Clause> GetSubsumingCandidates(Clause clause)
+        {
+            return clauses;
+        }
+
+        public virtual List<Clause> GetSubsumedCandidates(Clause clause)
+        {
+            return clauses;
+        }
     }
 }
