@@ -116,22 +116,22 @@ namespace Prover.Genetic
             //        return /*(new FIFOEvaluation(), (int)param[1]); //*/(new SymbolCountEvaluation((int)param[2], (int)param[3]), (int)param[1]);
             //    default: throw new ArgumentException(param[0].ToString());
             //}
-            Predicate<Clause> priof = PriorityFunctions.PriorityFunctionSwitch(param[2] as string);
-            switch ((string)param[0])
+            Predicate<Clause> priof = PriorityFunctions.PriorityFunctionSwitch(param[2].ToString());
+            switch (param[0].ToString())
             {             
                 case "FIFOPrio":
-                    return (new FIFOEvaluationPrio(priof), (int)param[1]);
+                    return (new FIFOEvaluationPrio(priof), Convert.ToInt32(param[1].ToString()));
                 case "LIFOPrio":
-                    return (new LIFOEvaluationPrio(priof), (int)param[1]);
+                    return (new LIFOEvaluationPrio(priof), Convert.ToInt32(param[1].ToString()));
                 case "ClauseWeight":
-                    return (new ClauseWeight(priof, (int)param[3], (int)param[4], (int)param[5]), (int)param[1]);
+                    return (new ClauseWeight(priof, Convert.ToInt32(param[3].ToString()), Convert.ToInt32(param[4].ToString()), Convert.ToInt32(param[5].ToString())), Convert.ToInt32(param[1].ToString()));
                 case "ByDerivationDepth":
-                    return (new ByDerivationDepth(priof), (int)param[1]);
+                    return (new ByDerivationDepth(priof), Convert.ToInt32(param[1].ToString()));
                 case "ByLiteralNumber":
-                    return /*(new FIFOEvaluation(), (int)param[1]); //*/(new ByLiteralNumber(priof), (int)param[1]);
+                    return /*(new FIFOEvaluation(), (int)param[1]); //*/(new ByLiteralNumber(priof), Convert.ToInt32(param[1].ToString()));
                 case "ByDerivationSize":
-                    return (new ByDerivationSize(priof), (int)param[1]);
-                default: throw new ArgumentException(param[0].ToString());
+                    return (new ByDerivationSize(priof), Convert.ToInt32(param[1].ToString()));
+                default: throw new ArgumentException("Нет такой функции " + param[0].ToString() );
             }
 
         }

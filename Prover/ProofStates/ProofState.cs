@@ -146,7 +146,7 @@ namespace Prover.ProofStates
         public Clause Saturate()
         {
 
-            Console.WriteLine("SATURATE");
+            // Console.WriteLine("SATURATE");
             while (unprocessed.Count > 0)
             {
                 if (token.IsCancellationRequested) return null;

@@ -20,7 +20,7 @@ namespace Prover
     class Program
     {
         static int Count = 0;
-        static string problemsDirectory = @"./TrainTask"; //@"./problems/";
+        static string problemsDirectory = @"./problems/"; // @"./TrainTask"; //@"./problems/";
         static string answersDirectory = @"./answers/";
 
         static List<string> solved = new List<string>();
@@ -31,7 +31,7 @@ namespace Prover
         static void Main(string[] args)
         {
             //GeneticBreeding();
-
+            //
             string[] files = Directory.GetFiles(problemsDirectory);
             var s = problemsDirectory + "SYN941+1.p";
             //FOF(s);
@@ -47,10 +47,13 @@ namespace Prover
             //if (args[0] == "-i") indexing = true;
             //////if (args[1] == "-so") statonly = true;
             //FOFFull(args[args.Length - 1]);
-
-
-            //foreach (string file in files)
-            //    FOFFull(file);
+            param.heuristics = Heuristics.Heuristics.BreedingBest;
+            param.timeout = 10000;
+            param.backward_subsumption = true;
+            param.forward_subsumption = true;
+            param.simplify = false;
+            foreach (string file in files)
+                FOFFull(file, param);
             //////Rating(file);
 
             Console.ForegroundColor = ConsoleColor.Green;
@@ -77,9 +80,9 @@ namespace Prover
             {              
                 backward_subsumption= true,
                 forward_subsumption = true,
-                heuristics = Heuristics.Heuristics.BreedingBest,
-                //delete_tautologies= true
-                timeout = 10000
+                heuristics = Heuristics.Heuristics.BreedingBestPrio,
+                delete_tautologies= true,
+                timeout = 100000
             };
             //param.heuristics = Heuristics.Heuristics.PickGiven5;
             string TPTPStatus;
@@ -280,8 +283,8 @@ namespace Prover
             options.probWeight = 0.5;
             options.LightTimeOut = 3000;
             options.probParam = 0.4;
-            //options.Mode = GeneticOptions.GeneticMode.LoadExistingPopulation;
-            //options.PopulationFileName = "InitialPopulation1.txt";
+            options.Mode = GeneticOptions.GeneticMode.LoadExistingPopulation;
+            options.PopulationFileName = "InitialPopulation.txt";
 
             GeneticAlgorithm algorithm = new GeneticAlgorithm(options);
 

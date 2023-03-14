@@ -42,7 +42,7 @@ namespace Prover.Genetic
             int result = 0;
             string[] files = Directory.GetFiles(TrainDirectory);
 
-            var PartedData = Partitioner.Create(files, true);
+            //var PartedData = Partitioner.Create(files, true);
             //Parallel.ForEach(PartedData, (file) =>
             //{
             //    if (TrySolve(file, individual)) Interlocked.Increment(ref result);
@@ -63,8 +63,8 @@ namespace Prover.Genetic
             var param = new SearchParams()
             {
                 forward_subsumption = true,
-                //backward_subsumption = true,
-                //delete_tautologies = true
+                backward_subsumption = true,
+                delete_tautologies = true
             };
 
             param.heuristics = individual;
@@ -180,6 +180,8 @@ namespace Prover.Genetic
             else
             {
                 population = Population.LoadFromFile(Options.PopulationFileName);
+                foreach(var g in population.individuals)
+                    g.InvalidFitness = false;
             }
 
             Parallel.For(0, Options.Size, poptions, i =>

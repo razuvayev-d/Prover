@@ -103,6 +103,14 @@ namespace Prover.Heuristics
                                                                                  (new ClauseWeight(PriorityFunctions.PreferHorn, 1, 6, 6), 2),
                                                                                  (new ByDerivationDepth(PriorityFunctions.PreferNonHorn), 4)
                                                                                                                                        });
+
+        public static EvalStructure BreedingBestPrio43 { get; } = new EvalStructure(new List<(ClauseEvaluationFunction, int)> {
+                                                                                 (new ByLiteralNumber(PriorityFunctions.PreferUnits), 2),
+                                                                                 (new ClauseWeight(PriorityFunctions.PreferNonUnits, 2,5,8), 2),
+                                                                                 (new ByDerivationDepth(PriorityFunctions.SimulateSOS), 5),
+                                                                                 (new LIFOEvaluationPrio(PriorityFunctions.PreferAll), 3),
+                                                                                 (new FIFOEvaluationPrio(PriorityFunctions.PreferUnits), 3)
+                                                                                                                                       });
     }
 
 }
