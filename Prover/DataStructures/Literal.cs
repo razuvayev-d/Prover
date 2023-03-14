@@ -281,8 +281,8 @@ namespace Prover.DataStructures
         {
             // TODO: этот метод дублирует Substitute
             Literal newLit = DeepCopy();
-            newLit.Substitute(sbst);
-            return newLit;
+            return newLit.Substitute(sbst);
+            //return newLit;
         }
         /// <summary>
         /// Parse a list of literals separated by "|" (logical or). As per

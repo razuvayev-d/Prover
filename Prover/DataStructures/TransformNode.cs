@@ -10,6 +10,7 @@ namespace Prover.DataStructures
         public TransformNode Parent2;
         public string TransformOperation;
         public Substitution Sbst;
+        public string LiteralStr;
 
         public bool from_conjecture { get; private set; } = false;
 
@@ -26,13 +27,13 @@ namespace Prover.DataStructures
             }
         }
 
-        public void SetTransform(string transformation, TransformNode parent1 = null, TransformNode parent2 = null, Substitution sbst = null)
+        public void SetTransform(string transformation, TransformNode parent1 = null, TransformNode parent2 = null, Substitution sbst = null, string literal = null)
         {
             TransformOperation = transformation;
             Parent1 = parent1;
-            Parent2 = parent2;
-
+            Parent2 = parent2;         
             Sbst = sbst;
+            LiteralStr = literal;
             //Проброс флага в через преобразования
             if((parent1 is not null && parent1.from_conjecture) || 
                 (parent2 is not null && parent2.from_conjecture))

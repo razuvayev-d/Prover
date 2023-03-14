@@ -374,11 +374,11 @@ namespace Prover
             }
             else if (f.op == "|")
             {
-                if (f.Child1.IsPropConst(true)) return (f.Child1, true);
-                if (f.Child2.IsPropConst(true)) return (f.Child2, true);
-                if (f.Child1.IsPropConst(false)) return (f.Child2, true);
-                if (f.Child2.IsPropConst(false)) return (f.Child1, true);
-                if (f.Child1.Equals(f.Child2)) return (f.Child2, true);
+                if (f.Child1.IsPropConst(true)) return (f.Child1, true); //T | P -> T
+                if (f.Child2.IsPropConst(true)) return (f.Child2, true); //P | T -> T
+                if (f.Child1.IsPropConst(false)) return (f.Child2, true);//F | P -> P
+                if (f.Child2.IsPropConst(false)) return (f.Child1, true);//P | F -> P
+                if (f.Child1.Equals(f.Child2)) return (f.Child2, true);  //P | P -> P
 
                 //TODO: тождественно ложная контрарная пара
                 //if (f.Child1.IsLiteral && f.Child2.IsLiteral)

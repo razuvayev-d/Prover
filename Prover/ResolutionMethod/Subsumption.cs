@@ -1,5 +1,6 @@
 ﻿using Prover.ClauseSets;
 using Prover.DataStructures;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -34,17 +35,22 @@ namespace Prover.ResolutionMethod
 
         public static bool Forward(ClauseSet set, Clause clause)
         {
-            var candidates = set.clauses;
+            var candidates = set.GetSubsumingCandidates(clause); // set.clauses;
 
             foreach (var candidate in candidates)
                 if (Subsumes(candidate, clause))
+                {
+                    Console.WriteLine(candidate.ToString());
+                    Console.WriteLine(clause.ToString());
+                    Console.WriteLine("========================================");
                     return true;
+                }
             return false;
         }
 
         public static int Backward(Clause clause, ClauseSet set)
         {
-            var candidates = set.clauses;
+            var candidates = set.GetSubsumedCandidates(clause); //set.clauses;
             var subsumedSet = new List<Clause>();
 
             foreach (var candidate in candidates)

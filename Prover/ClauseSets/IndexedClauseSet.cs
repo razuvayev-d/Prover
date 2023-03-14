@@ -30,12 +30,12 @@ namespace Prover.ClauseSets
             return ResIndex.GetResolutionLiterals(lit);
         }
 
-        public List<Clause> GetSubsumingCandidates(Clause queryClause)
+        public override List<Clause> GetSubsumingCandidates(Clause queryClause)
         {
             return SubIndex.GetSubsumingCandidates(queryClause);
         }
 
-        public List<Clause> GetSubsumedCandidates(Clause queryClause)
+        public override List<Clause> GetSubsumedCandidates(Clause queryClause)
         {
             return SubIndex.GetSubsumedCandidates(queryClause);
         }

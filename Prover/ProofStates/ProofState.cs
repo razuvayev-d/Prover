@@ -22,7 +22,7 @@ namespace Prover.ProofStates
 
         public bool simplify { get; set; } = false;
 
-        public int timeout { get; set; } = 100;
+        public int timeout { get; set; } = 0;
 
         public string file { get; set; }
         public SearchParams()
