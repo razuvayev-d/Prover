@@ -14,7 +14,7 @@ namespace Prover.Genetic
 
         public int Fitness { get; set; }
 
-        public bool InvalidFitness = true;
+        public bool InvalidFitness { get; set; } = true;
 
         public Individual(List<List<object>> genes, int Fitness, bool InvalidF)
         {

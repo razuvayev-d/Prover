@@ -30,7 +30,7 @@ namespace Prover
         static bool statonly = false;
         static void Main(string[] args)
         {
-            //GeneticBreeding();
+            GeneticBreeding();
             //
             string[] files = Directory.GetFiles(problemsDirectory);
             var s = problemsDirectory + "SYN941+1.p";
@@ -44,12 +44,12 @@ namespace Prover
             param.delete_tautologies = true;
             param.forward_subsumption = true;
             param.delete_tautologies = true;
-            FOFFull(param.file, param);
+            //FOFFull(param.file, param);
 
             //if (args[0] == "-i") indexing = true;
             //////if (args[1] == "-so") statonly = true;
             //FOFFull(args[args.Length - 1]);
-            param.heuristics = Heuristics.Heuristics.BreedingBest;
+            param.heuristics = Heuristics.Heuristics.BreedingBestPrio;
             param.timeout = 10000;
             param.backward_subsumption = true;
             param.forward_subsumption = true;
@@ -298,7 +298,7 @@ namespace Prover
             options.probWeight = 0.5;
             options.LightTimeOut = 3000;
             options.probParam = 0.4;
-            options.Mode = GeneticOptions.GeneticMode.LoadExistingPopulation;
+            options.Mode = GeneticOptions.GeneticMode.CreateNewPopulation;
             options.PopulationFileName = "InitialPopulation.txt";
 
             GeneticAlgorithm algorithm = new GeneticAlgorithm(options);

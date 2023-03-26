@@ -39,12 +39,7 @@ namespace Prover.ResolutionMethod
 
             foreach (var candidate in candidates)
                 if (Subsumes(candidate, clause))
-                {
-                    Console.WriteLine(candidate.ToString());
-                    Console.WriteLine(clause.ToString());
-                    Console.WriteLine("========================================");
                     return true;
-                }
             return false;
         }
 

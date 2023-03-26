@@ -21,20 +21,29 @@ namespace Prover.Genetic
                     {
                         var param = individual.genes[i][j];
                         if (random.NextDouble() < probParamMutates)
-                        {
-                            individual.InvalidFitness = true;
+                        {                           
                             if (param is string)
                             {
-                                param = PriorityFunctions.GetRandomFunctionName(); // Fitness.GetRandomString();
+                                individual.InvalidFitness = true;
+                                if (j == 2)
+                                    individual.genes[i][j] = PriorityFunctions.GetRandomFunctionName();
+                                else // j == 0
+                                    individual.genes[i][j] = Fitness.GetRandomString();
+                                    // Fitness.GetRandomString();
+
                             }
-                            else if (param is double)
-                            {
-                                param = random.NextDouble(); //TODO: можно изменить в зависимости от значения param
-                            }
+                            //else if (param is double)
+                            //{
+                            //    param = random.NextDouble(); //TODO: можно изменить в зависимости от значения param
+                            //}
                             else if (param is int)
                             {
-                                param = random.NextDouble() > 0.5? (int)param + 2 : (int)param - 2;//RandomNormalDistribution((int)param, 1 + (int)param / 5);//random.Next(1, (int)param / 2 > 2 ? (int)param / 2 + 1 : 2);
-
+                                if (individual.genes[i][0].ToString() == "ClauseWeight")
+                                {
+                                    individual.InvalidFitness = true;
+                                    individual.genes[i][j] = random.NextDouble() > 0.5 ? (int)param + 2 : (int)param - 2;
+                                }
+                                //RandomNormalDistribution((int)param, 1 + (int)param / 5);//random.Next(1, (int)param / 2 > 2 ? (int)param / 2 + 1 : 2);
                             }
                         }
                     }
