@@ -209,31 +209,45 @@ namespace Prover
                     HeuristicName = param.heuristics.ToString()
                 };
                 report.statistics.ElapsedTime = stopwatch.Elapsed.TotalMilliseconds;
-
+                StreamWriter r = new StreamWriter(System.IO.Path.Combine(answersDirectory, System.IO.Path.GetFileName(Path)));
+                  
 
                 Console.WriteLine("Доказательство найдено!\n", ConsoleColor.Green);
+                r.WriteLine("Доказательство найдено!\n");
 
                 Console.WriteLine("Прочитанная формула: ");
+                r.WriteLine("Прочитанная формула: ");
                 Console.WriteLine(formulastr);
+                r.WriteLine(formulastr);
 
                 if (param.simplify)
                 {
                     var CnfForms = problem.clauses.Select(clause => clause.Parent1).Distinct().ToList();
 
                     Console.WriteLine("Преобразования в клаузы: ");
+                    r.WriteLine("Преобразования в клаузы: ");
                     for (int j = 0; j < CnfForms.Count; j++)
                     {
                         Console.WriteLine("   Формула " + (j + 1));
+                        r.WriteLine("   Формула " + (j + 1));
+
                         Console.WriteLine("\n" + CnfForms[j].TransformationPath());
+                        r.WriteLine("\n" + CnfForms[j].TransformationPath());
+
                         Console.WriteLine();
+                        r.WriteLine();
                     }
                 }
 
 
                 Console.WriteLine("\nПосле преобразований получены следующие клаузы: ");
                 Console.WriteLine(ClausesStr);
+
+                r.WriteLine("\nПосле преобразований получены следующие клаузы: ");
+                r.WriteLine(ClausesStr);
                 if (param.proof)
                 {
+                    r.WriteLine("Доказательство");
                     Console.WriteLine("\nДоказательство: ");
                     var str1 = new List<string>();
                     Print(state, res, str1);
@@ -242,12 +256,21 @@ namespace Prover
                     str1 = str1.Distinct().ToList();
                     int k = 1;
                     foreach (string s in str1)
-                        Console.WriteLine((Convert.ToString(k++)).PadLeft(3) + ". " + s);
+                    { 
+                        Console.WriteLine((Convert.ToString(k)).PadLeft(3) + ". " + s);
+                        r.WriteLine((Convert.ToString(k)).PadLeft(3) + ". " + s);
+                        k++;
+
+                    }
                     Console.WriteLine("Найдена пустая клауза. Доказательство завершено.\n");
+                    r.WriteLine("Найдена пустая клауза. Доказательство завершено.\n");
 
                 }
                 Console.WriteLine("\nСтатистика: ");
                 Console.WriteLine(report.statistics.ToString());
+
+                r.WriteLine("\nСтатистика: ");
+                r.WriteLine(report.statistics.ToString());
             }
 
 
@@ -573,7 +596,7 @@ namespace Prover
 
             using (StreamWriter sw = new StreamWriter(answersDirectory + System.IO.Path.GetFileNameWithoutExtension(Path) + ".json"))
             {
-                sw.WriteLine(json);
+                //.WriteLine(json);
                 //sw.WriteLine("Read formula: ");
                 //sw.WriteLine(formulastr);
                 //sw.WriteLine("Result: " + verdict);
@@ -758,7 +781,7 @@ namespace Prover
                 //Console.WriteLine(i++ + ". " + res.Name + ": " + res.ToString() + " from: " + res.support[0] + ", " + res.support[1]);
                 if (res.Parent1 is not null && res.Parent2 is not null)
                 {
-                    string substStr = res.Sbst is null||res.Sbst.subst.Count == 0? "" : " использована подстановка " + res.Sbst.ToString() +" по " + res.LiteralStr;
+                    string substStr = res.Sbst is null || res.Sbst.subst.Count == 0 ? "" : " использована подстановка " + res.Sbst.ToString();// +" по " + res.LiteralStr;
                     sq.Add(((res.Name + ": ").PadRight(7) + res.ToString()).PadRight(50) + (" [" + (res.Parent1 as Clause).Name + ", " + (res.Parent2 as Clause).Name + "]").PadRight(15) + substStr);
                     //string Name1, Name2;
                     //Name1 = res.support[0];

@@ -131,6 +131,7 @@ namespace Prover.Heuristics
     [Serializable]
     public abstract class ClauseEvaluationFunctionWithPrio : ClauseEvaluationFunction
     {
+        protected const int NonPrioConstModifier = int.MaxValue / 2;
         public Predicate<Clause> prio { get; protected set; }
     }
 
@@ -154,7 +155,37 @@ namespace Prover.Heuristics
             {
                 if (prio(clause))
                     return clause.PositiveWeight(fweight, vweight, pos_mult);
-                return int.MaxValue;
+                return NonPrioConstModifier + clause.PositiveWeight(fweight, vweight, pos_mult); ;
+            };
+        }
+    }
+
+    [Serializable]
+    internal class RefinedWeight : ClauseEvaluationFunctionWithPrio
+    {
+        public override int ParamsCount => 3;
+        public int fweight { get; }
+        public int vweight { get; }
+        public int pos_mult { get; }
+
+        public int lit_pen { get;}
+        public int term_pen { get; }
+
+        public RefinedWeight(Predicate<Clause> prio, int fweight, int vweight, int term_pen, int lit_pen, int pos_mult)
+        {
+            this.prio = prio;
+            this.fweight = fweight;
+            this.vweight = vweight;
+            this.pos_mult = pos_mult;
+            this.lit_pen = lit_pen;
+            this.term_pen = term_pen;
+
+            name = string.Format("ClauseEvalFun(%s, %s)", fweight, vweight);
+            hEval = (clause) =>
+            {
+                if (prio(clause))
+                    return clause.RefinedWeight(fweight, vweight, term_pen, lit_pen, pos_mult);
+                return NonPrioConstModifier + clause.RefinedWeight(fweight, vweight, term_pen, lit_pen, pos_mult);
             };
         }
     }
@@ -173,7 +204,7 @@ namespace Prover.Heuristics
             {
                 if (prio(clause))
                     return --FIFOCounter;
-                return 10000 + --FIFOCounter;
+                return NonPrioConstModifier + --FIFOCounter;
             };
         }
     }
@@ -192,7 +223,7 @@ namespace Prover.Heuristics
             {
                 if (prio(clause))
                     return ++FIFOCounter;
-                return 10000 + ++FIFOCounter;
+                return NonPrioConstModifier + ++FIFOCounter;
             };
         }
     }
@@ -208,7 +239,7 @@ namespace Prover.Heuristics
             {
                 if (prio(clause))
                     return clause.Length;
-                return 10000 + clause.Length;
+                return NonPrioConstModifier + clause.Length;
             };
         }
     }
@@ -226,7 +257,7 @@ namespace Prover.Heuristics
             {
                 if (prio(clause))
                     return int.MaxValue / 2 - clause.depth; //так как меньше -- лучше. 
-                    return 10000 + int.MaxValue / 2 - clause.depth;
+                    return 10000 + NonPrioConstModifier - clause.depth;
             };
         }
     }

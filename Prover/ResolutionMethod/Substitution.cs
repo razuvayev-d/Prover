@@ -159,7 +159,8 @@ namespace Prover.ResolutionMethod
             {
                 Term t1 = it.Current;
                 Term t2 = s.subst[t1];
-                subst.Add(t1, t2);
+                //subst.Add(t1, t2);
+                subst[t1] = t2;
             }
         }
 

@@ -2,6 +2,7 @@
 using Prover.Tokenization;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.Text;
 
 namespace Prover.DataStructures
@@ -337,6 +338,20 @@ namespace Prover.DataStructures
             var res = fweight;
             foreach (var term in arguments)
                 res += term.Weight(fweight, vweight);
+            return res;
+        }
+
+        public int RefinedWeight(int fweight, int vweight, int term_pen)
+        {
+            var res = fweight;
+            int max = -10000;
+            foreach(var term in arguments)
+            {
+                int weight = term.Weight(fweight, vweight);
+                max = weight > max? weight: max;
+                res += weight;
+            }
+            res += (term_pen - 1) * max;
             return res;
         }
 

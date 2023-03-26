@@ -163,6 +163,24 @@ namespace Prover.DataStructures
             }             
             return res;
         }
+
+        public int RefinedWeight(int fweight, int vweight, int term_pem, int lit_pen, int pos_mult)
+        {
+            var res = 0;
+            var max = -10000;
+            foreach (var literal in literals)
+            {
+                var weight = literal.RefinedWeight(fweight, vweight, term_pem);
+                max = weight > max? weight: max;
+
+                if (literal.Negative)
+                    res += weight;
+                else
+                    res += pos_mult * weight;
+            }
+            res += (lit_pen - 1) * max;
+            return res;
+        }
         public Clause()
         {
             clauseIdCounter++;
@@ -202,7 +220,7 @@ namespace Prover.DataStructures
         public Clause FreshVarCopy()
         {
             List<Term> vars = CollectVars();
-            Substitution s = Substitution.FreshVarSubst(vars);
+            Substitution s = Substitution.FreshVarSubst(vars.Distinct().ToList());
             subst.AddAll(s);
             return Substitute(s);
         }
