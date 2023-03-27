@@ -111,6 +111,7 @@ namespace Prover.ClauseSets
             foreach (Clause clause in clauses)
             {
                 sb.Append(i++ + ". ");
+                sb.Append(clause.Name + ": ");
                 sb.Append(clause.ToString());
                 sb.Append("\n");
             }

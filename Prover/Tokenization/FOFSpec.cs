@@ -104,7 +104,7 @@ namespace Prover.Tokenization
             return new ClauseSet(clauses);
         }
 
-        public bool AddEqAxioms()
+        public List<Clause> AddEqAxioms()
         {
             var sig = new Signature();
             foreach(Clause c in clauses)
@@ -116,9 +116,9 @@ namespace Prover.Tokenization
                 var res = EqAxioms.GenerateEquivAxioms();
                 res.AddRange(EqAxioms.GenerateCompatAxioms(sig));
                 this.clauses.AddRange(res);
-                return true;
+                return res;
             }
-            return false;
+            return null;
         }
     }
 }

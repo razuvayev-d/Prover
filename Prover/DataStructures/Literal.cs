@@ -52,16 +52,27 @@ namespace Prover.DataStructures
 
         public Literal(string name, List<Term> arguments, bool negative = false) : base(string.Empty, null)
         {
-            this.name = name;
-            this.arguments = arguments;
-            Negative = negative;
 
-            // TODO: разобраться с обработкой равенства при создании литерала
+            if(name == "!=")
+            {
+                this.Negative  =!negative;
+                this.name = "=";
+                this.arguments = arguments;
+            }
+            else {
+                this.name = name;
+                this.arguments = arguments;
+                Negative = negative;
+            }
+
+
+
+        //TODO: разобраться с обработкой равенства при создании литерала
             //if (atom.Func == "!=")
             //{
 
             //}
-            //    self.negative = not negative
+            //self.negative = not negative
             //    self.atom = list(["="])
             //    self.atom.extend(termArgs(atom))
             //else:
@@ -212,23 +223,33 @@ namespace Prover.DataStructures
         }
         public override string ToString()
         {
-            StringBuilder result = new StringBuilder();
-            if (Negative)
-                result.Append('~');
-            result.Append(name);
-            if (arguments is not null)
+            if (IsEquational)
             {
-                var n = arguments.Count;
-                result.Append('(');
-                for (int i = 0; i < n; i++)
-                {
-                    result.Append(arguments[i].ToString());
-                    if (i < n - 1)
-                        result.Append(", ");
-                }
-                result.Append(')');
+                var op = "=";
+                if(Negative) op = "!=";
+                return arguments[0].ToString() + op + arguments[1].ToString();
             }
-            return result.ToString();
+            else
+            {
+                StringBuilder result = new StringBuilder();
+                if (Negative)
+                    result.Append('~');
+                result.Append(name);
+                if (arguments is not null)
+                {
+                    var n = arguments.Count;
+                    result.Append('(');
+                    for (int i = 0; i < n; i++)
+                    {
+                        result.Append(arguments[i].ToString());
+                        if (i < n - 1)
+                            result.Append(", ");
+                    }
+                    result.Append(')');
+                }
+                return result.ToString();
+            }
+            
         }
         /// <summary>
         ///  Return a copy of self with oposite polarity.
@@ -404,6 +425,7 @@ namespace Prover.DataStructures
             return res;
         }
 
+        public bool IsEquational => name == "=" || name == "!=";
         public Literal DeepCopy()
         {
             List<Term> newlist = new List<Term>(arguments.Count);

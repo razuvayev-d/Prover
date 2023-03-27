@@ -39,6 +39,10 @@ namespace Prover
             statistics.depth = depth;
         }
 
+        public Report()
+        {
+        }
+
         public class Statistics
         {
             [JsonPropertyName("Elapsed time")]
@@ -77,6 +81,7 @@ namespace Prover
         public string Formula { get; set; }
         public string FormulaStr { get; set; }
         public string ClausesStr { get; set; }
+        public string AxiomStr { get; set; }
         public string HeuristicName { get; set; }
         public string Result { get; set; }
         public string TPTPResult { get; set; }
@@ -84,67 +89,85 @@ namespace Prover
         public string InitialClauses { get; set; }
         public string Proof { get; set; }
         public FOFSpec problem;
-        public bool Sucсess { get; set; }
+        public Clause Res { get; set; }
+        public ProofState State { get; set; }
 
         public SearchParams Params { get; set; }
 
+        public bool Timeout { get; set; }
         public void ConsolePrint()
         {
             Console.WriteLine("\n\nЗадача " + ProblemName);
             Console.WriteLine();
-            if (Sucсess)
+            string verdict;
+            bool success = false;
+            if (Res is not null && Res.IsEmpty)
             {
-                Console.WriteLine("Доказательство найдено!");
-
-                Console.WriteLine("Прочитанная формула: ");
-                Console.WriteLine(FormulaStr);
-
-                if (Params.simplify)
-                {
-                    var CnfForms = problem.clauses.Select(clause => clause.Parent1).Distinct().ToList();
-
-                    Console.WriteLine("Преобразования в клаузы: ");
-                  
-                    for (int j = 0; j < CnfForms.Count; j++)
-                    {
-                        if (CnfForms[j] is null) continue;
-                        Console.WriteLine("   Формула " + (j + 1));
-                        Console.WriteLine("\n" + CnfForms[j].TransformationPath());
-                        Console.WriteLine();
-                    }
-
-                }
-
-                Console.WriteLine("\nПосле преобразований получены следующие клаузы: ");
-                Console.WriteLine(ClausesStr);
-
-
-                if (Params.proof)
-                {
-                    
-                    Console.WriteLine("\nДоказательство: ");
-                    var str1 = new List<string>();
-                    Print(state, res, str1);
-
-                    str1.Reverse();
-                    str1 = str1.Distinct().ToList();
-                    int k = 1;
-                    foreach (string s in str1)
-                    {
-                        Console.WriteLine((Convert.ToString(k)).PadLeft(3) + ". " + s);                     
-                        k++;
-
-                    }
-                    Console.WriteLine("Найдена пустая клауза. Доказательство завершено.\n");
-
-                }
-                Console.WriteLine("\nСтатистика: ");
-                Console.WriteLine(statistics.ToString());
-
+                verdict = "Доказательство найдено.";
+                success = true;
+            }
+            else
+            {
+                verdict = "Доказательство не найдено.";
+                if (Timeout)
+                    verdict += "\nВремя истекло";
             }
 
 
-        }
+            Console.WriteLine(verdict);
+
+            Console.WriteLine("Прочитанная формула: ");
+            Console.WriteLine(FormulaStr);
+
+            if(!Params.supress_eq_axioms)
+            {
+                Console.WriteLine("Добавлены следующие аксиомы равенства:");
+                Console.WriteLine(AxiomStr);
+            }
+
+            if (Params.simplify)
+            {
+                var CnfForms = problem.clauses.Select(clause => clause.Parent1).Distinct().ToList();
+
+                Console.WriteLine("Преобразования в клаузы: ");
+
+                for (int j = 0; j < CnfForms.Count; j++)
+                {
+                    if (CnfForms[j] is null) continue;
+                    Console.WriteLine("   Формула " + (j + 1));
+                    Console.WriteLine("\n" + CnfForms[j].TransformationPath());
+                    Console.WriteLine();
+                }
+
+            }
+
+            Console.WriteLine("\nПосле преобразований получены следующие клаузы: ");
+            Console.WriteLine(ClausesStr);
+
+
+            if (Params.proof && success)
+            {
+
+                Console.WriteLine("\nДоказательство: ");
+                var str1 = new List<string>();
+                Print(State, Res, str1);
+
+                str1.Reverse();
+                str1 = str1.Distinct().ToList();
+                int k = 1;
+                foreach (string s in str1)
+                {
+                    Console.WriteLine((Convert.ToString(k)).PadLeft(3) + ". " + s);
+                    k++;
+
+                }
+                Console.WriteLine("Найдена пустая клауза. Доказательство завершено.\n");
+
+            }
+            Console.WriteLine("\nСтатистика: ");
+            Console.WriteLine(State.statistics.ToString());
+
+        }        
 
         private static void Print(ProofState state, Clause res, List<string> sq)
         {

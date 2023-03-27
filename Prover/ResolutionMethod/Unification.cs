@@ -1,4 +1,5 @@
 ﻿using Prover.DataStructures;
+using System;
 using System.Collections.Generic;
 
 namespace Prover.ResolutionMethod
@@ -60,17 +61,18 @@ namespace Prover.ResolutionMethod
 
                     substitution.ComposeBinding(t2, t1);
                 }
-                else if (t2.IsConstant && t1.IsConstant)
-                {
-                    //Сравниваем константы по имени, если совпадают то возвращаем текущую подстановку (not null)
-                    if (!t1.name.Equals(t2.name))
-                        return null;
-                    return substitution;
-                }
+                //else if (t2.IsConstant && t1.IsConstant)
+                //{
+                //    //Сравниваем константы по имени, если совпадают то возвращаем текущую подстановку (not null)
+                //    if (!t1.name.Equals(t2.name))
+                //        return null;
+                //    //return substitution;
+                //}
                 else
                 {
-                    if (!t1.IsCompound || !t2.IsCompound)
-                        return null;
+
+                    //if (!t1.IsCompound || !t2.IsCompound) //тип проверка на функциональность, считаем что константа это функция 
+                    //    throw new Exception("tems is not compound");
 
                     if (!t1.name.Equals(t2.name))
                         return null;

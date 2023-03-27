@@ -44,18 +44,18 @@ namespace Prover
             param.delete_tautologies = true;
             param.forward_subsumption = true;
             param.delete_tautologies = true;
-            FOFFull(param.file, param);
-
+            //FOFFull(param.file, param);
+            FOFFullClear(param.file, param);
             //if (args[0] == "-i") indexing = true;
             //////if (args[1] == "-so") statonly = true;
             //FOFFull(args[args.Length - 1]);
-            param.heuristics = Heuristics.Heuristics.BreedingBestPrio;
-            param.timeout = 10000;
-            param.backward_subsumption = true;
-            param.forward_subsumption = true;
-            param.simplify = false;
-            foreach (string file in files)
-                FOFFull(file, param);
+            //param.heuristics = Heuristics.Heuristics.BreedingBestPrio;
+            //param.timeout = 10000;
+            //param.backward_subsumption = true;
+            //param.forward_subsumption = true;
+            //param.simplify = false;
+            //foreach (string file in files)
+            //    FOFFull(file, param);
             //////Rating(file);
 
             Console.ForegroundColor = ConsoleColor.Green;
@@ -69,9 +69,103 @@ namespace Prover
             }
         }
 
+        static void FOFFullClear(string Path, SearchParams param = null)
+        {
+
+            Report report = new Report();
+            Clause.ResetCounter();
+            string timeoutStatus = string.Empty;
+            param ??= new SearchParams()
+            {
+                backward_subsumption = true,
+                forward_subsumption = true,
+                heuristics = Heuristics.Heuristics.BreedingBestPrio,
+                delete_tautologies = true,
+                timeout = 100000
+            };
+
+            
+
+            string TPTPStatus;
+            using (StreamReader sr = new StreamReader(Path))
+            {
+                string text = sr.ReadToEnd();
+                var rg = new Regex("(Status).+(\n)");
+                TPTPStatus = rg.Match(text).Value;
+            }
+
+            var problem = new FOFSpec();
+            problem.Parse(Path);
+            List<Clause> eqaxioms = null;
+            if (!param.supress_eq_axioms)
+            {
+                eqaxioms = problem.AddEqAxioms();
+                report.AxiomStr = CreateEqList(eqaxioms);
+            }
 
 
-        static void FOFFull(string Path, SearchParams param = null)
+
+
+            //string formulastr = CreateFormulaList(problem.formulas);
+            report.FormulaStr = CreateFormulaList(problem.formulas);
+
+            var cnf = problem.Clausify();
+            string ClausesStr = cnf.ToString();
+
+            var state = new ProofState(param, cnf, false, indexing);
+
+
+
+            report.Params = param;
+            report.ClausesStr = cnf.ToString();
+            report.problem = problem;
+            report.State = state;
+            
+
+            Stopwatch stopwatch = new Stopwatch();
+            Clause res;
+            CancellationTokenSource token = new CancellationTokenSource();
+            state.token = token;
+            if (param.timeout != 0)
+            {
+                var tsk = new Task<Clause>(() => state.Saturate());
+
+                stopwatch.Restart();
+                tsk.Start();
+                bool complete = tsk.Wait(param.timeout);
+                stopwatch.Stop();
+                token.Cancel();
+
+                if (complete)
+                {
+                    res = tsk.Result;
+                   
+                }
+                else
+                {
+                    res = null;
+                    report.Timeout = true;
+                }
+            }
+            else
+            {
+                stopwatch.Restart();
+                res = state.Saturate();
+                stopwatch.Stop();
+            }
+
+            if (res is not null && res.IsEmpty)
+            {
+                Count++;
+                state.statistics.depth = res.depth;
+            }
+            state.statistics.ElapsedTime = stopwatch.Elapsed.TotalMilliseconds;
+            report.Res = res;
+
+            report.ConsolePrint();
+        }
+
+            static void FOFFull(string Path, SearchParams param = null)
         {
 
             Console.WriteLine("\n\nЗадача " + Path);
@@ -844,6 +938,19 @@ namespace Prover
             {
                 sb.Append(i++ + ". ");
                 sb.Append(formula.Formula.ToString());
+                sb.Append("\n");
+            }
+            return sb.ToString();
+        }
+
+        private static string CreateEqList(List<Clause> list)
+        {
+            int i = 1;
+            StringBuilder sb = new StringBuilder();
+            foreach (var formula in list)
+            {
+                sb.Append(i++ + ". ");
+                sb.Append(formula.ToString());
                 sb.Append("\n");
             }
             return sb.ToString();

@@ -59,6 +59,8 @@ namespace Prover
                         var heur = args[++i];
                         param.heuristics = SelectHeuristic(heur);
                         break;
+                    case "-S":
+                            param.supress_eq_axioms= true; break;
                     default:
                         if (flag)
                             param.file = arg;

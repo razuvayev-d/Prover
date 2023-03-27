@@ -24,7 +24,7 @@ namespace Prover.ProofStates
 
         public int timeout { get; set; } = 0;
 
-        public bool supress_eq_axioms = false;
+        public bool supress_eq_axioms { get; set; } = false;
 
         public string file { get; set; }
 
