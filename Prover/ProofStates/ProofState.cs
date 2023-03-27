@@ -24,7 +24,10 @@ namespace Prover.ProofStates
 
         public int timeout { get; set; } = 0;
 
+        public bool supress_eq_axioms = false;
+
         public string file { get; set; }
+
         public SearchParams()
         {
         }
@@ -145,8 +148,6 @@ namespace Prover.ProofStates
 
         public Clause Saturate()
         {
-
-            Console.WriteLine("SATURATE");
             while (unprocessed.Count > 0)
             {
                 if (token.IsCancellationRequested) return null;

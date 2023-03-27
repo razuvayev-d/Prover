@@ -1,4 +1,10 @@
-﻿using Prover.ProofStates;
+﻿using Prover.DataStructures;
+using Prover.ProofStates;
+using Prover.Tokenization;
+using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Linq;
 using System.Text;
 using System.Text.Json.Serialization;
 
@@ -69,12 +75,94 @@ namespace Prover
         public string ProblemName { get; set; }
         [JsonPropertyName("Read formula")]
         public string Formula { get; set; }
-
+        public string FormulaStr { get; set; }
+        public string ClausesStr { get; set; }
         public string HeuristicName { get; set; }
         public string Result { get; set; }
         public string TPTPResult { get; set; }
         public Statistics statistics { get; set; }
         public string InitialClauses { get; set; }
         public string Proof { get; set; }
+        public FOFSpec problem;
+        public bool Sucсess { get; set; }
+
+        public SearchParams Params { get; set; }
+
+        public void ConsolePrint()
+        {
+            Console.WriteLine("\n\nЗадача " + ProblemName);
+            Console.WriteLine();
+            if (Sucсess)
+            {
+                Console.WriteLine("Доказательство найдено!");
+
+                Console.WriteLine("Прочитанная формула: ");
+                Console.WriteLine(FormulaStr);
+
+                if (Params.simplify)
+                {
+                    var CnfForms = problem.clauses.Select(clause => clause.Parent1).Distinct().ToList();
+
+                    Console.WriteLine("Преобразования в клаузы: ");
+                  
+                    for (int j = 0; j < CnfForms.Count; j++)
+                    {
+                        if (CnfForms[j] is null) continue;
+                        Console.WriteLine("   Формула " + (j + 1));
+                        Console.WriteLine("\n" + CnfForms[j].TransformationPath());
+                        Console.WriteLine();
+                    }
+
+                }
+
+                Console.WriteLine("\nПосле преобразований получены следующие клаузы: ");
+                Console.WriteLine(ClausesStr);
+
+
+                if (Params.proof)
+                {
+                    
+                    Console.WriteLine("\nДоказательство: ");
+                    var str1 = new List<string>();
+                    Print(state, res, str1);
+
+                    str1.Reverse();
+                    str1 = str1.Distinct().ToList();
+                    int k = 1;
+                    foreach (string s in str1)
+                    {
+                        Console.WriteLine((Convert.ToString(k)).PadLeft(3) + ". " + s);                     
+                        k++;
+
+                    }
+                    Console.WriteLine("Найдена пустая клауза. Доказательство завершено.\n");
+
+                }
+                Console.WriteLine("\nСтатистика: ");
+                Console.WriteLine(statistics.ToString());
+
+            }
+
+
+        }
+
+        private static void Print(ProofState state, Clause res, List<string> sq)
+        {
+            //Console.WriteLine(i++ + ". " + res.Name + ": " + res.ToString() + " from: " + res.support[0] + ", " + res.support[1]);
+            if (res.Parent1 is not null && res.Parent2 is not null)
+            {
+                string substStr = res.Sbst is null || res.Sbst.subst.Count == 0 ? "" : " использована подстановка " + res.Sbst.ToString();// +" по " + res.LiteralStr;
+                sq.Add(((res.Name + ": ").PadRight(7) + res.ToString()).PadRight(50) + (" [" + (res.Parent1 as Clause).Name + ", " + (res.Parent2 as Clause).Name + "]").PadRight(15) + substStr);
+
+                Print(state, res.Parent1 as Clause, sq);
+
+                Print(state, res.Parent2 as Clause, sq);
+            }
+            else
+            {
+                sq.Add((res.Name + ": " + res.ToString()).PadRight(50) + " [input]");// " [" + res.Parent1 + "]");
+            }
+
+        }
     }
 }

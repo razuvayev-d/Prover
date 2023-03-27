@@ -10,17 +10,19 @@ namespace Prover.DataStructures
     /// </summary>
     public class Signature
     {
-        Dictionary<string, int> funs = new Dictionary<string, int>();
-        Dictionary<string, int> preds = new Dictionary<string, int>();
+        public Dictionary<string, int> funs = new Dictionary<string, int>();
+        public Dictionary<string, int> preds = new Dictionary<string, int>();
 
         public void AddFun(string f, int arity)
         {
-            funs.Add(f, arity);
+            //funs.Add(f, arity);
+            funs[f] = arity;
         }
 
         public void AddPred(string p, int arity)
         {
-            preds.Add(p, arity);
+            preds[p] = arity;
+            //preds.Add(p, arity);
         }
 
         public bool IsPred(string p)

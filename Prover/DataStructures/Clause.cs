@@ -240,6 +240,12 @@ namespace Prover.DataStructures
             return newC;
         }
 
+        public Signature CollectSig(Signature sig)
+        {
+            foreach(Literal lit in literals)
+                sig = lit.CollectSig(sig);
+            return sig;
+        }
         public List<Term> CollectVars()
         {
 

@@ -177,5 +177,26 @@ namespace Prover.ClauseSets
         {
             return clauses;
         }
+
+        public Signature CollectSig(Signature sig)
+        {
+            foreach (Clause c in clauses)
+                sig = c.CollectSig(sig);
+            return sig;
+        }
+
+        public ClauseSet AddEqAxioms()
+        {
+            Signature sig = new Signature();    
+            sig = CollectSig(sig);
+            if (sig.IsPred("="))
+            {
+                var res = EqAxioms.GenerateEquivAxioms();
+                res.AddRange(EqAxioms.GenerateCompatAxioms(sig));
+                this.clauses.AddRange(res);
+            }
+            return this;
+        }
+ 
     }
 }

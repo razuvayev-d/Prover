@@ -30,7 +30,7 @@ namespace Prover
         static bool statonly = false;
         static void Main(string[] args)
         {
-            GeneticBreeding();
+            //GeneticBreeding();
             //
             string[] files = Directory.GetFiles(problemsDirectory);
             var s = problemsDirectory + "SYN941+1.p";
@@ -44,7 +44,7 @@ namespace Prover
             param.delete_tautologies = true;
             param.forward_subsumption = true;
             param.delete_tautologies = true;
-            //FOFFull(param.file, param);
+            FOFFull(param.file, param);
 
             //if (args[0] == "-i") indexing = true;
             //////if (args[1] == "-so") statonly = true;
@@ -97,7 +97,8 @@ namespace Prover
 
             var problem = new FOFSpec();
             problem.Parse(Path);
-
+            if (!param.supress_eq_axioms)
+                problem.AddEqAxioms();
 
             string formulastr = CreateFormulaList(problem.formulas);
 
@@ -228,6 +229,7 @@ namespace Prover
                     r.WriteLine("Преобразования в клаузы: ");
                     for (int j = 0; j < CnfForms.Count; j++)
                     {
+                        if (CnfForms[j] is null) continue;
                         Console.WriteLine("   Формула " + (j + 1));
                         r.WriteLine("   Формула " + (j + 1));
 

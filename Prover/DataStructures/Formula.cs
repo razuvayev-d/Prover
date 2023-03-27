@@ -159,7 +159,7 @@ namespace Prover
         /// </summary>
         /// <param name="sig"></param>
         /// <returns></returns>
-        public Signature CollectSig(Signature sig = null)
+        public virtual Signature CollectSig(Signature sig = null)
         {
             if (sig is null) sig = new Signature();
 
@@ -170,7 +170,7 @@ namespace Prover
             {
                 var f = todo.Dequeue();
                 if (f.IsLiteral)
-                    f.subFormula1.CollectSig(sig);
+                    f.CollectSig(sig);
                 else if (f.IsUnary)
                     todo.Enqueue(f.subFormula1);
                 else if (f.IsBinary)

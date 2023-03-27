@@ -201,6 +201,15 @@ namespace Prover.DataStructures
             }
         }
 
+        public override Signature CollectSig(Signature sig = null)
+        {
+            if (sig == null) sig = new Signature();
+
+            sig.AddPred(name, arguments.Count);
+            foreach (var s in arguments)
+                s.CollectSig(sig);
+            return sig;
+        }
         public override string ToString()
         {
             StringBuilder result = new StringBuilder();

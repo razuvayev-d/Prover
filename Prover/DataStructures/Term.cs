@@ -241,6 +241,18 @@ namespace Prover.DataStructures
             return result;
         }
 
+        public override Signature CollectSig(Signature sig = null)
+        {
+            if (sig is null) sig = new Signature();
+
+            if (IsCompound)
+            {
+                sig.AddFun(Func, subterms.Count);
+                foreach(var strm in subterms)
+                    strm.CollectSig(sig);
+            }
+            return sig;
+        }
         /// <summary>
         /// Разбор списка термов разделенных запятыми
         /// </summary>
