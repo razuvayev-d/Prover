@@ -3,6 +3,7 @@ using Prover.Tokenization;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net.Http.Headers;
 
 namespace Prover
 {
@@ -21,7 +22,7 @@ namespace Prover
 
     public partial class Formula
     {
-        string op;
+        protected string op;
         Formula subFormula1;
         Formula subFormula2;
         public Formula() { }
@@ -62,10 +63,7 @@ namespace Prover
             }
             return "(" + arg1 + op + arg2 + ")";
         }
-        /// <summary>
-        ///   Parse a (naked) formula.
-        /// </summary>
-        /// <param name="lexer"></param>
+
         public static Formula ParseFormula(Lexer lexer)
         {
             var res = ParseUnitaryFormula(lexer);
@@ -84,10 +82,8 @@ namespace Prover
             return res;
         }
         /// <summary>
-        /// Разбираем остальную часть ассоциативной формулы которая начинается с head
+        /// Разбираем остальную часть формулы которая начинается с head
         /// </summary>
-        /// <param name="lexer"></param>
-        /// <param name="head"></param>
         public static Formula ParseAssocFormula(Lexer lexer, Formula head)
         {
             var op = lexer.LookLit();
@@ -126,9 +122,9 @@ namespace Prover
             {
                 var lit = Literal.ParseLiteral(lexer);
                 return lit;
-                ///new Formula("", lit, null);
             }
         }
+
         /// <summary>
         /// Разбирает остаток формулы начиная с данного квантора
         /// </summary>
@@ -154,11 +150,8 @@ namespace Prover
         }
 
         /// <summary>
-        ///  Return the set of all function and predicate symbols used in
-        /// the formula.
+        ///  Возвращает множдество всех предикативных и функциональных символов в этой формуле
         /// </summary>
-        /// <param name="sig"></param>
-        /// <returns></returns>
         public virtual Signature CollectSig(Signature sig = null)
         {
             if (sig is null) sig = new Signature();
@@ -191,11 +184,8 @@ namespace Prover
 
 
         /// <summary>
-        /// Return the formula without any leading quantifiers(if the
-        /// formula is in prefix normal form, this is the matrix of the
-        /// formuma).
+        /// Возвращает формулу без лидирующих кванторов
         /// </summary>
-        /// <returns></returns>
         public Formula GetMatrix()
         {
             var f = this;
@@ -203,10 +193,10 @@ namespace Prover
                 f = f.subFormula2;
             return f;
         }
+
         /// <summary>
-        /// Return a list of the subformula connected by top-level "&".
+        ///  Возвращает список формул, которые были соединены "&" 
         /// </summary>
-        /// <returns></returns>
         public List<Formula> ConjToList()
         {
             if (op == "&")
@@ -219,9 +209,8 @@ namespace Prover
             return new List<Formula> { this };
         }
         /// <summary>
-        ///  Return a list of the subformula connected by top-level "|".
+        ///  Возвращает список формул, которые были соединены "|"
         /// </summary>
-        /// <returns></returns>
         public List<Formula> DisjToList()
         {
             if (op == "|")
@@ -236,14 +225,12 @@ namespace Prover
 
 
         /// <summary>
-        ///  Simplify the formula by eliminating the <=, ~|, ~& and <~>. This
-        ///is not strictly necessary, but means fewer cases to consider
-        ///later.The following rules are applied exhaustively:
+        /// Упрощает формулу удаляя <=, ~|, ~& и <~>
+        /// Используем правила:
         ///F ~|G  -> ~(F|G)
         ///F ~&G  -> ~(F&G)
         ///F<=G  -> G=>F
         ///F<~>G -> ~(F<=>G)
-        ///Returns f', modified
         /// </summary>
         public static (Formula, bool) FormulaOpSimplify(Formula f)
         {
@@ -305,15 +292,9 @@ namespace Prover
             return (f, modified);
         }
 
-        /// <summary>
-        ///  Исчерпывающе примените упрощение к f, создавая упрощенную
-        ///    версию f'. См. формулуTopSimplify()
-        ///выше для отдельных правил.
-        ///Возвращает(f', True), если f'!=f, (f', False) в противном случае (т.е. если упрощение не произошло, потому что формула уже была упрощена).
-        ///упрощение не произошло, потому что формула уже была полностью
-        ///упрощена.
-        /// </summary>
-        /// <param name="f"></param>
+       /// <summary>
+       /// Упрощает формулу
+       /// </summary>
         public static (Formula, bool) FormulaSimplify(Formula f)
         {
             if (f.IsLiteral)
@@ -438,13 +419,6 @@ namespace Prover
             return (f, false);
         }
 
-
-        /// <summary>
-        /// Return True if self is a propositional constant of the given
-        /// polarity.
-        /// </summary>
-        /// <param name="polarity"></param>
-        /// <returns></returns>
         public bool IsPropConst(bool polarity)
         {
             if (!IsLiteral)
@@ -465,17 +439,16 @@ namespace Prover
 
         public virtual bool Equals(Formula other)
         {
-            if (this.op != other.op) return false;
+            if (op != other.op) return false;
 
-            if (this.IsLiteral) return Literal.Equals(this, other);  //(this as Literal).Equals(other as Literal);
-
-
-            //if (this.IsQuantified)
-            //    return
-
-            //if (this.IsUnary)
-            //    return subFormula1.Equals(other.subFormula1);
-            //return 
+            if (IsLiteral) 
+                return Literal.Equals(this, other);  //(this as Literal).Equals(other as Literal);
+            if (IsUnary)
+                return subFormula1.Equals(other.subFormula1);
+            if (IsQuantified)
+                return Term.Equals(subFormula1, other.subFormula2) && subFormula2.Equals(other.subFormula2);
+            if (IsBinary)
+                return subFormula1.Equals(other.subFormula1) && subFormula2.Equals(other.subFormula2);
             return false;
         }
         /// <summary>
@@ -493,10 +466,6 @@ namespace Prover
             {
                 return subFormula1.CollectFreeVars();
             }
-            //else if (IsUnary)
-            //{
-            //    res = subFormula1.CollectFreeVars();
-            //}
             else if (IsBinary)
             {
                 res = subFormula1.CollectFreeVars();
@@ -517,20 +486,4 @@ namespace Prover
 
     }
 }
-
-
-//class Litera1 : Formula
-//{
-//    string name; //предикативная буква
-//    List<Term> terms;
-
-
-//    public Litera1(string atom, bool negative = false)
-//    {
-//        if (negative) op = OpType.Negation;
-//        else op = OpType.NoOp;
-
-
-//    }
-//}
 
