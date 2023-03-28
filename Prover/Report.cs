@@ -212,6 +212,7 @@ namespace Prover
             var sb = new StringBuilder();
             sb.Append((res.Name + ": ").PadRight(pad_name));
             sb.Append(res.ToString().PadRight(pad_clause_str));
+            sb.Append("  ");
             sb.Append(("[" + (res.Parent1 as Clause).Name + ", " + (res.Parent2 as Clause).Name + "]").PadRight(pad_source));
             sb.Append(res.TransformOperation);
             sb.Append(" по литералу " + res.LiteralStr);
@@ -225,6 +226,7 @@ namespace Prover
             var sb = new StringBuilder();
             sb.Append((res.Name + ": ").PadRight(pad_name));
             sb.Append(res.ToString().PadRight(pad_clause_str));
+            sb.Append("  ");
             sb.Append(("[" + (res.Parent1 as Clause).Name + "]").PadRight(pad_source));
             sb.Append(res.TransformOperation);
             sb.Append("  по литералу " + res.LiteralStr);
@@ -238,6 +240,7 @@ namespace Prover
             var sb = new StringBuilder();
             sb.Append((res.Name + ": ").PadRight(pad_name));
             sb.Append(res.ToString().PadRight(pad_clause_str));
+            sb.Append("  ");
             sb.Append(("[input]").PadRight(pad_source));
             //sb.Append(res.TransformOperation);
             //sb.Append(substStr);

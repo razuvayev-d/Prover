@@ -35,7 +35,7 @@ namespace Prover.ClauseSets
         /// <returns></returns>
         public Clause ExtractBestByEval(int heuristicIndex)
         {
-            Console.WriteLine(EvalFunctions.EvalFunctions[heuristicIndex].ToString());
+            //Console.WriteLine(EvalFunctions.EvalFunctions[heuristicIndex].ToString());
             if (clauses.Count == 0) return null;
             int best = 0;
             int besteval = clauses[0].evaluation[heuristicIndex];
