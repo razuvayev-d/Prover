@@ -12,6 +12,7 @@ namespace Prover.Genetic
         public List<List<object>> genes { get; set; } = new List<List<object>>(10);//Каждый элемент список вида [name, weight, par1, par2 ... ]
         public int Fitness { get; set; }
         public bool InvalidFitness { get; set; } = true;
+        public Individual() { }
 
         public Individual(List<List<object>> genes, int Fitness, bool InvalidF)
         {
@@ -42,23 +43,10 @@ namespace Prover.Genetic
 
             return new List<object> { name, weight, prio, par1, par2, par3, par4, par5 };
         }
-        [Serializable]
-        public class FunctionWithParams
-        {
-            public EvalStructure func { get; set; }
-            public List<float> param { get; set; }
-
-            public FunctionWithParams(EvalStructure structure, List<float> parameters)
-            {
-                func = structure;
-                param = parameters;
-            }
-        }
+       
         /// <summary>
         /// Получает гены которые НЕ имеют индексы indecies
         /// </summary>
-        /// <param name="indecies"></param>
-        /// <returns></returns>
         public List<List<object>> GetNonmatches(List<int> indecies)
         {
             var ret = new List<List<object>>();
@@ -69,9 +57,7 @@ namespace Prover.Genetic
             return ret;
         }
 
-        public Individual()
-        {
-        }
+      
         public EvalStructure CreateEvalStructure()
         {
             var heuristics = new List<(ClauseEvaluationFunction, int)>();
