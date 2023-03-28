@@ -28,14 +28,9 @@ namespace Prover.Genetic
                                 if (j == 2)
                                     individual.genes[i][j] = PriorityFunctions.GetRandomFunctionName();
                                 else // j == 0
-                                    individual.genes[i][j] = Fitness.GetRandomString();
-                                // Fitness.GetRandomString();
+                                    individual.genes[i][j] = Extensions.GetRandomEvaluationFunction();                               
 
                             }
-                            //else if (param is double)
-                            //{
-                            //    param = random.NextDouble(); //TODO: можно изменить в зависимости от значения param
-                            //}
                             else if (param is int)
                             {
                                 if (individual.genes[i][0].ToString() == "ClauseWeight")
@@ -43,7 +38,6 @@ namespace Prover.Genetic
                                     individual.InvalidFitness = true;
                                     individual.genes[i][j] = random.NextDouble() > 0.5 ? (int)param + 2 : (int)param - 2;
                                 }
-                                //RandomNormalDistribution((int)param, 1 + (int)param / 5);//random.Next(1, (int)param / 2 > 2 ? (int)param / 2 + 1 : 2);
                             }
                         }
                     }
@@ -51,17 +45,17 @@ namespace Prover.Genetic
             }
         }
 
-        public static int RandomNormalDistribution(int mean, int std)
-        {
-            Random rand = new Random(); //reuse this if you are generating many
-            double u1 = 1.0 - rand.NextDouble(); //uniform(0,1] random doubles
-            double u2 = 1.0 - rand.NextDouble();
-            double randStdNormal = Math.Sqrt(-2.0 * Math.Log(u1)) *
-                         Math.Sin(2.0 * Math.PI * u2); //random normal(0,1)
-            double randNormal =
-                         mean + std * randStdNormal; //random normal(mean,stdDev^2)
-            return Convert.ToInt32(randNormal);
-        }
+        //public static int RandomNormalDistribution(int mean, int std)
+        //{
+        //    Random rand = new Random(); //reuse this if you are generating many
+        //    double u1 = 1.0 - rand.NextDouble(); //uniform(0,1] random doubles
+        //    double u2 = 1.0 - rand.NextDouble();
+        //    double randStdNormal = Math.Sqrt(-2.0 * Math.Log(u1)) *
+        //                 Math.Sin(2.0 * Math.PI * u2); //random normal(0,1)
+        //    double randNormal =
+        //                 mean + std * randStdNormal; //random normal(mean,stdDev^2)
+        //    return Convert.ToInt32(randNormal);
+        //}
 
         public static Individual Crossover(Individual individual1, Individual individual2, double favor)
         {

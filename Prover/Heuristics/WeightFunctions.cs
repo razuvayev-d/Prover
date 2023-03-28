@@ -15,6 +15,9 @@ namespace Prover.Heuristics
     //    LIFO,
     //    ConstPrio
     //}
+
+
+
     public enum HeuristicsFunctions
     {
         FIFOPrio,
@@ -26,6 +29,15 @@ namespace Prover.Heuristics
         ByDerivationSize
     }
 
+    public static class Extensions
+    {
+        public static string GetRandomEvaluationFunction()
+        {
+            var MemberCount = Enum.GetNames(typeof(HeuristicsFunctions)).Length;
+            Random r = new Random();
+            return ((HeuristicsFunctions)r.Next(MemberCount)).ToString();
+        }
+    }
 
     public delegate int Heuristic(Clause clause);
     public abstract class ClauseEvaluationFunction
