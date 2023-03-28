@@ -37,7 +37,10 @@ namespace Prover.Genetic
             int par1 = r.Next(0, 10);
             int par2 = r.Next(1000, 2000) % 10;
             int par3 = r.Next(0, 10);
-            return new List<object> { name, weight, prio, par1, par2, par3 };
+            int par4 = r.Next(0, 10);
+            int par5 = r.Next(0, 10);
+
+            return new List<object> { name, weight, prio, par1, par2, par3, par4, par5 };
         }
         [Serializable]
         public class FunctionWithParams
