@@ -2,6 +2,7 @@
 using Prover.DataStructures;
 using Prover.Heuristics;
 using Prover.ResolutionMethod;
+using System;
 using System.Threading;
 using static Prover.Report;
 
@@ -15,7 +16,7 @@ namespace Prover.ProofStates
         public bool backward_subsumption { get; set; } = false;
 
         public bool index { get; set; } = false;
-        public object literal_selection { get; set; } = false;
+        public string literal_selection { get; set; } = null;
 
         public bool proof { get; set; } = false;
 
@@ -35,7 +36,7 @@ namespace Prover.ProofStates
                             bool delete_tautologies = false,
                             bool forward_subsumption = false,
                             bool backward_subsumption = false,
-                            object literal_selection = null)
+                            string literal_selection = null)
         {
             this.heuristics = heuristics;
             this.delete_tautologies = delete_tautologies;
@@ -62,6 +63,8 @@ namespace Prover.ProofStates
         public Statistics statistics = new Statistics();
         bool indexed = false;
 
+        public LiteralSelector Selector;
+
         //public int initial_clause_count;
         //public int proc_clause_count = 0;
         //public int factor_count = 0;
@@ -72,6 +75,7 @@ namespace Prover.ProofStates
         bool silent;
         public ProofState(SearchParams Params, ClauseSet clauses, bool silent = false, bool indexed = false)
         {
+            //indexed = true;
             this.Params = Params;
             unprocessed = new HeuristicClauseSet(Params.heuristics);
             this.indexed = indexed;
@@ -84,13 +88,21 @@ namespace Prover.ProofStates
 
             statistics.initial_count = unprocessed.Count;
             this.silent = silent;
-        }
 
+            if(Params.literal_selection is not null)
+            {
+                Selector = LiteralSelection.GetSelector(Params.literal_selection);
+            }
+        }
+        static int iter = 0;
         public Clause ProcessClause()
         {
-
+            
             var given_clause = unprocessed.ExtractBest();
-
+            //Console.WriteLine("\nGIVEN========================== {0}", ++iter);
+            //Console.WriteLine(given_clause.ToString());
+            //Console.WriteLine(given_clause.evaluation[0].ToString() + " " + given_clause.evaluation[1]);
+            //Console.WriteLine("PROCESSED: {0}   UNPROC: {1}", processed.Count, unprocessed.Count);
             given_clause = given_clause.FreshVarCopy();
 
             if (given_clause.IsEmpty) return given_clause;
@@ -104,17 +116,21 @@ namespace Prover.ProofStates
             if (Params.forward_subsumption && Subsumption.Forward(processed, given_clause))
             {
                 statistics.forward_subsumed++;
+                //Console.WriteLine("Forward");
                 return null;
             }
 
             if (Params.backward_subsumption)
             {
-                statistics.backward_subsumed += Subsumption.Backward(given_clause, processed);
+                var tmp = Subsumption.Backward(given_clause, processed);
+                statistics.backward_subsumed += tmp;// Subsumption.Backward(given_clause, processed);
+
+                //Console.WriteLine("BACKWARD " + tmp);
             }
 
-            if (Params.literal_selection != null)
+            if (Params.literal_selection is not null)
             {
-                //given_clause.SelectInferenceLits(Params.literal_selection);
+                given_clause.SelectInferenceLiterals(Selector);
             }
 
             ClauseSet newClauses = new ClauseSet();
@@ -129,7 +145,7 @@ namespace Prover.ProofStates
             else
                 resolvents = ResControl.ComputeAllResolvents(given_clause, processed);
 
-
+            //Console.WriteLine("FACTORS LEN {0}, RESOLV LEN {1}", factors.Count, resolvents.Count);
             statistics.resolvent_count += resolvents.Count;
             statistics.proc_clause_count++;
             //resolvents.Distinct();
@@ -144,6 +160,9 @@ namespace Prover.ProofStates
                 unprocessed.AddClause(c);
             }
             return null;
+        
+        
+        
         }
 
 

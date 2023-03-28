@@ -65,7 +65,7 @@ namespace Prover.DataStructures
                 Negative = negative;
             }
 
-
+            IsInference = true;
 
             //TODO: разобраться с обработкой равенства при создании литерала
             //if (atom.Func == "!=")
@@ -81,7 +81,7 @@ namespace Prover.DataStructures
             //self.setInferenceLit(True)
         }
 
-        public bool IsInference { get; set; } = true;
+        public bool IsInference { get; set; } 
         public bool Match(Literal other, Substitution subst)
         {
             int btstate = ((BTSubst)subst).GetState;
@@ -111,6 +111,11 @@ namespace Prover.DataStructures
                 if (Negative != other.Negative) return false;
                 if (Name != other.Name) return false;
                 if (arguments.Count != other.arguments.Count) return false;
+                if (IsEquational)
+                {
+                    return arguments[0].Equals(other.arguments[0]) && (arguments[1].Equals(other.arguments[1])) ||
+                        arguments[0].Equals(other.arguments[1]) && arguments[1].Equals(other.arguments[0]);
+                }
                 int n = arguments.Count;
                 for (int i = 0; i < n; i++)
                 {
@@ -360,6 +365,8 @@ namespace Prover.DataStructures
                 lexer.Next();
             }
             var atom = ParseAtom(lexer);
+            if(atom.name == "=" || atom.name == "!=")
+                return atom;
             atom.Negative = negative;
             return atom;
         }

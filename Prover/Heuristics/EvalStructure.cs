@@ -68,15 +68,15 @@ namespace Prover.Heuristics
         {
             get
             {
-                if (currentCount > 1)
-                {
-                    currentCount--;
+                currentCount--;
+                if (currentCount >= 0)
+                { 
                     return current;
                 }
                 else
                 {
                     current = (current + 1) % EvalVec.Count;
-                    currentCount = EvalVec[current];
+                    currentCount = EvalVec[current] - 1;
                     return current;
                 }
             }

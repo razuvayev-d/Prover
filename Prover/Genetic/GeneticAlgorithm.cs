@@ -16,19 +16,19 @@ namespace Prover.Genetic
     {
         static string TrainDirectory = @".\TrainTask";
 
-        public static int Calculate(Individual individual, int timeout)
+        public static int Calculate(Individual individual, int timeout, SearchParams param)
         {
             if (individual.InvalidFitness)
             {
                 individual.InvalidFitness = false;
-                return Calculate(individual.CreateEvalStructure(), timeout);
+                return Calculate(individual.CreateEvalStructure(), timeout, param);
             }
             else
                 return individual.Fitness;
         }
 
 
-        private static int Calculate(EvalStructure individual, int timeout)
+        private static int Calculate(EvalStructure individual, int timeout, SearchParams param)
         {
             int result = 0;
             string[] files = Directory.GetFiles(TrainDirectory);
@@ -40,23 +40,17 @@ namespace Prover.Genetic
             //});
             foreach (var file in files)
             {
-                if (TrySolve(file, individual, timeout)) result++;
+                if (TrySolve(file, individual, timeout, param)) result++;
             }
 
             return result;
         }
 
-        static bool TrySolve(string Path, EvalStructure individual, int timeout)
+        static bool TrySolve(string Path, EvalStructure individual, int timeout, SearchParams param)
         {
             Clause.ResetCounter();
 
             string timeoutStatus = string.Empty;
-            var param = new SearchParams()
-            {
-                forward_subsumption = true,
-                backward_subsumption = true,
-                delete_tautologies = true
-            };
 
             param.heuristics = individual;
             string TPTPStatus;
@@ -70,58 +64,27 @@ namespace Prover.Genetic
             var problem = new FOFSpec();
             problem.Parse(Path);
 
-            string formulastr = "FORMULA";// problem.formulas[0].Formula.ToString();
-            // string formulastr = problem.clauses.ToString();
             var cnf = problem.Clausify();
 
             var state = new ProofState(param, cnf, false, false);
 
-
-            //stopwatch.Restart();
-            //var res = state.Saturate();
-            //stopwatch.Stop();
             CancellationTokenSource token = new CancellationTokenSource();
             state.token = token;
             var tsk = new Task<Clause>(() => state.Saturate());
 
             tsk.Start();
-            //var res = state.Saturate();
             bool complete = tsk.Wait(timeout);
-
             token.Cancel();
             Clause res;
             if (complete)
-            {
                 res = tsk.Result;
-                //lock ("Console")
-                //{                 
-                //    Console.ForegroundColor = ConsoleColor.Green; // устанавливаем цвет
-                //    Console.WriteLine("Solved: " + Path);
-                //    Console.ResetColor(); // сбрасываем в стандарт
-                //}
-
-            }
             else
-            {
-
                 res = null;
-                timeoutStatus = " - timeout";
-                //lock ("Console")
-                //{
-                //    Console.ForegroundColor = ConsoleColor.Red; // устанавливаем цвет
-                //    Console.WriteLine("Timeout: " + Path);
-                //    Console.ResetColor(); // сбрасываем в стандарт
-                //}
-
-            }
 
             if (res is null)
             {
-
                 return false;
             }
-
-
             if (res.IsEmpty) return true;
             else return false;
 
@@ -131,10 +94,12 @@ namespace Prover.Genetic
     internal class GeneticAlgorithm
     {
         GeneticOptions Options;
+        SearchParams SearchParams;
 
-        public GeneticAlgorithm(GeneticOptions options)
+        public GeneticAlgorithm(GeneticOptions options, SearchParams searchParams)
         {
             Options = options;
+            SearchParams = searchParams;
         }
 
         public void Evolution()
@@ -146,29 +111,23 @@ namespace Prover.Genetic
 
             Population population;
             if (Options.Mode == GeneticOptions.GeneticMode.CreateNewPopulation)
+            {
                 population = Population.CreateRandom(Options.Size, Options.GenesLengts);
+                Parallel.For(0, Options.Size, poptions, i =>
+                {
+                    population.individuals[i].Fitness = Fitness.Calculate(population.individuals[i], Options.LightTimeOut, SearchParams);
+                });
+            }
             else
             {
                 population = Population.LoadFromFile(Options.PopulationFileName);
                 foreach (var g in population.individuals)
                     g.InvalidFitness = false;
             }
-
-            Parallel.For(0, Options.Size, poptions, i =>
-            {
-                population.individuals[i].Fitness = Fitness.Calculate(population.individuals[i], Options.LightTimeOut);
-            });
-            //population.AverageFitness = population.individuals.Select(x => x.Fitness).Average();
-            //population.MinFitness = population.individuals.Select(x => x.Fitness).Min();
-            //population.MaxFitness = population.individuals.Select(x => x.Fitness).Max();
-
+            population.SaveToFile("InitialPopulation.txt");
             Console.WriteLine("Average fitness of generation {0}: {1}", -1, population.AverageFitness);
             Console.WriteLine("Max fitness of generation {0}: {1}", -1, population.MaxFitness);
             Console.WriteLine("Min fitness of generation {0}: {1}", -1, population.MinFitness);
-
-
-            population.SaveToFile("InitialPopulation.txt");
-
 
             int timeout = Options.LightTimeOut;
 
@@ -179,7 +138,6 @@ namespace Prover.Genetic
 
                 Console.WriteLine("\n\nGeneration number: " + generation.ToString());
 
-
                 var bests = population.individuals.Where(x => x.Fitness == population.MinFitness).Take(5).ToList();
 
                 //Sequental mutation
@@ -187,7 +145,6 @@ namespace Prover.Genetic
                 //{
                 //    GeneticOperators.Mutation(population.individuals[i], Options.probWeight, Options.probParam);
                 //}
-
                 Parallel.For(0, Options.Size, poptions, i =>
                 {
                     GeneticOperators.Mutation(population.individuals[i], Options.probWeight, Options.probParam);
@@ -201,10 +158,19 @@ namespace Prover.Genetic
                 //        newIndividuals.Add(GeneticOperators.Crossover(population.individuals[i], population.individuals[j], Options.Favor));
                 //    }
                 Random random = new Random();
-                for (int i = 0; i < Options.Size; i++)
+                //for (int i = 0; i < Options.Size; i++)
+                //{
+                //    newIndividuals.Add(GeneticOperators.Crossover(population.individuals[random.Next(Options.Size)], population.individuals[random.Next(Options.Size)], Options.Favor));
+                //}
+
+                Parallel.For(0, Options.Size /*(int)Math.Min(population.Size * 1.5, newIndividuals.Count) /*newIndividuals.Count*/, poptions, i =>
                 {
-                    newIndividuals.Add(GeneticOperators.Crossover(population.individuals[random.Next(Options.Size)], population.individuals[random.Next(Options.Size)], Options.Favor));
-                }
+                    var ind = GeneticOperators.Crossover(population.individuals[random.Next(Options.Size)], population.individuals[random.Next(Options.Size)], Options.Favor);
+                    lock ("ge")
+                    {
+                        newIndividuals.Add(ind);
+                    }
+                });
                 //newIndividuals.Distinct();
                 List<int> fitness = new List<int>();
 
@@ -213,11 +179,9 @@ namespace Prover.Genetic
                 //{
                 //    newIndividuals[i].Fitness = Fitness.Calculate(newIndividuals[i]);
                 //}
-
-
                 Parallel.For(0, Options.Size /*(int)Math.Min(population.Size * 1.5, newIndividuals.Count) /*newIndividuals.Count*/, poptions, i =>
                 {
-                    newIndividuals[i].Fitness = Fitness.Calculate(newIndividuals[i], timeout);
+                    newIndividuals[i].Fitness = Fitness.Calculate(newIndividuals[i], timeout, SearchParams);
                 });
                 newIndividuals.AddRange(population.individuals);
 
@@ -226,13 +190,6 @@ namespace Prover.Genetic
                 newPopulation.individuals = newIndividuals;
 
                 population = GeneticOperators.Select(newPopulation, Options.Size, Options.elitism);
-
-                //population.AverageFitness = newIndividuals.Select(x => x.Fitness).Average();
-                //population.MinFitness = newIndividuals.Select(x => x.Fitness).Min();
-                //population.MaxFitness = newIndividuals.Select(x => x.Fitness).Max();
-
-                //population.AverageFitness = population.
-
 
                 using (StreamWriter wr = new StreamWriter("averF.txt", append: true))
                 {

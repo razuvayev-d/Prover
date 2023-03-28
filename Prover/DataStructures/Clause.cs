@@ -17,7 +17,7 @@ namespace Prover.DataStructures
     {
         List<Literal> literals = new List<Literal>();
         string type { get; set; }
-        string name;
+        public string name;
 
         public List<Literal> Literals => literals;
         public string Name => name;
@@ -292,6 +292,30 @@ namespace Prover.DataStructures
             for (int i = 0; i < Length; i++)
                 total += literals[i].GetHashCode();
             return total;
+        }
+
+        
+        private List<Literal> GetNegativeLiterals()
+        {
+            var res = new List<Literal>();
+            foreach(var literal in literals)
+            {
+                if(literal.Negative) 
+                    res.Add(literal);
+            }
+            return res;
+        }
+        public void SelectInferenceLiterals(LiteralSelector SelectorFunction)
+        {
+            var candidates = GetNegativeLiterals();
+            if(candidates.Count == 0) return;
+
+            foreach (var literal in literals)
+                literal.IsInference = false;
+
+            var selected = SelectorFunction(candidates);
+            foreach(var literal in selected)
+                literal.IsInference = true;
         }
 
         public PredicateAbstractionArray PredicateAbstraction()
