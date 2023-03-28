@@ -113,27 +113,32 @@ namespace Prover.Genetic
             //        return /*(new FIFOEvaluation(), (int)param[1]); //*/(new SymbolCountEvaluation((int)param[2], (int)param[3]), (int)param[1]);
             //    default: throw new ArgumentException(param[0].ToString());
             //}
+
+            Func<object, int> ToInt = (obj) => Convert.ToInt32(obj.ToString());
+        
             Predicate<Clause> priof = PriorityFunctions.PriorityFunctionSwitch(param[2].ToString());
             switch (param[0].ToString())
             {
                 case "FIFOPrio":
-                    return (new FIFOEvaluationPrio(priof), Convert.ToInt32(param[1].ToString()));
+                    return (new FIFOEvaluationPrio(priof), ToInt(param[1]));
                 case "LIFOPrio":
-                    return (new LIFOEvaluationPrio(priof), Convert.ToInt32(param[1].ToString()));
+                    return (new LIFOEvaluationPrio(priof), ToInt(param[1]));
                 case "ClauseWeight":
-                    return (new ClauseWeight(priof, Convert.ToInt32(param[3].ToString()), Convert.ToInt32(param[4].ToString()), Convert.ToInt32(param[5].ToString())), Convert.ToInt32(param[1].ToString()));
+                    return (new ClauseWeight(priof, ToInt(param[3]), ToInt(param[4]), ToInt(param[5])), ToInt(param[1]));
                 case "ByDerivationDepth":
                     return (new ByDerivationDepth(priof), Convert.ToInt32(param[1].ToString()));
                 case "ByLiteralNumber":
-                    return /*(new FIFOEvaluation(), (int)param[1]); //*/(new ByLiteralNumber(priof), Convert.ToInt32(param[1].ToString()));
+                    return (new ByLiteralNumber(priof), ToInt(param[1]));
                 case "ByDerivationSize":
-                    return (new ByDerivationSize(priof), Convert.ToInt32(param[1].ToString()));
+                    return (new ByDerivationSize(priof), ToInt(param[1]));
+                case "RefinedWeight":
+                    return (new RefinedWeight(priof, ToInt(param[3]), ToInt(param[4]), ToInt(param[5]), ToInt(param[6]), ToInt(param[7])),  ToInt(param[1]));
                 default: throw new ArgumentException("Нет такой функции " + param[0].ToString());
             }
 
         }
 
-
+      
         //    FIFOPrio,
         //    ClauseWeight,
         //    LIFOPrio,

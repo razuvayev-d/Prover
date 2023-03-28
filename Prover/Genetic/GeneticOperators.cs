@@ -33,7 +33,7 @@ namespace Prover.Genetic
                             }
                             else if (param is int)
                             {
-                                if (individual.genes[i][0].ToString() == "ClauseWeight")
+                                if (individual.genes[i][0].ToString() == "ClauseWeight" || individual.genes[i][0].ToString() == "RefinedWeight")
                                 {
                                     individual.InvalidFitness = true;
                                     individual.genes[i][j] = random.NextDouble() > 0.5 ? (int)param + 2 : (int)param - 2;
