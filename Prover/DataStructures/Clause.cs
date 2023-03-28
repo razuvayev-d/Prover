@@ -26,8 +26,7 @@ namespace Prover.DataStructures
         static int clauseIdCounter = 0;
 
         public int depth { get; set; } = 0;
-
-       // public Substitution subst { get; set; } = new Substitution();
+   
         /// <summary>
         /// Содержит оценки в соответствии со схемами. Намример для PickGiven5 {5, 10} означает, что клауза имеет оценку 5 по symbolCount и 10 по LIFO.
         /// </summary>
