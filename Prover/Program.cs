@@ -276,7 +276,7 @@ namespace Prover
                 string verdict = res.IsEmpty ? "STATUS: THEOREM" : "STATUS: NOT THEOREM";
                 var str = new List<string>();
                 //Console.WriteLine(Path);
-                Print(state, res, str);
+                //Print(state, res, str);
 
                 str.Reverse();
                 str = str.Distinct().ToList();
@@ -349,7 +349,7 @@ namespace Prover
                     r.WriteLine("Доказательство");
                     Console.WriteLine("\nДоказательство: ");
                     var str1 = new List<string>();
-                    Print(state, res, str1);
+                    //Print(state, res, str1);
 
                     str1.Reverse();
                     str1 = str1.Distinct().ToList();
@@ -512,7 +512,7 @@ namespace Prover
 
             string verdict = res.IsEmpty ? "STATUS: THEOREM" : "STATUS: NOT THEOREM";
             var str = new List<string>();
-            Print(state, res, str);
+            //Print(state, res, str);
 
             str.Reverse();
             str = str.Distinct().ToList();
@@ -651,7 +651,7 @@ namespace Prover
             string verdict = res.IsEmpty ? "STATUS: THEOREM" : "STATUS: NOT THEOREM";
             var str = new List<string>();
             Console.WriteLine(Path);
-            Print(state, res, str);
+            //Print(state, res, str);
 
             str.Reverse();
             str = str.Distinct().ToList();
@@ -744,7 +744,7 @@ namespace Prover
 
             string verdict = res.IsEmpty ? "STATUS: THEOREM" : "STATUS: NOT THEOREM";
             var str = new List<string>();
-            Print(state, res, str);
+            //Print(state, res, str);
 
             str.Reverse();
             str = str.Distinct().ToList();
@@ -785,154 +785,9 @@ namespace Prover
             //}
         }
         //static int i = 1;
-        static void Print(SimpleProofState state, Clause res, List<string> sq)
-        {
-            if (res.support.Count == 0)
-            {
-                var s = res.Name + ": " + res.ToString() + " from: input";
-                sq.Add(s);
-                return;
-            }
-            else
-            {
-                //Console.WriteLine(i++ + ". " + res.Name + ": " + res.ToString() + " from: " + res.support[0] + ", " + res.support[1]);
-                if (res.support.Count == 2)
-                {
-                    sq.Add(res.Name + ": " + res.ToString() + " from: " + res.support[0] + ", " + res.support[1]);
-                    string Name1, Name2;
-                    Name1 = res.support[0];
-                    Name2 = res.support[1];
-                    var q = state.processed.clauses.Where(x => x.Name == Name1).ToList()[0];
-                    Print(state, q, sq);
-                    q = state.processed.clauses.Where(x => x.Name == Name2).ToList()[0];
-                    Print(state, q, sq);
-                }
-                if (res.support.Count == 1)
-                {
-                    sq.Add(res.Name + ": " + res.ToString() + " from: " + res.support[0]);
-                    string Name1, Name2;
-                    Name1 = res.support[0];
-                    var q = state.processed.clauses.Where(x => x.Name == Name1).ToList()[0];
-                    Print(state, q, sq);
+       
 
-                }
-
-                //var q = state.processed.clauses.Where(x => x.Name == Name1).ToList()[0];
-                //Print(state, q, sq);
-                //q = state.processed.clauses.Where(x => x.Name == Name2).ToList()[0];
-                //Print(state, q, sq);
-
-            }
-        }
-
-        static void Print(RatingProofState state, Clause res, List<string> sq)
-        {
-
-            if (res.support.Count == 0)
-            {
-                var s = res.Name + ": " + res.ToString() + " from: input";
-                sq.Add(s);
-                return;
-            }
-            else
-            {
-                //Console.WriteLine(i++ + ". " + res.Name + ": " + res.ToString() + " from: " + res.support[0] + ", " + res.support[1]);
-                if (res.support.Count == 2)
-                {
-                    sq.Add(res.Name + ": " + res.ToString() + " from: " + res.support[0] + ", " + res.support[1]);
-                    string Name1, Name2;
-                    Name1 = res.support[0];
-                    Name2 = res.support[1];
-                    var q = state.allClauses.Where(x => x.Name == Name1).ToList()[0];
-                    Print(state, q, sq);
-                    q = state.allClauses.Where(x => x.Name == Name2).ToList()[0];
-                    Print(state, q, sq);
-                }
-                if (res.support.Count == 1)
-                {
-                    sq.Add(res.Name + ": " + res.ToString() + " from: " + res.support[0]);
-                    string Name1, Name2;
-                    Name1 = res.support[0];
-                    var q = state.allClauses.Where(x => x.Name == Name1).ToList()[0];
-                    Print(state, q, sq);
-
-                }
-
-                //var q = state.processed.clauses.Where(x => x.Name == Name1).ToList()[0];
-                //Print(state, q, sq);
-                //q = state.processed.clauses.Where(x => x.Name == Name2).ToList()[0];
-                //Print(state, q, sq);
-
-            }
-        }
-
-
-        static void Print(ProofState state, Clause res, List<string> sq)
-        {
-            //if (res.support.Count == 0)
-            //{
-            //    var s = ((res.Name + ": ").PadRight(7) + res.ToString()).PadRight(50) + " [input]";
-            //    sq.Add(s);
-            //    return;
-            //}
-            //else
-            {
-                //Console.WriteLine(i++ + ". " + res.Name + ": " + res.ToString() + " from: " + res.support[0] + ", " + res.support[1]);
-                if (res.Parent1 is not null && res.Parent2 is not null)
-                {
-                    string substStr = res.Sbst is null || res.Sbst.subst.Count == 0 ? "" : " использована подстановка " + res.Sbst.ToString();// +" по " + res.LiteralStr;
-                    sq.Add(((res.Name + ": ").PadRight(7) + res.ToString()).PadRight(50) + (" [" + (res.Parent1 as Clause).Name + ", " + (res.Parent2 as Clause).Name + "]").PadRight(15) + substStr);
-                    //string Name1, Name2;
-                    //Name1 = res.support[0];
-                    //Name2 = res.support[1];
-                    //var q = state.processed.clauses.Where(x => x.Name == Name1).ToList()[0];
-                    Print(state, res.Parent1 as Clause, sq);
-                    //q = state.processed.clauses.Where(x => x.Name == Name2).ToList()[0];
-                    Print(state, res.Parent2 as Clause, sq);
-                }
-                else
-                {
-                    sq.Add((res.Name + ": " + res.ToString()).PadRight(50) + " [input]");// " [" + res.Parent1 + "]");
-                    //string Name1, Name2;
-                    //Name1 = res.support[0];
-                    //var q = state.processed.clauses.Where(x => x.Name == Name1).ToList()[0];
-                    //Print(state, res.Parent1 as Clause, sq);
-
-                }
-
-                //var q = state.processed.clauses.Where(x => x.Name == Name1).ToList()[0];
-                //Print(state, q, sq);
-                //q = state.processed.clauses.Where(x => x.Name == Name2).ToList()[0];
-                //Print(state, q, sq);
-
-            }
-        }
-
-        static void Write(string path, SimpleProofState state, Clause res, List<string> sq)
-        {
-
-            if (res.support.Count == 0)
-            {
-                var s = res.Name + ": " + res.ToString() + " from: input";
-                sq.Add(s);
-                return;
-            }
-            else
-            {
-                //Console.WriteLine(i++ + ". " + res.Name + ": " + res.ToString() + " from: " + res.support[0] + ", " + res.support[1]);
-                sq.Add(res.Name + ": " + res.ToString() + " from: " + res.support[0] + ", " + res.support[1]);
-                string Name1, Name2;
-                Name1 = res.support[0];
-                Name2 = res.support[1];
-
-                var q = state.processed.clauses.Where(x => x.Name == Name1).ToList()[0];
-                Write(path, state, q, sq);
-                q = state.processed.clauses.Where(x => x.Name == Name2).ToList()[0];
-                Write(path, state, q, sq);
-
-            }
-        }
-
+       
         private static string CreateFormulaList(List<WFormula> list)
         {
             int i = 1;

@@ -16,26 +16,18 @@ namespace Prover.DataStructures
     public class Clause : TransformNode//Derivable
     {
         List<Literal> literals = new List<Literal>();
-        string type;
+        string type { get; set; }
         string name;
 
         public List<Literal> Literals => literals;
         public string Name => name;
-        /// <summary>
-        /// Клаузы или формулы из которых получена эта клауза
-        /// </summary>
-        public List<string> support = new List<string>();
-        /// <summary>
-        /// Клаузы, которые породила эта клауза
-        /// </summary>
-        public List<string> supportsClauses = new List<string>();
 
         static int clauseIdCounter = 0;
 
         public int depth { get; set; } = 0;
         public string rationale = "input";
         /// <summary>
-        /// 
+        /// Содержит оценки в соответствии со схемами. Намример для PickGiven5 {5, 10} означает, что клауза имеет оценку 5 по symbolCount и 10 по LIFO.
         /// </summary>
         public List<int> evaluation = null;
         public string Type => type;
@@ -49,19 +41,6 @@ namespace Prover.DataStructures
         {
             get
             {
-                //var groups = literals.GroupBy((x) => x.Name);
-                //foreach (var group in groups)
-                //{
-                //    bool f = group.First().Negative;
-
-                //    foreach (var el in group)
-                //    {
-                //        f ^= el.Negative;
-                //    }
-                //    if (f) return true;
-                //}
-                //return false;
-
                 for(int i =0; i< literals.Count; i++)
                 {
                     if (Literal.OppositeInLitList(literals[i], literals.Skip(i + 1).ToList())) 
@@ -184,7 +163,6 @@ namespace Prover.DataStructures
         public Clause()
         {
             clauseIdCounter++;
-            //this.name = String.Format("c{0}", clauseIdCounter++);
         }
 
         public Literal this[int index]
@@ -277,10 +255,8 @@ namespace Prover.DataStructures
             result.Sbst = Sbst;
             result.LiteralStr = LiteralStr;
 
-
             result.depth = depth;
-            for (int i = 0; i < support.Count; i++)
-                result.support.Add(support[i]);
+           
             for (int i = start; i < literals.Count; i++)
                 result.literals.Add(literals[i].DeepCopy());
             if (subst != null)
@@ -297,25 +273,13 @@ namespace Prover.DataStructures
         public void RemoveDupLits()
         {
             //literals = literals.Distinct().ToList();
-
             var lits = new List<Literal>();
-            for (int i = 0; i < literals.Count; i++)
-                //if (!TMP_CONTAINS_LITS(literals[i], lits))
+            for (int i = 0; i < literals.Count; i++)           
                 if (!lits.Contains(literals[i]))
                     lits.Add(literals[i]);
             literals = lits;
 
         }
-
-        public bool TMP_CONTAINS_LITS(Literal clause, List<Literal> clauses)
-        {
-            // TODO: замена TMP_CONTAINS_LITS
-            foreach (var clause2 in clauses)
-                if (clause2.Equals(clause)) return true;
-            return false;
-        }
-
-
 
         public void AddRange(List<Literal> literals)
         {
