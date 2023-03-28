@@ -1,6 +1,7 @@
 ﻿using Prover.ResolutionMethod;
 using Prover.Tokenization;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 
@@ -13,7 +14,7 @@ namespace Prover.DataStructures
     /// - Тип ("простой", если не задан).
     /// - Имя(генерируется автоматически, если не задано)
     /// </summary>
-    public class Clause : TransformNode//Derivable
+    public class Clause : TransformNode
     {
         List<Literal> literals = new List<Literal>();
         string type { get; set; }
@@ -25,15 +26,13 @@ namespace Prover.DataStructures
         static int clauseIdCounter = 0;
 
         public int depth { get; set; } = 0;
-        public string rationale = "input";
+
+       // public Substitution subst { get; set; } = new Substitution();
         /// <summary>
         /// Содержит оценки в соответствии со схемами. Намример для PickGiven5 {5, 10} означает, что клауза имеет оценку 5 по symbolCount и 10 по LIFO.
         /// </summary>
         public List<int> evaluation = null;
         public string Type => type;
-
-        public Substitution subst = new Substitution();
-
         public bool IsEmpty => literals.Count == 0;
         public int Length => literals.Count;
 
@@ -50,44 +49,24 @@ namespace Prover.DataStructures
             }
         }
 
+        public Literal this[int index]
+        {
+            get
+            {
+                return literals[index];
+            }
+        }
+
         public static void ResetCounter()
         {
             clauseIdCounter = 0;
         }
-        public static Clause ParseClause(Lexer lexer)
+       
+
+        public Clause()
         {
-            lexer.AcceptLit("cnf");
-            lexer.AcceptTok(TokenType.OpenPar);
-            var name = lexer.LookLit();
-            lexer.AcceptTok(TokenType.IdentLower);
-            lexer.AcceptTok(TokenType.Comma);
-            var type = lexer.LookLit();
-            List<Literal> lits;
-
-            if (!(type == "axiom" || type == "negated_conjecture"))
-                type = "plain";
-            lexer.AcceptTok(TokenType.IdentLower);
-            lexer.AcceptTok(TokenType.Comma);
-            if (lexer.TestTok(TokenType.OpenPar))
-            {
-                lexer.AcceptTok(TokenType.OpenPar);
-                lits = Literal.ParseLiteralList(lexer);
-                lexer.AcceptTok(TokenType.ClosePar);
-            }
-            else
-            {
-                lits = Literal.ParseLiteralList(lexer);
-            }
-
-            lexer.AcceptTok(TokenType.ClosePar);
-            lexer.AcceptTok(TokenType.FullStop);
-
-            var res = new Clause(lits, type, name);
-            //res.Derivation = new Derivation("input");
-            res.SetTransform("input");
-            return res;
+            clauseIdCounter++;
         }
-
         public Clause(List<Literal> literals, string type = "plain", string name = null) : base(name)
         {
             this.literals = literals;
@@ -116,12 +95,44 @@ namespace Prover.DataStructures
             else
                 this.name = string.Format("c{0}", clauseIdCounter++);
         }
+
+        public static Clause ParseClause(Lexer lexer)
+        {
+            lexer.AcceptLit("cnf");
+            lexer.AcceptTok(TokenType.OpenPar);
+            var name = lexer.LookLit();
+            lexer.AcceptTok(TokenType.IdentLower);
+            lexer.AcceptTok(TokenType.Comma);
+            var type = lexer.LookLit();
+            List<Literal> lits;
+
+            if (!(type == "axiom" || type == "negated_conjecture"))
+                type = "plain";
+            lexer.AcceptTok(TokenType.IdentLower);
+            lexer.AcceptTok(TokenType.Comma);
+            if (lexer.TestTok(TokenType.OpenPar))
+            {
+                lexer.AcceptTok(TokenType.OpenPar);
+                lits = Literal.ParseLiteralList(lexer);
+                lexer.AcceptTok(TokenType.ClosePar);
+            }
+            else
+            {
+                lits = Literal.ParseLiteralList(lexer);
+            }
+
+            lexer.AcceptTok(TokenType.ClosePar);
+            lexer.AcceptTok(TokenType.FullStop);
+
+            var res = new Clause(lits, type, name);        
+            res.SetTransform("input");
+            return res;
+        }
+
+        #region Вычисление веса
         /// <summary>
         /// Возвращает вес клаузы по количеству символов
         /// </summary>
-        /// <param name="fweight"></param>
-        /// <param name="vweight"></param>
-        /// <returns></returns>
         public int Weight(int fweight, int vweight)
         {
             var res = 0;
@@ -160,18 +171,7 @@ namespace Prover.DataStructures
             res += (lit_pen - 1) * max;
             return res;
         }
-        public Clause()
-        {
-            clauseIdCounter++;
-        }
-
-        public Literal this[int index]
-        {
-            get
-            {
-                return literals[index];
-            }
-        }
+        #endregion
 
 
         public void AddEval(List<int> eval)
@@ -191,24 +191,19 @@ namespace Prover.DataStructures
                 res.Append(lit.ToString() + ", ");
             res.Remove(res.Length - 2, 2);
             res.Append(" }");
-            //res.Append("  rating = " + this.evaluation[0].ToString());
             return res.ToString();
         }
 
         public Clause FreshVarCopy()
         {
             List<Term> vars = CollectVars();
-            Substitution s = Substitution.FreshVarSubst(vars.Distinct().ToList());
-            subst.AddAll(s);
+            Substitution s = Substitution.FreshVarSubst(vars.Distinct().ToList());           
             return Substitute(s);
         }
+       
         /// <summary>
-        // /** ***************************************************************
-        ///Return an instantiated copy of self.Name and type are copied
-        /// and need to be overwritten if that is not desired.
+        /// Возвращает глубокую копию такущей клаузы с примененной подстановкой. 
         /// </summary>
-        /// <param name="subst"></param>
-        /// <returns></returns>
         public Clause Substitute(Substitution subst)
         {
             Clause newC = DeepCopy();
@@ -226,7 +221,6 @@ namespace Prover.DataStructures
         }
         public List<Term> CollectVars()
         {
-
             List<Term> res = new List<Term>();
             for (int i = 0; i < literals.Count; i++)
                 res.AddRange(literals[i].CollectVars());
@@ -237,34 +231,29 @@ namespace Prover.DataStructures
         {
             return DeepCopy(0);
         }
-        /// <summary>
-        /// start is the starting index of the literal list to copy
-        /// </summary>
-        /// <param name="start"></param>
-        /// <returns></returns>
-        public Clause DeepCopy(int start)
+    
+        private Clause DeepCopy(int start)
         {
 
             Clause result = new Clause();
             result.name = name;
             result.type = type;
-            result.rationale = rationale;
 
-            /*TransformNode */
+            /*from TransformNode */
             result.TransformOperation = TransformOperation;
             result.Sbst = Sbst;
             result.LiteralStr = LiteralStr;
+            result.Parent1 = Parent1;
+            result.Parent2 = Parent2;
+            if (Sbst != null)
+                result.Sbst = Sbst.DeepCopy();
 
             result.depth = depth;
            
             for (int i = start; i < literals.Count; i++)
                 result.literals.Add(literals[i].DeepCopy());
-            if (subst != null)
-                result.subst = subst.DeepCopy();
-            result.Parent1 = Parent1;
-            result.Parent2 = Parent2;
-            if (Sbst != null)
-                result.Sbst = Sbst.DeepCopy();
+
+         
             return result;
         }
 
@@ -272,12 +261,12 @@ namespace Prover.DataStructures
 
         public void RemoveDupLits()
         {
-            //literals = literals.Distinct().ToList();
-            var lits = new List<Literal>();
-            for (int i = 0; i < literals.Count; i++)           
-                if (!lits.Contains(literals[i]))
-                    lits.Add(literals[i]);
-            literals = lits;
+            literals = literals.Distinct().ToList();
+            //var lits = new List<Literal>();
+            //for (int i = 0; i < literals.Count; i++)
+            //    if (!lits.Contains(literals[i]))
+            //        lits.Add(literals[i]);
+            //literals = lits;
 
         }
 

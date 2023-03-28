@@ -21,7 +21,7 @@ namespace Prover
                 {
                     Clause c = new Clause();
                     c = Clause.ParseClause(lex);
-                    c.rationale = "eq_axiom";
+                    c.TransformOperation = "eq_axiom";
                     res.Add(c);
                 }
             }
