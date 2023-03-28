@@ -107,19 +107,26 @@ namespace Prover.ResolutionMethod
             for (int i = 0; i < clause.Length; i++)
             {
                 Literal l = clause[i];
-                l.Substitute(sigma);
+                l = l.Substitute(sigma);
                 literals.Add(l);
             }
 
             Clause res = new Clause();
-
-            res.CreateName();
             res.AddRange(literals);
             res.RemoveDupLits();
-            res.rationale = "factoring";
-            res.support.Add(clause.Name);
-
+            res.CreateName();
+            res.depth = clause.depth + 1;
+            //res.subst.AddAll(sigma);
+            res.SetTransform("factoring", clause, null, sigma, l1.Name);
             return res;
+
+            //res.CreateName();
+            //res.AddRange(literals);
+            //res.RemoveDupLits();
+            //res.rationale = "factoring";
+            //res.support.Add(clause.Name);
+
+            //return res;
         }
     }
 }

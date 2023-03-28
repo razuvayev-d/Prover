@@ -30,7 +30,7 @@ namespace Prover.Heuristics
     public abstract class ClauseEvaluationFunction
     {
         public abstract int ParamsCount { get; }
-        protected string name;
+        protected string name = "SymbolCount";
         protected Heuristic hEval;
         public ClauseEvaluationFunction()
         {
@@ -39,7 +39,7 @@ namespace Prover.Heuristics
 
         public override string ToString()
         {
-            return string.Format("ClauseEvalFun(%s)", name);
+            return string.Format("ClauseEvalFun({0})", name);
         }
 
         public int Call(Clause clause)
@@ -90,6 +90,7 @@ namespace Prover.Heuristics
     {
         public override int ParamsCount { get { return 0; } }
         int FIFOCounter;
+        
         public FIFOEvaluation()
         {
             name = "FIFOEval";
@@ -105,7 +106,7 @@ namespace Prover.Heuristics
         int FIFOCounter;
         public LIFOEvaluation()
         {
-            name = "FIFOEval";
+            name = "LIFOEval";
             FIFOCounter = 0;
             hEval = (clause) => { return --FIFOCounter; };
         }

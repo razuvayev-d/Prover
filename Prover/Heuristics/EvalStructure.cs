@@ -44,6 +44,7 @@ namespace Prover.Heuristics
                 EvalFunctions.Add(eval.Item1);
                 EvalVec.Add(eval.Item2);
             }
+            currentCount = EvalVec[0];
         }
 
         public EvalStructure(ClauseEvaluationFunction cef, int rating)
@@ -67,11 +68,31 @@ namespace Prover.Heuristics
         {
             get
             {
-                current++;
-                if (current >= EvalVec.Count)
-                    current = 0;
-                currentCount = EvalVec[current];
-                return current;
+                //current++;
+                //if (current >= EvalVec.Count)
+                //    current = 0;
+                //currentCount = EvalVec[current];
+                //return current;
+
+                //if (currentCount > 0)
+                //{
+                //    current = (current + 1) % EvalVec.Count;
+                //    currentCount = EvalVec[current];
+                //}
+                //currentCount--;
+                //return current;
+
+                if (currentCount > 1)
+                {
+                    currentCount--;
+                    return current;
+                }
+                else
+                {
+                    current = (current + 1) % EvalVec.Count;
+                    currentCount = EvalVec[current];
+                    return current;
+                }
             }
         }
     }

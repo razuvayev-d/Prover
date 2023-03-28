@@ -89,8 +89,10 @@ namespace Prover.ProofStates
 
         public Clause ProcessClause()
         {
+            
             var given_clause = unprocessed.ExtractBest();
-            given_clause = given_clause.FreshVarCopy(); //TODO: сделать уже копирование...
+         
+            given_clause = given_clause.FreshVarCopy(); 
 
             if (given_clause.IsEmpty) return given_clause;
 

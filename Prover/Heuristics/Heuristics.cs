@@ -73,6 +73,12 @@ namespace Prover.Heuristics
                                                                                 (new SymbolCountEvaluation(2, 1), 5),
                                                                                 (new FIFOEvaluation(), 1)
                         });
+
+
+        public static EvalStructure PickGiven5_2 = new EvalStructure(new List<(ClauseEvaluationFunction, int)> {
+                                                                                (new SymbolCountEvaluation(2, 1), 1),
+                                                                                (new FIFOEvaluation(), 5)
+                        });
         /// <summary>
         /// Чередование стратегии предпочтения более коротких дизъюнктов и FIFO с соотношением весов 2 к 1.
         /// </summary>                                                                                                      

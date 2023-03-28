@@ -43,7 +43,9 @@ namespace Prover
             var param = IO.ParamsSplit(args);
             param.delete_tautologies = true;
             param.forward_subsumption = true;
+            param.backward_subsumption = true;
             param.delete_tautologies = true;
+            param.heuristics = Heuristics.Heuristics.PickGiven2;
             //FOFFull(param.file, param);
             FOFFullClear(param.file, param);
             //if (args[0] == "-i") indexing = true;
@@ -73,13 +75,14 @@ namespace Prover
         {
 
             Report report = new Report();
+            report.ProblemName = Path;
             Clause.ResetCounter();
             string timeoutStatus = string.Empty;
             param ??= new SearchParams()
             {
                 backward_subsumption = true,
                 forward_subsumption = true,
-                heuristics = Heuristics.Heuristics.BreedingBestPrio,
+                heuristics = Heuristics.Heuristics.PickGiven5,
                 delete_tautologies = true,
                 timeout = 100000
             };

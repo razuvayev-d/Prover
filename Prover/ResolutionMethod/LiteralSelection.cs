@@ -22,6 +22,11 @@ namespace Prover.ResolutionMethod
             return new List<Literal>() { list[0] };
         }
 
+        public static List<Literal> LargestLit(List<Literal> list)
+        {
+            list.Sort((x, y) => y.Weight(1, 1).CompareTo(x.Weight(1, 1)));
+            return new List<Literal>() { list[0] };
+        }
 
 
     }

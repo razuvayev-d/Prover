@@ -271,6 +271,13 @@ namespace Prover.DataStructures
             result.name = name;
             result.type = type;
             result.rationale = rationale;
+
+            /*TransformNode */
+            result.TransformOperation = TransformOperation;
+            result.Sbst = Sbst;
+            result.LiteralStr = LiteralStr;
+
+
             result.depth = depth;
             for (int i = 0; i < support.Count; i++)
                 result.support.Add(support[i]);

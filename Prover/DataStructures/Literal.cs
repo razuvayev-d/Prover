@@ -374,7 +374,7 @@ namespace Prover.DataStructures
         public int RefinedWeight(int fweight, int vweight, int term_pen)
         {
             var res = fweight;
-            int max = -10000;
+            int max = int.MinValue;
             foreach(var term in arguments)
             {
                 int weight = term.Weight(fweight, vweight);

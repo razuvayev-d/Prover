@@ -119,7 +119,7 @@ namespace Prover
             Console.WriteLine("Прочитанная формула: ");
             Console.WriteLine(FormulaStr);
 
-            if(!Params.supress_eq_axioms)
+            if (!Params.supress_eq_axioms)
             {
                 Console.WriteLine("Добавлены следующие аксиомы равенства:");
                 Console.WriteLine(AxiomStr);
@@ -149,13 +149,11 @@ namespace Prover
             {
 
                 Console.WriteLine("\nДоказательство: ");
-                var str1 = new List<string>();
-                Print(State, Res, str1);
 
-                str1.Reverse();
-                str1 = str1.Distinct().ToList();
+                var inference = Printer.CreateInference(Res);
+
                 int k = 1;
-                foreach (string s in str1)
+                foreach (string s in inference)
                 {
                     Console.WriteLine((Convert.ToString(k)).PadLeft(3) + ". " + s);
                     k++;
@@ -167,25 +165,85 @@ namespace Prover
             Console.WriteLine("\nСтатистика: ");
             Console.WriteLine(State.statistics.ToString());
 
-        }        
+        }
 
-        private static void Print(ProofState state, Clause res, List<string> sq)
+
+
+     
+    }
+
+
+    class Printer
+    {
+        static int pad_clause_str = 50;
+        static int pad_name = 7;
+        static int pad_source = 15;
+
+        public static List<string> CreateInference(Clause res)
         {
-            //Console.WriteLine(i++ + ". " + res.Name + ": " + res.ToString() + " from: " + res.support[0] + ", " + res.support[1]);
-            if (res.Parent1 is not null && res.Parent2 is not null)
+            var inference = new List<string>();
+            CreateInference(res, inference);
+            inference.Reverse();
+            return inference;
+        }
+
+        private static void CreateInference(Clause res, List<string> sq)
+        {
+            switch (res.TransformOperation)
             {
-                string substStr = res.Sbst is null || res.Sbst.subst.Count == 0 ? "" : " использована подстановка " + res.Sbst.ToString();// +" по " + res.LiteralStr;
-                sq.Add(((res.Name + ": ").PadRight(7) + res.ToString()).PadRight(50) + (" [" + (res.Parent1 as Clause).Name + ", " + (res.Parent2 as Clause).Name + "]").PadRight(15) + substStr);
-
-                Print(state, res.Parent1 as Clause, sq);
-
-                Print(state, res.Parent2 as Clause, sq);
+                case "resolution":
+                    sq.Add(Printer.ReolutionString(res));
+                    CreateInference(res.Parent1 as Clause, sq);
+                    CreateInference(res.Parent2 as Clause, sq);
+                    break;
+                case "factoring":
+                    sq.Add(Printer.FactoringString(res));
+                    CreateInference(res.Parent1 as Clause, sq);
+                    break;
+                default:
+                    sq.Add(Printer.InputString(res));
+                    break;
             }
-            else
-            {
-                sq.Add((res.Name + ": " + res.ToString()).PadRight(50) + " [input]");// " [" + res.Parent1 + "]");
-            }
+        }
 
+        public static string ReolutionString(Clause res)
+        {
+            string substStr = res.Sbst is null || res.Sbst.subst.Count == 0 ? "" : " с подстановкой " + res.Sbst.ToString();
+            
+            var sb = new StringBuilder();
+            sb.Append((res.Name + ": ").PadRight(pad_name));
+            sb.Append(res.ToString().PadRight(pad_clause_str));
+            sb.Append(("[" + (res.Parent1 as Clause).Name + ", " + (res.Parent2 as Clause).Name +"]").PadRight(pad_source));
+            sb.Append(res.TransformOperation);
+            sb.Append(" по литералу " + res.LiteralStr);
+            sb.Append(substStr);           
+            return sb.ToString();
+        }
+
+        public static string FactoringString(Clause res)
+        {
+            string substStr = res.Sbst is null || res.Sbst.subst.Count == 0 ? "" : " с подстановкой " + res.Sbst.ToString();
+            var sb = new StringBuilder();
+            sb.Append((res.Name + ": ").PadRight(pad_name));
+            sb.Append(res.ToString().PadRight(pad_clause_str));
+            sb.Append(("[" + (res.Parent1 as Clause).Name + "]").PadRight(pad_source));
+            sb.Append(res.TransformOperation);
+            sb.Append("  по литералу " + res.LiteralStr);
+            sb.Append(substStr);        
+            return sb.ToString();
+        }
+
+        public static string InputString(Clause res)
+        {
+            //string substStr = res.Sbst is null || res.Sbst.subst.Count == 0 ? "" : " использована подстановка " + res.Sbst.ToString();
+            var sb = new StringBuilder();
+            sb.Append((res.Name + ": ").PadRight(pad_name));
+            sb.Append(res.ToString().PadRight(pad_clause_str));
+            sb.Append(("[input]").PadRight(pad_source));
+            //sb.Append(res.TransformOperation);
+            //sb.Append(substStr);
+            return sb.ToString();
         }
     }
+
 }
