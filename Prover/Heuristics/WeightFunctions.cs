@@ -151,7 +151,7 @@ namespace Prover.Heuristics
             this.vweight = vweight;
             this.pos_mult = pos_mult;
 
-            name = string.Format("ClauseEvalFun(%s, %s)", fweight, vweight);
+            name = string.Format("ClauseWeight({0}, {1}, {2})", fweight, vweight, pos_mult);
             hEval = (clause) =>
             {
                 if (prio(clause))
@@ -181,7 +181,7 @@ namespace Prover.Heuristics
             this.lit_pen = lit_pen;
             this.term_pen = term_pen;
 
-            name = string.Format("ClauseEvalFun(%s, %s)", fweight, vweight);
+            name = string.Format("RefinedWeight({0}, {1}, {2}, {3}, {4})", fweight, vweight, term_pen, lit_pen, pos_mult);
             hEval = (clause) =>
             {
                 if (prio(clause))
@@ -199,7 +199,7 @@ namespace Prover.Heuristics
         public LIFOEvaluationPrio(Predicate<Clause> prio)
         {
             this.prio = prio;
-            name = "FIFOEval";
+            name = "LIFOprio";
             FIFOCounter = 0;
             hEval = (clause) =>
             {
@@ -218,7 +218,7 @@ namespace Prover.Heuristics
         public FIFOEvaluationPrio(Predicate<Clause> prio)
         {
             this.prio = prio;
-            name = "FIFOEval";
+            name = "FIFOprio";
             FIFOCounter = 0;
             hEval = (clause) =>
             {
@@ -235,6 +235,7 @@ namespace Prover.Heuristics
 
         public ByLiteralNumber(Predicate<Clause> prio)
         {
+            name = "ByLiteralPrio";
             this.prio = prio;
             hEval = (clause) =>
             {
@@ -253,6 +254,7 @@ namespace Prover.Heuristics
         public override int ParamsCount => 0;
         public ByDerivationDepth(Predicate<Clause> prio)
         {
+            name = "ByDerivationDepthPrio";
             this.prio = prio;
             hEval = (clause) =>
             {
@@ -271,6 +273,7 @@ namespace Prover.Heuristics
         public override int ParamsCount => 0;
         public ByDerivationSize(Predicate<Clause> prio)
         {
+            name = "ByDerivationSizePrio";
             this.prio = prio;
             hEval = (clause) =>
             {
