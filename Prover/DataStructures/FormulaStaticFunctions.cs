@@ -4,7 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 
-namespace Prover
+namespace Prover.DataStructures
 {
     public partial class Formula
     {
