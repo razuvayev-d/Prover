@@ -19,10 +19,11 @@ namespace Prover.Heuristics
     {
         FIFOPrio,
         ClauseWeight,
+        RefinedWeight,
         LIFOPrio,
         ByLiteralNumber,
         ByDerivationDepth,
-        ByDerivationSize
+        ByDerivationSize     
     }
 
 
