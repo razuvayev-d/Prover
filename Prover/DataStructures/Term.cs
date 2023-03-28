@@ -10,9 +10,8 @@ namespace Prover.DataStructures
     [DebuggerDisplay("{ToString()}")]
     public class Term : Formula
     {
-        //public static TermEqualityComparer Comparer = new();
-        public string name;
-        // TODO: может оставить subterms null?
+
+        public string name;      
         public List<Term> subterms = new List<Term>();
         bool constant;
 
@@ -35,7 +34,7 @@ namespace Prover.DataStructures
             get { return constant; }
             set { constant = value; }
         }
-        //public List<Term> subterms => _subterms;
+      
         static Term falseConstant = new Term("$false", new List<Term>(), constant: true);
         static Term trueConstant = new Term("$true", new List<Term>(), constant: true);
         public static Term False => falseConstant;
@@ -112,28 +111,24 @@ namespace Prover.DataStructures
         {
             var result = new StringBuilder();
             result.Append(name);
-            // TODO: subterms null
-            if (subterms is not null)
+            var n = subterms.Count;
+            if (n > 0)
             {
-                var n = subterms.Count;
-                if (n > 0)
+                result.Append('(');
+                for (int i = 0; i < n; i++)
                 {
-                    result.Append('(');
-                    for (int i = 0; i < n; i++)
-                    {
-                        result.Append(subterms[i].ToString());
-                        if (i < n - 1)
-                            result.Append(", ");
-                    }
-                    result.Append(')');
+                    result.Append(subterms[i].ToString());
+                    if (i < n - 1)
+                        result.Append(", ");
                 }
+                result.Append(')');
             }
             return result.ToString();
         }
         public static Term Copy(Term t)
         {
             List<Term> copy = new List<Term>();
-            //if (t.subterms is null) return new Term(t.name, null, t.constant);
+
             foreach (var v in t.subterms)
             {
                 copy.Add(Copy(v));
@@ -149,20 +144,12 @@ namespace Prover.DataStructures
 
         public static List<Term> ListCopy(List<Term> terms)
         {
-            //TODO: tems null
-            //if (terms is null) return null;
             var copy = new List<Term>(terms.Count);
             foreach (var t in terms)
             {
                 copy.Add(Copy(t));
             }
             return copy;
-        }
-
-        public Literal ToLiteral()
-        {
-            //if (constant) throw new Exception("Константа не может быть литерой");
-            return new Literal(name, subterms);
         }
 
         public static implicit operator Literal(Term t)
@@ -213,7 +200,7 @@ namespace Prover.DataStructures
 
             if (lexer.TestTok(TokenType.OpenPar))
             {
-                //Это термин с соответствующими подтерминами, поэтому разберите их
+                //Это термин с подтерминами, поэтому разбираем их
                 lexer.AcceptTok(TokenType.OpenPar);
                 res.AddSubterms(ParseTermList(lexer));
                 lexer.AcceptTok(TokenType.ClosePar);
@@ -256,17 +243,15 @@ namespace Prover.DataStructures
         /// <summary>
         /// Разбор списка термов разделенных запятыми
         /// </summary>
-        /// <param name="lexer"></param>
-        /// <returns></returns>
         public static List<Term> ParseTermList(Lexer lexer)
         {
             var res = new List<Term>();
-            res.Add(ParseTerm(lexer)); //res.Add(new Term(ParseTerm(lexer).name));
+            res.Add(ParseTerm(lexer)); 
 
             while (lexer.TestTok(TokenType.Comma))
             {
                 lexer.AcceptTok(TokenType.Comma);
-                res.Add(ParseTerm(lexer)); // res.Add(new Term(ParseTerm(lexer).name));
+                res.Add(ParseTerm(lexer)); 
             }
             return res;
         }
@@ -283,18 +268,9 @@ namespace Prover.DataStructures
             }
         }
 
-        public List<Term> TermArgs
-        {
-            get
-            {
-                //if (IsCompound)
-                return subterms;
-                throw new Exception("Not args");
-            }
-        }
+        public List<Term> TermArgs => subterms;
 
         public bool IsConstFalse => Equals(False);
-
 
         bool TermListEqual(List<Term> l1, List<Term> l2)
         {
