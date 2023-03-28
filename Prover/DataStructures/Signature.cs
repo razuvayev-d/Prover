@@ -5,8 +5,7 @@ using System.Linq;
 namespace Prover.DataStructures
 {
     /// <summary>
-    ///  A signature object, containing function symbols, predicate
-    /// symbols, and their associated arities.
+    /// Сигнатура содержит предикативные и функциональные символы и соответствущую им арность
     /// </summary>
     public class Signature
     {
@@ -15,14 +14,12 @@ namespace Prover.DataStructures
 
         public void AddFun(string f, int arity)
         {
-            //funs.Add(f, arity);
             funs[f] = arity;
         }
 
         public void AddPred(string p, int arity)
         {
             preds[p] = arity;
-            //preds.Add(p, arity);
         }
 
         public bool IsPred(string p)
