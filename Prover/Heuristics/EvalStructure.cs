@@ -5,7 +5,7 @@ using System.Collections.Generic;
 namespace Prover.Heuristics
 {
     /// <summary>
-    /// Представляют собой эвристическую схему обработки предложений. Схема
+    /// Представляют собой эвристическую схему обработки клауз. Схема
     /// содержит несколько различных функций оценки и способ
     /// чередования между ними.
     /// </summary>
@@ -68,20 +68,6 @@ namespace Prover.Heuristics
         {
             get
             {
-                //current++;
-                //if (current >= EvalVec.Count)
-                //    current = 0;
-                //currentCount = EvalVec[current];
-                //return current;
-
-                //if (currentCount > 0)
-                //{
-                //    current = (current + 1) % EvalVec.Count;
-                //    currentCount = EvalVec[current];
-                //}
-                //currentCount--;
-                //return current;
-
                 if (currentCount > 1)
                 {
                     currentCount--;
