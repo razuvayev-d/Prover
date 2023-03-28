@@ -7,7 +7,7 @@ namespace Prover
 {
     internal class EqAxioms
     {
-
+        
         public static List<Clause> GenerateEquivAxioms()
         {
 
@@ -82,6 +82,7 @@ namespace Prover
 
         public static List<Clause> GenerateCompatAxioms(Signature sig)
         {
+            int count = 1;
             var res = new List<Clause>();
             foreach (var f in sig.funs)
             {
@@ -89,6 +90,8 @@ namespace Prover
                 if (arity > 0)
                 {
                     var c = GenerateFunCompatAx(f.Key, arity);
+                    c.name = "EqA" + count.ToString();
+                    count++;
                     res.Add(c);
                 }
             }
@@ -96,9 +99,11 @@ namespace Prover
             foreach (var p in sig.preds)
             {
                 var arity = sig.GetArity(p.Key);
-                if (arity > 0)
+                if (arity > 0 && p.Key != "=")
                 {
                     var c = GeneratePredCompatAx(p.Key, arity);
+                    c.name = "EqA" + count.ToString();
+                    count++;
                     res.Add(c);
                 }
             }

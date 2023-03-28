@@ -14,14 +14,16 @@ namespace Prover.ResolutionMethod
             {
                 List<Clause> clauseres = new List<Clause>();
                 List<int> indices = new List<int>();
-
-                clauseSet.GetResolutionLiterals(clause[lit], clauseres, indices);
-                Debug.Assert(clauseres.Count == indices.Count);
-                for (int i = 0; i < clauseres.Count; i++)
+                if (clause[lit].IsInference)
                 {
-                    Clause resolvent = Resolution.Apply(clause, lit, clauseres[i], indices[i]);
-                    if (resolvent is not null)
-                        res.AddClause(resolvent);
+                    clauseSet.GetResolutionLiterals(clause[lit], clauseres, indices);
+                    //Debug.Assert(clauseres.Count == indices.Count);
+                    for (int i = 0; i < clauseres.Count; i++)
+                    {
+                        Clause resolvent = Resolution.Apply(clause, lit, clauseres[i], indices[i]);
+                        if (resolvent is not null)
+                            res.AddClause(resolvent);
+                    }
                 }
             }
             return res;
@@ -33,14 +35,16 @@ namespace Prover.ResolutionMethod
             ClauseSet res = new ClauseSet();
             for (int lit = 0; lit < clause.Length; lit++)
             {
-
-                var partners = clauseSet.GetResolutionLiterals(clause[lit]);
-
-                foreach (var p in partners)
+                if (clause[lit].IsInference)
                 {
-                    var resolvent = Resolution.Apply(clause, lit, p.Clause, p.Position);
-                    if (resolvent is not null)
-                        res.AddClause(resolvent);
+                    var partners = clauseSet.GetResolutionLiterals(clause[lit]);
+
+                    foreach (var p in partners)
+                    {
+                        var resolvent = Resolution.Apply(clause, lit, p.Clause, p.Position);
+                        if (resolvent is not null)
+                            res.AddClause(resolvent);
+                    }
                 }
             }
             return res;
@@ -52,9 +56,12 @@ namespace Prover.ResolutionMethod
             for (int i = 0; i < clause.Length; i++)
                 for (int j = i + 1; j < clause.Length; j++)
                 {
-                    Clause fact = Resolution.Factor(clause, i, j);
-                    if (fact is not null)
-                        res.AddClause(fact);
+                    if (clause[j].IsInference || clause[i].IsInference)
+                    {
+                        Clause fact = Resolution.Factor(clause, i, j);
+                        if (fact is not null)
+                            res.AddClause(fact);
+                    }
                 }
             return res;
         }

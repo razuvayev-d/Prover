@@ -65,6 +65,9 @@ namespace Prover.ResolutionMethod
             res.AddRange(lits1);
             res.RemoveDupLits();
 
+            //if (res.Equals(clause1) || res.Equals(clause2))
+            //    return null;
+
             //TODO: убрать, так как эта функциональность поддерживается через TransformNode
             //res.support.Add(clause1.Name);
             //res.support.Add(clause2.Name);
@@ -86,7 +89,11 @@ namespace Prover.ResolutionMethod
                 {
                     res = Apply(clause1, i, clause2, j);
                     if (res is not null)
+                    {
+                        if (res.Equals(clause1) || res.Equals(clause2))
+                            return null;
                         return res;
+                    }                        
                 }
             return null;
         }

@@ -118,7 +118,7 @@ namespace Prover.Tokenization
                 this.clauses.AddRange(res);
                 return res;
             }
-            return null;
+            return new List<Clause>();
         }
     }
 }

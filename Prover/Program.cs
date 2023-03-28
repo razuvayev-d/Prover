@@ -45,7 +45,9 @@ namespace Prover
             param.forward_subsumption = true;
             param.backward_subsumption = true;
             param.delete_tautologies = true;
-            param.heuristics = Heuristics.Heuristics.PickGiven2;
+            param.heuristics = Heuristics.Heuristics.PickGiven5;
+            param.literal_selection = "large";
+            
             //FOFFull(param.file, param);
             FOFFullClear(param.file, param);
             //if (args[0] == "-i") indexing = true;
@@ -98,12 +100,15 @@ namespace Prover
             }
 
             var problem = new FOFSpec();
+            
             problem.Parse(Path);
+            
             List<Clause> eqaxioms = null;
             if (!param.supress_eq_axioms)
             {
                 eqaxioms = problem.AddEqAxioms();
-                report.AxiomStr = CreateEqList(eqaxioms);
+                var set = new ClauseSet(eqaxioms);
+                report.AxiomStr = set.ToString();
             }
 
 
@@ -167,6 +172,33 @@ namespace Prover
 
             report.ConsolePrint();
         }
+
+        static void GeneticBreeding()
+        {
+            GeneticOptions options = new GeneticOptions();
+            options.Size = 35;
+            options.MaxNumberOfGeneration = 50;
+            options.GenerationTimeOutThreshold = 100;
+            options.probWeight = 0.5;
+            options.LightTimeOut = 3000;
+            options.probParam = 0.4;
+            options.Mode = GeneticOptions.GeneticMode.CreateNewPopulation;
+            options.PopulationFileName = "InitialPopulation.txt";
+
+            SearchParams sp = new SearchParams()
+            {
+                delete_tautologies = true,
+                backward_subsumption = true,
+                forward_subsumption = true
+            };
+
+            GeneticAlgorithm algorithm = new GeneticAlgorithm(options, sp);
+
+            Console.WriteLine("Начато в {0}", DateTime.Now);
+            algorithm.Evolution();
+        }
+
+        #region Остальное
 
         static void FOFFull(string Path, SearchParams param = null)
         {
@@ -409,26 +441,6 @@ namespace Prover
             //}
         }
 
-        #region Остальное
-
-        static void GeneticBreeding()
-        {
-            GeneticOptions options = new GeneticOptions();
-            options.Size = 35;
-            options.MaxNumberOfGeneration = 50;
-            options.GenerationTimeOutThreshold = 100;
-            options.probWeight = 0.5;
-            options.LightTimeOut = 3000;
-            options.probParam = 0.4;
-            options.Mode = GeneticOptions.GeneticMode.CreateNewPopulation;
-            options.PopulationFileName = "InitialPopulation.txt";
-
-            GeneticAlgorithm algorithm = new GeneticAlgorithm(options);
-
-            Console.WriteLine("Начато в {0}", DateTime.Now);
-            algorithm.Evolution();
-
-        }
 
         static void Rating(string Path)
         {
