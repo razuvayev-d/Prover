@@ -23,7 +23,7 @@ namespace Prover.Heuristics
         LIFOPrio,
         ByLiteralNumber,
         ByDerivationDepth,
-        ByDerivationSize     
+        ByDerivationSize
     }
 
 
@@ -91,7 +91,7 @@ namespace Prover.Heuristics
     {
         public override int ParamsCount { get { return 0; } }
         int FIFOCounter;
-        
+
         public FIFOEvaluation()
         {
             name = "FIFOEval";
@@ -170,7 +170,7 @@ namespace Prover.Heuristics
         public int vweight { get; }
         public int pos_mult { get; }
 
-        public int lit_pen { get;}
+        public int lit_pen { get; }
         public int term_pen { get; }
 
         public RefinedWeight(Predicate<Clause> prio, int fweight, int vweight, int term_pen, int lit_pen, int pos_mult)
@@ -261,7 +261,7 @@ namespace Prover.Heuristics
             {
                 if (prio(clause))
                     return int.MaxValue / 2 - clause.depth; //так как меньше -- лучше. 
-                    return 10000 + NonPrioConstModifier - clause.depth;
+                return 10000 + NonPrioConstModifier - clause.depth;
             };
         }
     }

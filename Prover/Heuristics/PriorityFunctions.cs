@@ -1,9 +1,6 @@
 ﻿using Prover.DataStructures;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Prover.Heuristics
 {
@@ -34,7 +31,7 @@ namespace Prover.Heuristics
                 case "PreferNonUnits": return PreferNonUnits;
                 case "PreferAll": return PreferAll;
                 case "SimulateSOS": return SimulateSOS;
-                default: 
+                default:
                     throw new Exception("Ошибка имени функции приоритета.");
 
             }
@@ -48,14 +45,14 @@ namespace Prover.Heuristics
         public static bool PreferHorn(Clause clause)
         {
             int countPositive = 0;
-            foreach(var lit in clause.Literals) 
+            foreach (var lit in clause.Literals)
             {
                 if (!lit.Negative) countPositive++;
             }
             return countPositive > 1 ? false : true;
         }
 
-        public static bool PreferNonHorn(Clause clause) 
+        public static bool PreferNonHorn(Clause clause)
         {
             return !PreferHorn(clause);
         }
@@ -64,18 +61,18 @@ namespace Prover.Heuristics
         /// </summary>
         /// <param name="clause"></param>
         /// <returns></returns>
-        public static bool PreferGround(Clause clause) 
+        public static bool PreferGround(Clause clause)
         {
-            foreach(var lit in clause.Literals)
+            foreach (var lit in clause.Literals)
             {
-                if(lit.HasVariables) return false; 
+                if (lit.HasVariables) return false;
             }
             return true;
         }
 
         public static bool PreferNonGround(Clause clause)
-        { 
-            return !PreferGround(clause);   
+        {
+            return !PreferGround(clause);
         }
 
         /// <summary>
@@ -87,7 +84,7 @@ namespace Prover.Heuristics
         {
             foreach (var lit in clause.Literals)
             {
-                if(!lit.Negative) return false;
+                if (!lit.Negative) return false;
             }
             return true;
         }

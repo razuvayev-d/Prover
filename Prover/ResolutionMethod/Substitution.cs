@@ -186,12 +186,12 @@ namespace Prover.ResolutionMethod
             StringBuilder sb = new StringBuilder();
 
             sb.Append("{ ");
-            foreach(var sub in subst)
+            foreach (var sub in subst)
             {
                 sb.Append(string.Format("{1}/{0}, ", sub.Key, sub.Value));
             }
             sb[sb.Length - 2] = ' ';
-            sb[sb.Length -1] = '}';
+            sb[sb.Length - 1] = '}';
             return sb.ToString();
         }
     }

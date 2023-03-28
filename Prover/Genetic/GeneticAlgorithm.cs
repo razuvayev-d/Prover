@@ -3,7 +3,6 @@ using Prover.Heuristics;
 using Prover.ProofStates;
 using Prover.Tokenization;
 using System;
-using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -71,7 +70,7 @@ namespace Prover.Genetic
             string TPTPStatus;
             using (StreamReader sr = new StreamReader(Path))
             {
-                string text = sr.ReadToEnd(); 
+                string text = sr.ReadToEnd();
                 var rg = new Regex("(Status).+(\n)");
                 TPTPStatus = rg.Match(text).Value;
             }
@@ -180,7 +179,7 @@ namespace Prover.Genetic
             else
             {
                 population = Population.LoadFromFile(Options.PopulationFileName);
-                foreach(var g in population.individuals)
+                foreach (var g in population.individuals)
                     g.InvalidFitness = false;
             }
 
@@ -201,7 +200,7 @@ namespace Prover.Genetic
 
 
             int timeout = Options.LightTimeOut;
-        
+
             for (int generation = 0; generation < Options.MaxNumberOfGeneration; generation++)
             {
                 Console.WriteLine("Начато в {0}\n", DateTime.Now);
@@ -230,8 +229,8 @@ namespace Prover.Genetic
                 //    {
                 //        newIndividuals.Add(GeneticOperators.Crossover(population.individuals[i], population.individuals[j], Options.Favor));
                 //    }
-                Random random = new Random();   
-                for(int i =0; i < Options.Size; i++)
+                Random random = new Random();
+                for (int i = 0; i < Options.Size; i++)
                 {
                     newIndividuals.Add(GeneticOperators.Crossover(population.individuals[random.Next(Options.Size)], population.individuals[random.Next(Options.Size)], Options.Favor));
                 }
@@ -245,7 +244,7 @@ namespace Prover.Genetic
                 //}
 
 
-                Parallel.For(0,Options.Size /*(int)Math.Min(population.Size * 1.5, newIndividuals.Count) /*newIndividuals.Count*/, poptions, i =>
+                Parallel.For(0, Options.Size /*(int)Math.Min(population.Size * 1.5, newIndividuals.Count) /*newIndividuals.Count*/, poptions, i =>
                 {
                     newIndividuals[i].Fitness = Fitness.Calculate(newIndividuals[i], timeout);
                 });

@@ -60,7 +60,7 @@ namespace Prover
                         param.heuristics = SelectHeuristic(heur);
                         break;
                     case "-S":
-                            param.supress_eq_axioms= true; break;
+                        param.supress_eq_axioms = true; break;
                     default:
                         if (flag)
                             param.file = arg;

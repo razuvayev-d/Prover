@@ -1,7 +1,6 @@
 ﻿using Prover.ResolutionMethod;
 using Prover.Tokenization;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Linq;
 using System.Text;
 
@@ -26,7 +25,7 @@ namespace Prover.DataStructures
         static int clauseIdCounter = 0;
 
         public int depth { get; set; } = 0;
-   
+
         /// <summary>
         /// Содержит оценки в соответствии со схемами. Намример для PickGiven5 {5, 10} означает, что клауза имеет оценку 5 по symbolCount и 10 по LIFO.
         /// </summary>
@@ -39,9 +38,9 @@ namespace Prover.DataStructures
         {
             get
             {
-                for(int i =0; i< literals.Count; i++)
+                for (int i = 0; i < literals.Count; i++)
                 {
-                    if (Literal.OppositeInLitList(literals[i], literals.Skip(i + 1).ToList())) 
+                    if (Literal.OppositeInLitList(literals[i], literals.Skip(i + 1).ToList()))
                         return true;
                 }
                 return false;
@@ -60,7 +59,7 @@ namespace Prover.DataStructures
         {
             clauseIdCounter = 0;
         }
-       
+
 
         public Clause()
         {
@@ -123,7 +122,7 @@ namespace Prover.DataStructures
             lexer.AcceptTok(TokenType.ClosePar);
             lexer.AcceptTok(TokenType.FullStop);
 
-            var res = new Clause(lits, type, name);        
+            var res = new Clause(lits, type, name);
             res.SetTransform("input");
             return res;
         }
@@ -149,7 +148,7 @@ namespace Prover.DataStructures
                     res += literal.Weight(fweight, vweight);
                 else
                     res += pos_mult * literal.Weight(fweight, vweight);
-            }             
+            }
             return res;
         }
 
@@ -160,7 +159,7 @@ namespace Prover.DataStructures
             foreach (var literal in literals)
             {
                 var weight = literal.RefinedWeight(fweight, vweight, term_pem);
-                max = weight > max? weight: max;
+                max = weight > max ? weight : max;
 
                 if (literal.Negative)
                     res += weight;
@@ -196,10 +195,10 @@ namespace Prover.DataStructures
         public Clause FreshVarCopy()
         {
             List<Term> vars = CollectVars();
-            Substitution s = Substitution.FreshVarSubst(vars.Distinct().ToList());           
+            Substitution s = Substitution.FreshVarSubst(vars.Distinct().ToList());
             return Substitute(s);
         }
-       
+
         /// <summary>
         /// Возвращает глубокую копию такущей клаузы с примененной подстановкой. 
         /// </summary>
@@ -214,7 +213,7 @@ namespace Prover.DataStructures
 
         public Signature CollectSig(Signature sig)
         {
-            foreach(Literal lit in literals)
+            foreach (Literal lit in literals)
                 sig = lit.CollectSig(sig);
             return sig;
         }
@@ -230,7 +229,7 @@ namespace Prover.DataStructures
         {
             return DeepCopy(0);
         }
-    
+
         private Clause DeepCopy(int start)
         {
 
@@ -248,11 +247,11 @@ namespace Prover.DataStructures
                 result.Sbst = Sbst.DeepCopy();
 
             result.depth = depth;
-           
+
             for (int i = start; i < literals.Count; i++)
                 result.literals.Add(literals[i].DeepCopy());
 
-         
+
             return result;
         }
 

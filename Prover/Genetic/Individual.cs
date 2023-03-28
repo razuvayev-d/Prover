@@ -9,11 +9,8 @@ namespace Prover.Genetic
     [Serializable]
     public class Individual
     {
-
         public List<List<object>> genes { get; set; } = new List<List<object>>(10);//Каждый элемент список вида [name, weight, par1, par2 ... ]
-
         public int Fitness { get; set; }
-
         public bool InvalidFitness { get; set; } = true;
 
         public Individual(List<List<object>> genes, int Fitness, bool InvalidF)
@@ -40,7 +37,7 @@ namespace Prover.Genetic
             int par1 = r.Next(0, 10);
             int par2 = r.Next(1000, 2000) % 10;
             int par3 = r.Next(0, 10);
-            return new List<object> { name, weight, prio, par1, par2, par3};
+            return new List<object> { name, weight, prio, par1, par2, par3 };
         }
         [Serializable]
         public class FunctionWithParams
@@ -118,7 +115,7 @@ namespace Prover.Genetic
             //}
             Predicate<Clause> priof = PriorityFunctions.PriorityFunctionSwitch(param[2].ToString());
             switch (param[0].ToString())
-            {             
+            {
                 case "FIFOPrio":
                     return (new FIFOEvaluationPrio(priof), Convert.ToInt32(param[1].ToString()));
                 case "LIFOPrio":
@@ -131,7 +128,7 @@ namespace Prover.Genetic
                     return /*(new FIFOEvaluation(), (int)param[1]); //*/(new ByLiteralNumber(priof), Convert.ToInt32(param[1].ToString()));
                 case "ByDerivationSize":
                     return (new ByDerivationSize(priof), Convert.ToInt32(param[1].ToString()));
-                default: throw new ArgumentException("Нет такой функции " + param[0].ToString() );
+                default: throw new ArgumentException("Нет такой функции " + param[0].ToString());
             }
 
         }

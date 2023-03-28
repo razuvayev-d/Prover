@@ -1,6 +1,5 @@
 ﻿using Prover.DataStructures;
 using Prover.Heuristics;
-using System;
 using System.Collections.Generic;
 
 namespace Prover.ClauseSets
@@ -35,7 +34,7 @@ namespace Prover.ClauseSets
         /// <returns></returns>
         public Clause ExtractBestByEval(int heuristicIndex)
         {
-            
+
             if (clauses.Count == 0) return null;
             int best = 0;
             int besteval = clauses[0].evaluation[heuristicIndex];
@@ -49,7 +48,7 @@ namespace Prover.ClauseSets
                 }
             }
             var ret = clauses[best];
-            
+
             clauses.RemoveAt(best);
             return ret;
         }

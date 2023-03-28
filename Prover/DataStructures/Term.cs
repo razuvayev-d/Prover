@@ -11,7 +11,7 @@ namespace Prover.DataStructures
     public class Term : Formula
     {
 
-        public string name;      
+        public string name;
         public List<Term> subterms = new List<Term>();
         bool constant;
 
@@ -34,7 +34,7 @@ namespace Prover.DataStructures
             get { return constant; }
             set { constant = value; }
         }
-      
+
         static Term falseConstant = new Term("$false", new List<Term>(), constant: true);
         static Term trueConstant = new Term("$true", new List<Term>(), constant: true);
         public static Term False => falseConstant;
@@ -235,7 +235,7 @@ namespace Prover.DataStructures
             if (IsCompound)
             {
                 sig.AddFun(Func, subterms.Count);
-                foreach(var strm in subterms)
+                foreach (var strm in subterms)
                     strm.CollectSig(sig);
             }
             return sig;
@@ -246,12 +246,12 @@ namespace Prover.DataStructures
         public static List<Term> ParseTermList(Lexer lexer)
         {
             var res = new List<Term>();
-            res.Add(ParseTerm(lexer)); 
+            res.Add(ParseTerm(lexer));
 
             while (lexer.TestTok(TokenType.Comma))
             {
                 lexer.AcceptTok(TokenType.Comma);
-                res.Add(ParseTerm(lexer)); 
+                res.Add(ParseTerm(lexer));
             }
             return res;
         }

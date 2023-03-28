@@ -188,7 +188,7 @@ namespace Prover.ClauseSets
 
         public ClauseSet AddEqAxioms()
         {
-            Signature sig = new Signature();    
+            Signature sig = new Signature();
             sig = CollectSig(sig);
             if (sig.IsPred("="))
             {
@@ -198,6 +198,6 @@ namespace Prover.ClauseSets
             }
             return this;
         }
- 
+
     }
 }

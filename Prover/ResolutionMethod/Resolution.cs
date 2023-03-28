@@ -64,7 +64,7 @@ namespace Prover.ResolutionMethod
             res.CreateName();
             res.AddRange(lits1);
             res.RemoveDupLits();
-            
+
             //TODO: убрать, так как эта функциональность поддерживается через TransformNode
             //res.support.Add(clause1.Name);
             //res.support.Add(clause2.Name);

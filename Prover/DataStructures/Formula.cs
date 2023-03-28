@@ -1,9 +1,7 @@
-﻿using Prover.DataStructures;
-using Prover.Tokenization;
+﻿using Prover.Tokenization;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Net.Http.Headers;
 
 namespace Prover.DataStructures
 {
@@ -292,9 +290,9 @@ namespace Prover.DataStructures
             return (f, modified);
         }
 
-       /// <summary>
-       /// Упрощает формулу
-       /// </summary>
+        /// <summary>
+        /// Упрощает формулу
+        /// </summary>
         public static (Formula, bool) FormulaSimplify(Formula f)
         {
             if (f.IsLiteral)
@@ -441,7 +439,7 @@ namespace Prover.DataStructures
         {
             if (op != other.op) return false;
 
-            if (IsLiteral) 
+            if (IsLiteral)
                 return Literal.Equals(this, other);  //(this as Literal).Equals(other as Literal);
             if (IsUnary)
                 return subFormula1.Equals(other.subFormula1);

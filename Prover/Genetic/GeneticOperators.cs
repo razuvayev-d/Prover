@@ -21,7 +21,7 @@ namespace Prover.Genetic
                     {
                         var param = individual.genes[i][j];
                         if (random.NextDouble() < probParamMutates)
-                        {                           
+                        {
                             if (param is string)
                             {
                                 individual.InvalidFitness = true;
@@ -29,7 +29,7 @@ namespace Prover.Genetic
                                     individual.genes[i][j] = PriorityFunctions.GetRandomFunctionName();
                                 else // j == 0
                                     individual.genes[i][j] = Fitness.GetRandomString();
-                                    // Fitness.GetRandomString();
+                                // Fitness.GetRandomString();
 
                             }
                             //else if (param is double)

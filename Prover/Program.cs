@@ -87,7 +87,7 @@ namespace Prover
                 timeout = 100000
             };
 
-            
+
 
             string TPTPStatus;
             using (StreamReader sr = new StreamReader(Path))
@@ -123,7 +123,7 @@ namespace Prover
             report.ClausesStr = cnf.ToString();
             report.problem = problem;
             report.State = state;
-            
+
 
             Stopwatch stopwatch = new Stopwatch();
             Clause res;
@@ -142,7 +142,7 @@ namespace Prover
                 if (complete)
                 {
                     res = tsk.Result;
-                   
+
                 }
                 else
                 {
@@ -168,7 +168,7 @@ namespace Prover
             report.ConsolePrint();
         }
 
-            static void FOFFull(string Path, SearchParams param = null)
+        static void FOFFull(string Path, SearchParams param = null)
         {
 
             Console.WriteLine("\n\nЗадача " + Path);
@@ -176,11 +176,11 @@ namespace Prover
             Clause.ResetCounter();
             string timeoutStatus = string.Empty;
             param ??= new SearchParams()
-            {              
-                backward_subsumption= true,
+            {
+                backward_subsumption = true,
                 forward_subsumption = true,
                 heuristics = Heuristics.Heuristics.BreedingBestPrio,
-                delete_tautologies= true,
+                delete_tautologies = true,
                 timeout = 100000
             };
             //param.heuristics = Heuristics.Heuristics.PickGiven5;
@@ -209,7 +209,7 @@ namespace Prover
             CancellationTokenSource token = new CancellationTokenSource();
             state.token = token;
             if (param.timeout != 0)
-            {         
+            {
                 var tsk = new Task<Clause>(() => state.Saturate());
 
                 stopwatch.Restart();
@@ -308,7 +308,7 @@ namespace Prover
                 };
                 report.statistics.ElapsedTime = stopwatch.Elapsed.TotalMilliseconds;
                 StreamWriter r = new StreamWriter(System.IO.Path.Combine(answersDirectory, System.IO.Path.GetFileName(Path)));
-                  
+
 
                 Console.WriteLine("Доказательство найдено!\n", ConsoleColor.Green);
                 r.WriteLine("Доказательство найдено!\n");
@@ -355,7 +355,7 @@ namespace Prover
                     str1 = str1.Distinct().ToList();
                     int k = 1;
                     foreach (string s in str1)
-                    { 
+                    {
                         Console.WriteLine((Convert.ToString(k)).PadLeft(3) + ". " + s);
                         r.WriteLine((Convert.ToString(k)).PadLeft(3) + ". " + s);
                         k++;
@@ -569,7 +569,7 @@ namespace Prover
             string timeoutStatus = string.Empty;
             var param = new SearchParams()
             {
-               // delete_tautologies = true,
+                // delete_tautologies = true,
                 forward_subsumption = true,
                 //backward_subsumption = true
             };
@@ -601,7 +601,7 @@ namespace Prover
             var tsk = new Task<Clause>(() => state.Saturate());
             stopwatch.Restart();
             tsk.Start();
-           // Thread.Sleep(500000);
+            // Thread.Sleep(500000);
             //var res = state.Saturate();
             bool complete = tsk.Wait(5000);
             stopwatch.Stop();
@@ -785,9 +785,9 @@ namespace Prover
             //}
         }
         //static int i = 1;
-       
 
-       
+
+
         private static string CreateFormulaList(List<WFormula> list)
         {
             int i = 1;

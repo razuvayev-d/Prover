@@ -1,5 +1,4 @@
-﻿using Prover.DataStructures;
-using Prover.ResolutionMethod;
+﻿using Prover.ResolutionMethod;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;

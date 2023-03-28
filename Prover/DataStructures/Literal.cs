@@ -2,7 +2,6 @@
 using Prover.Tokenization;
 using System;
 using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
 using System.Text;
 
 namespace Prover.DataStructures
@@ -27,8 +26,8 @@ namespace Prover.DataStructures
                 }
                 return false;
             }
-        }              
-   
+        }
+
         List<Term> arguments = new List<Term>();
 
         public List<Term> Arguments => arguments;
@@ -53,13 +52,14 @@ namespace Prover.DataStructures
         public Literal(string name, List<Term> arguments, bool negative = false) : base(string.Empty, null)
         {
 
-            if(name == "!=")
+            if (name == "!=")
             {
-                this.Negative  =!negative;
+                this.Negative = !negative;
                 this.name = "=";
                 this.arguments = arguments;
             }
-            else {
+            else
+            {
                 this.name = name;
                 this.arguments = arguments;
                 Negative = negative;
@@ -67,7 +67,7 @@ namespace Prover.DataStructures
 
 
 
-        //TODO: разобраться с обработкой равенства при создании литерала
+            //TODO: разобраться с обработкой равенства при создании литерала
             //if (atom.Func == "!=")
             //{
 
@@ -226,7 +226,7 @@ namespace Prover.DataStructures
             if (IsEquational)
             {
                 var op = "=";
-                if(Negative) op = "!=";
+                if (Negative) op = "!=";
                 return arguments[0].ToString() + op + arguments[1].ToString();
             }
             else
@@ -249,7 +249,7 @@ namespace Prover.DataStructures
                 }
                 return result.ToString();
             }
-            
+
         }
         /// <summary>
         ///  Return a copy of self with oposite polarity.
@@ -375,10 +375,10 @@ namespace Prover.DataStructures
         {
             var res = fweight;
             int max = int.MinValue;
-            foreach(var term in arguments)
+            foreach (var term in arguments)
             {
                 int weight = term.Weight(fweight, vweight);
-                max = weight > max? weight: max;
+                max = weight > max ? weight : max;
                 res += weight;
             }
             res += (term_pen - 1) * max;

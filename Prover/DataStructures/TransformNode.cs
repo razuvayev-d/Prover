@@ -31,11 +31,11 @@ namespace Prover.DataStructures
         {
             TransformOperation = transformation;
             Parent1 = parent1;
-            Parent2 = parent2;         
+            Parent2 = parent2;
             Sbst = sbst;
             LiteralStr = literal;
             //Проброс флага в через преобразования
-            if((parent1 is not null && parent1.from_conjecture) || 
+            if ((parent1 is not null && parent1.from_conjecture) ||
                 (parent2 is not null && parent2.from_conjecture))
             {
                 from_conjecture = true;

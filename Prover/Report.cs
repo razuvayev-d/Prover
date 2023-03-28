@@ -3,7 +3,6 @@ using Prover.ProofStates;
 using Prover.Tokenization;
 using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
 using System.Text;
 using System.Text.Json.Serialization;
@@ -169,7 +168,7 @@ namespace Prover
 
 
 
-     
+
     }
 
 
@@ -209,14 +208,14 @@ namespace Prover
         public static string ReolutionString(Clause res)
         {
             string substStr = res.Sbst is null || res.Sbst.subst.Count == 0 ? "" : " с подстановкой " + res.Sbst.ToString();
-            
+
             var sb = new StringBuilder();
             sb.Append((res.Name + ": ").PadRight(pad_name));
             sb.Append(res.ToString().PadRight(pad_clause_str));
-            sb.Append(("[" + (res.Parent1 as Clause).Name + ", " + (res.Parent2 as Clause).Name +"]").PadRight(pad_source));
+            sb.Append(("[" + (res.Parent1 as Clause).Name + ", " + (res.Parent2 as Clause).Name + "]").PadRight(pad_source));
             sb.Append(res.TransformOperation);
             sb.Append(" по литералу " + res.LiteralStr);
-            sb.Append(substStr);           
+            sb.Append(substStr);
             return sb.ToString();
         }
 
@@ -229,7 +228,7 @@ namespace Prover
             sb.Append(("[" + (res.Parent1 as Clause).Name + "]").PadRight(pad_source));
             sb.Append(res.TransformOperation);
             sb.Append("  по литералу " + res.LiteralStr);
-            sb.Append(substStr);        
+            sb.Append(substStr);
             return sb.ToString();
         }
 

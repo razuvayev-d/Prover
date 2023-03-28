@@ -2,7 +2,6 @@
 using Prover.DataStructures;
 using Prover.Heuristics;
 using Prover.ResolutionMethod;
-using System;
 using System.Threading;
 using static Prover.Report;
 
@@ -89,10 +88,10 @@ namespace Prover.ProofStates
 
         public Clause ProcessClause()
         {
-            
+
             var given_clause = unprocessed.ExtractBest();
-         
-            given_clause = given_clause.FreshVarCopy(); 
+
+            given_clause = given_clause.FreshVarCopy();
 
             if (given_clause.IsEmpty) return given_clause;
 

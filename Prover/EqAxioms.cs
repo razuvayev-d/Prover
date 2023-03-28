@@ -35,11 +35,11 @@ namespace Prover
         private static List<Term> GenerateVarLists(string x, int n)
         {
             var res = new List<Term>();
-            for(int i =0; i < n; i++)            
+            for (int i = 0; i < n; i++)
                 res.Add(new Term(x + i.ToString()));
-            
+
             return res;
-        } 
+        }
 
         private static List<Literal> GenerateEqPremise(int arity)
         {
@@ -58,8 +58,8 @@ namespace Prover
 
             Term lterm = new Term(f, GenerateVarLists("X", arity));
             Term rTerm = new Term(f, GenerateVarLists("Y", arity));
-           
-            Literal concl = new Literal("=", new List<Term> {lterm, rTerm}, false);  
+
+            Literal concl = new Literal("=", new List<Term> { lterm, rTerm }, false);
 
             res.Add(concl);
             var clause = new Clause(res);
@@ -83,26 +83,26 @@ namespace Prover
         public static List<Clause> GenerateCompatAxioms(Signature sig)
         {
             var res = new List<Clause>();
-            foreach(var f in sig.funs)
+            foreach (var f in sig.funs)
             {
                 int arity = sig.GetArity(f.Key);
-                if(arity > 0) 
+                if (arity > 0)
                 {
                     var c = GenerateFunCompatAx(f.Key, arity);
                     res.Add(c);
-                } 
+                }
             }
 
-            foreach(var p in sig.preds)
-            { 
+            foreach (var p in sig.preds)
+            {
                 var arity = sig.GetArity(p.Key);
-                if(arity > 0) 
+                if (arity > 0)
                 {
                     var c = GeneratePredCompatAx(p.Key, arity);
                     res.Add(c);
                 }
             }
             return res;
-        } 
+        }
     }
 }

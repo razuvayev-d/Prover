@@ -107,7 +107,7 @@ namespace Prover.Tokenization
         public List<Clause> AddEqAxioms()
         {
             var sig = new Signature();
-            foreach(Clause c in clauses)
+            foreach (Clause c in clauses)
                 c.CollectSig(sig);
             foreach (var f in formulas)
                 f.CollectSig(sig);

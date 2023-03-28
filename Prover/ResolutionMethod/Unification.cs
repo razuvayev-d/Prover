@@ -1,5 +1,4 @@
 ﻿using Prover.DataStructures;
-using System;
 using System.Collections.Generic;
 
 namespace Prover.ResolutionMethod
