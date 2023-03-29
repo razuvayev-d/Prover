@@ -20,7 +20,7 @@ namespace Prover.Heuristics
 
 
         public static EvalStructure PickGiven5_2 = new EvalStructure(new List<(ClauseEvaluationFunction, int)> {
-                                                                                (new SymbolCountEvaluation(2, 1), 1),
+                                                                                (new RefinedWeight(PriorityFunctions.PreferGoals, 2, 1, 3, 4, 5), 1),
                                                                                 (new FIFOEvaluation(), 5)
                         });
         /// <summary>

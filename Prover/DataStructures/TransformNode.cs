@@ -11,7 +11,9 @@ namespace Prover.DataStructures
         public string TransformOperation;
         public Substitution Sbst;
         public string LiteralStr;
-
+        /// <summary>
+        /// Для стратегии поддержки
+        /// </summary>
         public bool from_conjecture { get; private set; } = false;
 
         public TransformNode(string transformation = "input", TransformNode parent1 = null, TransformNode parent2 = null)
