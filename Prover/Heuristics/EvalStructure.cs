@@ -15,7 +15,7 @@ namespace Prover.Heuristics
         public List<int> EvalVec = null;
         int current = 0;
         int currentCount = 0;
-        string name = string.Empty;
+        public string Name { get; }
 
         /// <summary>
         /// Deprecated
@@ -34,7 +34,7 @@ namespace Prover.Heuristics
         }
 
 
-        public EvalStructure(List<(ClauseEvaluationFunction, int)> eval_descriptor)
+        public EvalStructure(List<(ClauseEvaluationFunction, int)> eval_descriptor, string name = null)
         {
             if (eval_descriptor.Count == 0) throw new Exception("eval_descriptoir is empty!");
             EvalFunctions = new List<ClauseEvaluationFunction>();
@@ -45,15 +45,17 @@ namespace Prover.Heuristics
                 EvalVec.Add(eval.Item2);
             }
             currentCount = EvalVec[0];
+            this.Name = name;
         }
 
-        public EvalStructure(ClauseEvaluationFunction cef, int rating)
+        public EvalStructure(ClauseEvaluationFunction cef, int rating, string name = null)
         {
             EvalFunctions = new List<ClauseEvaluationFunction>();
             EvalVec = new List<int>();
             EvalFunctions.Add(cef);
             EvalVec.Add(rating);
             currentCount = EvalVec[0];
+            this.Name = name;
         }
 
         public List<int> Evaluate(Clause clause)

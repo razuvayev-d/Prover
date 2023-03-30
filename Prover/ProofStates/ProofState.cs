@@ -3,6 +3,7 @@ using Prover.DataStructures;
 using Prover.Heuristics;
 using Prover.ResolutionMethod;
 using System;
+using System.Text;
 using System.Threading;
 using static Prover.Report;
 
@@ -45,10 +46,36 @@ namespace Prover.ProofStates
             this.literal_selection = literal_selection;
         }
 
-        //public override string ToString()
-        //{
+        public override string ToString()
+        {
+            StringBuilder sb = new StringBuilder();
+            sb.Append("Параметры поиска: ");
+            sb.Append("\nИспользована эвристика: ");
+            sb.Append(heuristics.Name);
+            if (delete_tautologies)
+            {
+                sb.Append("\nУдаление тавтологий");
+            }
+            if (forward_subsumption)
+            {
+                sb.Append("\nПрямое поглощение");
+            }
+            if (backward_subsumption)
+            {
+                sb.Append("\nОбратное поглощение");
+            }
+            if (literal_selection != null)
+            {
+                sb.Append("\nВыбор литералов: " + literal_selection);
+            }
+            if (timeout > 0)
+            {
+                sb.AppendLine("\nОграничение времени: " + timeout);
+            }
+            else sb.AppendLine("\nБез ограничения времени");
 
-        //}
+            return sb.ToString();
+        }
     }
 
 

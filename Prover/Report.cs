@@ -115,6 +115,9 @@ namespace Prover
 
             Console.WriteLine(verdict);
 
+            Console.WriteLine();
+            Console.WriteLine(Params.ToString());
+
             Console.WriteLine("Прочитанная формула: ");
             Console.WriteLine(FormulaStr);
 

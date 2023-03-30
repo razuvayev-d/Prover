@@ -16,7 +16,7 @@ namespace Prover.Heuristics
         public static EvalStructure PickGiven5 = new EvalStructure(new List<(ClauseEvaluationFunction, int)> {
                                                                                 (new SymbolCountEvaluation(2, 1), 5),
                                                                                 (new FIFOEvaluation(), 1)
-                        });
+                        }, "PickGiven5");
 
 
         public static EvalStructure PickGiven5_2 = new EvalStructure(new List<(ClauseEvaluationFunction, int)> {
@@ -29,7 +29,7 @@ namespace Prover.Heuristics
         public static EvalStructure PickGiven2 = new EvalStructure(new List<(ClauseEvaluationFunction, int)> {
                                                                                 (new SymbolCountEvaluation(2, 1), 2),
                                                                                 (new FIFOEvaluation(), 1)
-                                                                                                               });
+                                                                                                               }, "PickGiven2");
         public static EvalStructure InitialBest = new EvalStructure(new List<(ClauseEvaluationFunction, int)> {
                                                                                 (new ConstPrio(6), 6),
                                                                                 (new NegatePrio(4), 9),
