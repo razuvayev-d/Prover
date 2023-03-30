@@ -1,6 +1,9 @@
 ﻿using Prover.Heuristics;
 using Prover.ProofStates;
 using System;
+using System.IO;
+using System.Text.RegularExpressions;
+using static System.Net.Mime.MediaTypeNames;
 
 namespace Prover
 {
@@ -94,6 +97,28 @@ namespace Prover
                     break;
             }
             return null;
+        }
+
+        public string ReadFile(string path)
+        {
+            string text = string.Empty;
+            try
+            {
+                
+                using (StreamReader sr = new StreamReader(path))
+                {
+                    text = sr.ReadToEnd();
+                    var rg = new Regex("(Status).+(\n)");
+                    // TPTPStatus = rg.Match(text).Value;
+                }
+                
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine("Произошла ошибка: ");
+                Console.WriteLine(ex.Message);
+            }
+            return text;
         }
     }
 }

@@ -2,7 +2,7 @@
   "profiles": {
     "Prover": {
       "commandName": "Project",
-      "commandLineArgs": "-f -p -s .\\Problems\\PUZ001+1.p\r\n\r\n\r\n"
+      "commandLineArgs": "-f -p -s .\\SYN941+1.p\r\n\r\n\r\n\r\n"
     }
   }
 }

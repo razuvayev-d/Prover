@@ -89,16 +89,6 @@ namespace Prover
                 timeout = 100000
             };
 
-
-
-            string TPTPStatus;
-            using (StreamReader sr = new StreamReader(Path))
-            {
-                string text = sr.ReadToEnd();
-                var rg = new Regex("(Status).+(\n)");
-                TPTPStatus = rg.Match(text).Value;
-            }
-
             var problem = new FOFSpec();
             
             problem.Parse(Path);
@@ -121,7 +111,6 @@ namespace Prover
             string ClausesStr = cnf.ToString();
 
             var state = new ProofState(param, cnf, false, indexing);
-
 
 
             report.Params = param;

@@ -118,7 +118,7 @@ namespace Prover
             Console.WriteLine("Прочитанная формула: ");
             Console.WriteLine(FormulaStr);
 
-            if (!Params.supress_eq_axioms)
+            if (!Params.supress_eq_axioms && AxiomStr.Length > 0)
             {
                 Console.WriteLine("Добавлены следующие аксиомы равенства:");
                 Console.WriteLine(AxiomStr);
@@ -183,7 +183,7 @@ namespace Prover
 
             pad_clause_str = inference.Select(c => c.ToString().Length).Max() + 2;
             pad_name = inference.Select(c => c.Name.Length).Max() + 2;
-            pad_source = pad_name * 2;
+            pad_source = pad_name * 2 + 2;
 
             int pad_num = inference.Count.ToString().Length + 2;
             int i = 1;
