@@ -79,7 +79,7 @@ namespace Prover
             return param;
         }
 
-        public static EvalStructure SelectHeuristic(string name)
+        public static EvaluationScheme SelectHeuristic(string name)
         {
             switch (name)
             {

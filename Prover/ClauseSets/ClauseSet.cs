@@ -47,31 +47,6 @@ namespace Prover.ClauseSets
                 return null;
         }
 
-        public void Distinct()
-        {
-            var clauses = new List<Clause>();
-            foreach (var clause in this.clauses)
-            {
-                //if (!clauses.Contains(clause))
-                if (!TMP_CONTAINS(clause, clauses))
-                    clauses.Add(clause);
-            }
-            this.clauses = clauses;
-        }
-
-        /// <summary>
-        /// Потому что встроенный contains использует GetHashCode
-        /// </summary>
-        /// <param name="clause"></param>
-        /// <param name="clauses"></param>
-        /// <returns></returns>
-        public bool TMP_CONTAINS(Clause clause, List<Clause> clauses)
-        {
-            // TODO: замена TMP_CONTAINS
-            foreach (var clause2 in clauses)
-                if (clause2.Equals(clause)) return true;
-            return false;
-        }
 
         public Clause this[int i]
         {
@@ -133,9 +108,9 @@ namespace Prover.ClauseSets
             foreach (var c in conjuncts)
             {
                 var disj = c.DisjToList();
-                var litlist = new List<Formula>();
+                var litlist = new List<Literal>();
                 foreach (var l in disj)
-                    litlist.Add(l);
+                    litlist.Add(l as Literal);
                 var clause = new Clause(litlist, f.Type);
                 res.Add(clause);
             }

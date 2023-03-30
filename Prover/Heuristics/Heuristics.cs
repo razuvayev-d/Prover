@@ -1,36 +1,43 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 
 namespace Prover.Heuristics
 {
     public static class Heuristics
     {
-        public static EvalStructure FIFOEval { get; } = new EvalStructure(new FIFOEvaluation(), 1);
+        public static EvaluationScheme FIFOEval { get; } = new EvaluationScheme(new FIFOEvaluation(), 1);
         /// <summary>
         /// Стратегия предпочтения более коротких дизъюнктов. Меньше символов -- лучше. Требует чтобы была включена подстановка.
         /// </summary>
-        public static EvalStructure SymbolCountEval = new EvalStructure(new SymbolCountEvaluation(2, 1), 1);
+        public static EvaluationScheme SymbolCountEval = new EvaluationScheme(new SymbolCountEvaluation(2, 1), 1);
+
+        [Obsolete]
+        public static EvaluationScheme RefinedSOS = new EvaluationScheme(new List<(ClauseEvaluationFunction, int)> {
+                                                                           (new RefinedWeight(PriorityFunctions.SimulateSOS, 3, 1, 2, 3, 4), 5),
+                                                                           (new LIFOEvaluation(), 1) });
+
 
         /// <summary>
         /// Чередование стратегии предпочтения более коротких дизъюнктов и FIFO с соотношением весов 5 к 1.
         /// </summary>
-        public static EvalStructure PickGiven5 = new EvalStructure(new List<(ClauseEvaluationFunction, int)> {
+        public static EvaluationScheme PickGiven5 = new EvaluationScheme(new List<(ClauseEvaluationFunction, int)> {
                                                                                 (new SymbolCountEvaluation(2, 1), 5),
                                                                                 (new FIFOEvaluation(), 1)
                         }, "PickGiven5");
 
 
-        public static EvalStructure PickGiven5_2 = new EvalStructure(new List<(ClauseEvaluationFunction, int)> {
+        public static EvaluationScheme PickGiven5_2 = new EvaluationScheme(new List<(ClauseEvaluationFunction, int)> {
                                                                                 (new RefinedWeight(PriorityFunctions.PreferGoals, 2, 1, 3, 4, 5), 1),
                                                                                 (new FIFOEvaluation(), 5)
                         });
         /// <summary>
         /// Чередование стратегии предпочтения более коротких дизъюнктов и FIFO с соотношением весов 2 к 1.
         /// </summary>                                                                                                      
-        public static EvalStructure PickGiven2 = new EvalStructure(new List<(ClauseEvaluationFunction, int)> {
+        public static EvaluationScheme PickGiven2 = new EvaluationScheme(new List<(ClauseEvaluationFunction, int)> {
                                                                                 (new SymbolCountEvaluation(2, 1), 2),
                                                                                 (new FIFOEvaluation(), 1)
                                                                                                                }, "PickGiven2");
-        public static EvalStructure InitialBest = new EvalStructure(new List<(ClauseEvaluationFunction, int)> {
+        public static EvaluationScheme InitialBest = new EvaluationScheme(new List<(ClauseEvaluationFunction, int)> {
                                                                                 (new ConstPrio(6), 6),
                                                                                 (new NegatePrio(4), 9),
                                                                                 (new SymbolCountEvaluation(1,5), 7),
@@ -38,7 +45,7 @@ namespace Prover.Heuristics
                                                                                   (new LIFOEvaluation(), 5)
                                                                                                                });
 
-        public static EvalStructure BreedingBest { get; } = new EvalStructure(new List<(ClauseEvaluationFunction, int)> {
+        public static EvaluationScheme BreedingBest { get; } = new EvaluationScheme(new List<(ClauseEvaluationFunction, int)> {
                                                                                 (new SymbolCountEvaluation(1, 5), 9),
                                                                                 (new FIFOEvaluation(), 5),
                                                                                 (new LIFOEvaluation(), 7),
@@ -46,7 +53,7 @@ namespace Prover.Heuristics
                                                                                   (new FIFOEvaluation(), 5)
                                                                                                                });
 
-        public static EvalStructure BreedingBestPrio { get; } = new EvalStructure(new List<(ClauseEvaluationFunction, int)> {
+        public static EvaluationScheme BreedingBestPrio { get; } = new EvaluationScheme(new List<(ClauseEvaluationFunction, int)> {
                                                                                  (new ByLiteralNumber(PriorityFunctions.PreferGoals), 5),
                                                                                  (new FIFOEvaluationPrio(PriorityFunctions.PreferNonGoals), 4),
                                                                                  (new ByLiteralNumber(PriorityFunctions.PreferNonGround), 5),
@@ -54,7 +61,7 @@ namespace Prover.Heuristics
                                                                                  (new ByDerivationDepth(PriorityFunctions.PreferNonHorn), 4)
                                                                                                                                        });
 
-        public static EvalStructure BreedingBestPrio43 { get; } = new EvalStructure(new List<(ClauseEvaluationFunction, int)> {
+        public static EvaluationScheme BreedingBestPrio43 { get; } = new EvaluationScheme(new List<(ClauseEvaluationFunction, int)> {
                                                                                  (new ByLiteralNumber(PriorityFunctions.PreferUnits), 2),
                                                                                  (new ClauseWeight(PriorityFunctions.PreferNonUnits, 2,5,8), 2),
                                                                                  (new ByDerivationDepth(PriorityFunctions.SimulateSOS), 5),

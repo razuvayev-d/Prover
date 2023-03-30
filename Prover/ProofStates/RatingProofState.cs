@@ -35,7 +35,7 @@ namespace Prover.ProofStates
             freqLiterals = GetFrequentLiterals(clauses);
 
             this.Params = Params;
-            this.Params.heuristics = new EvalStructure(new RatingEvaluation(freqLiterals), 1);
+            this.Params.heuristics = new EvaluationScheme(new RatingEvaluation(freqLiterals), 1);
             unprocessed = new HeuristicClauseSet(Params.heuristics);
 
             foreach (Clause clause in clauses.clauses)

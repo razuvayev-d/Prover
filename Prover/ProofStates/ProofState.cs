@@ -5,13 +5,15 @@ using Prover.ResolutionMethod;
 using System;
 using System.Text;
 using System.Threading;
+using System.Linq;
 using static Prover.Report;
+using System.IO;
 
 namespace Prover.ProofStates
 {
     internal class SearchParams
     {
-        public EvalStructure heuristics { get; set; } = Prover.Heuristics.Heuristics.PickGiven5;
+        public EvaluationScheme heuristics { get; set; } = Prover.Heuristics.Heuristics.PickGiven5;
         public bool delete_tautologies { get; set; } = false;
         public bool forward_subsumption { get; set; } = false;
         public bool backward_subsumption { get; set; } = false;
@@ -33,7 +35,7 @@ namespace Prover.ProofStates
         {
         }
 
-        public SearchParams(EvalStructure heuristics,
+        public SearchParams(EvaluationScheme heuristics,
                             bool delete_tautologies = false,
                             bool forward_subsumption = false,
                             bool backward_subsumption = false,
@@ -123,13 +125,17 @@ namespace Prover.ProofStates
         }
         static int iter = 0;
         public Clause ProcessClause()
-        {
-            
+        {          
             var given_clause = unprocessed.ExtractBest();
             //Console.WriteLine("\nGIVEN========================== {0}", ++iter);
             //Console.WriteLine(given_clause.ToString());
             //Console.WriteLine(given_clause.evaluation[0].ToString() + " " + given_clause.evaluation[1]);
             //Console.WriteLine("PROCESSED: {0}   UNPROC: {1}", processed.Count, unprocessed.Count);
+
+            //using (StreamWriter sw = new StreamWriter("given_clauses000.txt", true))
+            //{
+            //    sw.WriteLine("1;" +given_clause.ToString() +";" + ++iter + ";" + processed.Count + ";" + unprocessed.Count + ";" + statistics.factor_count + ";" + statistics.backward_subsumed + ";" + statistics.forward_subsumed);
+            //}
             given_clause = given_clause.FreshVarCopy();
 
             if (given_clause.IsEmpty) return given_clause;
@@ -199,6 +205,7 @@ namespace Prover.ProofStates
             {
                 if (token.IsCancellationRequested) return null;
                 //unprocessed.clauses = unprocessed.clauses.Distinct().ToList();
+
                 //unprocessed.Distinct();
                 //processed.Distinct();
                 Clause res = ProcessClause();

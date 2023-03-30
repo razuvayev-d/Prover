@@ -10,8 +10,8 @@ namespace Prover.ClauseSets
     /// </summary>
     internal class HeuristicClauseSet : ClauseSet
     {
-        EvalStructure EvalFunctions;
-        public HeuristicClauseSet(EvalStructure evalFunctions)
+        EvaluationScheme EvalFunctions;
+        public HeuristicClauseSet(EvaluationScheme evalFunctions)
         {
             clauses = new List<Clause>();
             this.EvalFunctions = evalFunctions;

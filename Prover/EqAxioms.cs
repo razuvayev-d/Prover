@@ -63,7 +63,9 @@ namespace Prover
 
             res.Add(concl);
             var clause = new Clause(res);
+            
             clause.SetTransform("Добавление аксиомы равенства");
+            
             return clause;
         }
 
@@ -90,7 +92,7 @@ namespace Prover
                 if (arity > 0)
                 {
                     var c = GenerateFunCompatAx(f.Key, arity);
-                    c.name = "EqA" + count.ToString();
+                    c.name = "EqA_" + f.Key; //+count.ToString();
                     count++;
                     res.Add(c);
                 }
@@ -102,7 +104,7 @@ namespace Prover
                 if (arity > 0 && p.Key != "=")
                 {
                     var c = GeneratePredCompatAx(p.Key, arity);
-                    c.name = "EqA" + count.ToString();
+                    c.name = "EqA_" + p.Key; //+ count.ToString();
                     count++;
                     res.Add(c);
                 }

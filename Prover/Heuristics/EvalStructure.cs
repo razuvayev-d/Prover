@@ -9,7 +9,7 @@ namespace Prover.Heuristics
     /// содержит несколько различных функций оценки и способ
     /// чередования между ними.
     /// </summary>
-    public class EvalStructure
+    public class EvaluationScheme
     {
         public List<ClauseEvaluationFunction> EvalFunctions = null;
         public List<int> EvalVec = null;
@@ -22,7 +22,8 @@ namespace Prover.Heuristics
         /// </summary>
         /// <param name="descriptor"></param>
         /// <param name="rating"></param>
-        public EvalStructure(List<ClauseEvaluationFunction> descriptor, List<int> rating)
+        [Obsolete]
+        public EvaluationScheme(List<ClauseEvaluationFunction> descriptor, List<int> rating)
         {
             if (descriptor != null && rating != null && descriptor.Count > 0 && rating.Count > 0)
             {
@@ -34,7 +35,7 @@ namespace Prover.Heuristics
         }
 
 
-        public EvalStructure(List<(ClauseEvaluationFunction, int)> eval_descriptor, string name = null)
+        public EvaluationScheme(List<(ClauseEvaluationFunction, int)> eval_descriptor, string name = null)
         {
             if (eval_descriptor.Count == 0) throw new Exception("eval_descriptoir is empty!");
             EvalFunctions = new List<ClauseEvaluationFunction>();
@@ -48,7 +49,7 @@ namespace Prover.Heuristics
             this.Name = name;
         }
 
-        public EvalStructure(ClauseEvaluationFunction cef, int rating, string name = null)
+        public EvaluationScheme(ClauseEvaluationFunction cef, int rating, string name = null)
         {
             EvalFunctions = new List<ClauseEvaluationFunction>();
             EvalVec = new List<int>();

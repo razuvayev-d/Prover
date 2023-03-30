@@ -14,7 +14,7 @@ namespace Prover.DataStructures
         /// <summary>
         /// Для стратегии поддержки
         /// </summary>
-        public bool from_conjecture { get; private set; } = false;
+        public bool from_conjecture { get; protected set; } = false;
 
         public TransformNode(string transformation = "input", TransformNode parent1 = null, TransformNode parent2 = null)
         {

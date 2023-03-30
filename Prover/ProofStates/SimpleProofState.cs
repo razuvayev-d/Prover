@@ -1,6 +1,7 @@
 ﻿using Prover.ClauseSets;
 using Prover.DataStructures;
 using Prover.ResolutionMethod;
+using System.Linq;
 
 namespace Prover.ProofStates
 {
@@ -37,7 +38,7 @@ namespace Prover.ProofStates
             newClauses.AddRange(factors);
             ClauseSet resolvents = ResControl.ComputeAllResolvents(given_clause, processed);
 
-            resolvents.Distinct();
+            resolvents.clauses.Distinct();
             newClauses.AddRange(resolvents);
 
             processed.AddClause(given_clause);
@@ -60,7 +61,7 @@ namespace Prover.ProofStates
             while (unprocessed.Count > 0)
             {
                 //unprocessed.clauses = unprocessed.clauses.Distinct().ToList();
-                unprocessed.Distinct();
+                //unprocessed.Distinct();
                 Clause res = ProcessClause();
                 if (res is not null)
                 {

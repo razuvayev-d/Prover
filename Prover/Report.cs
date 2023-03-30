@@ -129,13 +129,13 @@ namespace Prover
 
             if (Params.simplify)
             {
-                var CnfForms = problem.clauses.Select(clause => clause.Parent1).Distinct().ToList();
+                var CnfForms = problem.clauses.Select(clause => clause.Parent1).Where(x => x is not null).Distinct().ToList();
 
                 Console.WriteLine("Преобразования в клаузы: ");
 
                 for (int j = 0; j < CnfForms.Count; j++)
                 {
-                    if (CnfForms[j] is null) continue;
+                    //if (CnfForms[j] is null) continue;
                     Console.WriteLine("   Формула " + (j + 1));
                     Console.WriteLine("\n" + CnfForms[j].TransformationPath());
                     Console.WriteLine();

@@ -28,7 +28,7 @@ namespace Prover.Genetic
         }
 
 
-        private static int Calculate(EvalStructure individual, int timeout, SearchParams param)
+        private static int Calculate(EvaluationScheme individual, int timeout, SearchParams param)
         {
             int result = 0;
             string[] files = Directory.GetFiles(TrainDirectory);
@@ -46,7 +46,7 @@ namespace Prover.Genetic
             return result;
         }
 
-        static bool TrySolve(string Path, EvalStructure individual, int timeout, SearchParams param)
+        static bool TrySolve(string Path, EvaluationScheme individual, int timeout, SearchParams param)
         {
             Clause.ResetCounter();
 

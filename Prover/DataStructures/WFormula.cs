@@ -8,7 +8,7 @@ namespace Prover.DataStructures
     ///  Datatype for the complete first-order formula, including
     ///meta-information like type and name.
     /// </summary>
-    public class WFormula : TransformNode// : Derivable
+    public class WFormula : TransformNode
     {
         Formula formula;
         string type;
@@ -62,7 +62,6 @@ namespace Prover.DataStructures
             lexer.AcceptTok(TokenType.FullStop);
 
             var res = new WFormula(form, type, name);
-            //res.Derivation = new Derivation("input");
             res.SetTransform("Исходная");
             return res;
         }

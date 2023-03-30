@@ -42,7 +42,7 @@ namespace Prover.ResolutionMethod
                 {
                     if (t1.Equals(t2)) continue;
 
-                    if (OccursCheck(t1, t2)) return null;
+                    if (OccursCheck(t1, t2)) return null; //проверка на случаи f(x) -> X
 
                     Substitution newBinding = new Substitution(t1, t2);
 
@@ -82,7 +82,9 @@ namespace Prover.ResolutionMethod
             }
             return substitution;
         }
-
+        /// <summary>
+        /// Проверка на то что t!=x
+        /// </summary>
         private static bool OccursCheck(Term x, Term t)
         {
             if (t.IsCompound)

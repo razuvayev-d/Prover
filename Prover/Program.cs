@@ -45,8 +45,8 @@ namespace Prover
             param.forward_subsumption = true;
             param.backward_subsumption = true;
             param.delete_tautologies = true;
-            param.heuristics = Heuristics.Heuristics.PickGiven5;
-            param.literal_selection = "large";
+            param.heuristics = Heuristics.Heuristics.PickGiven2;
+            param.literal_selection = "large"; //"largerandom";// largerandom"; //"large";
             
             //FOFFull(param.file, param);
             FOFFullClear(param.file, param);
