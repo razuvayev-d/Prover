@@ -41,15 +41,21 @@ namespace Prover
             //FOFFull(path);
 
             var param = IO.ParamsSplit(args);
-            param.delete_tautologies = true;
-            param.forward_subsumption = true;
-            param.backward_subsumption = true;
-            param.delete_tautologies = true;
-            param.heuristics = Heuristics.Heuristics.PickGiven2;
-            param.literal_selection = "large"; //"largerandom";// largerandom"; //"large";
-            
-            //FOFFull(param.file, param);
+            //param.delete_tautologies = true;
+            //param.forward_subsumption = true;
+            //param.backward_subsumption = true;
+            //param.delete_tautologies = true;
+            //param.heuristics = Heuristics.Heuristics.PickGiven5;
+
+            //param.literal_selection = "large2"; //"largerandom";// largerandom"; //"large";
+            //param.literal_selection = "mostfreq";
+
+
+            param.degree_of_parallelism = 1;
+            param.timeout = 105000;
             FOFFullClear(param.file, param);
+
+
             //if (args[0] == "-i") indexing = true;
             //////if (args[1] == "-so") statonly = true;
             //FOFFull(args[args.Length - 1]);
@@ -59,18 +65,18 @@ namespace Prover
             //param.forward_subsumption = true;
             //param.simplify = false;
             //foreach (string file in files)
-            //    FOFFull(file, param);
+            //    FOFFullClear(file, param);
             //////Rating(file);
 
-            Console.ForegroundColor = ConsoleColor.Green;
-            Console.WriteLine("Solved: {0} / {1}", Count, files.Length);
-            Console.WriteLine("Solved problems:");
-            Console.ResetColor();
+            //Console.ForegroundColor = ConsoleColor.Green;
+            //Console.WriteLine("Solved: {0} / {1}", Count, files.Length);
+            //Console.WriteLine("Solved problems:");
+            //Console.ResetColor();
 
-            foreach (var x in solved)
-            {
-                Console.WriteLine(x);
-            }
+            //foreach (var x in solved)
+            //{
+            //    Console.WriteLine(x);
+            //}
         }
 
         static void FOFFullClear(string Path, SearchParams param = null)
@@ -160,6 +166,7 @@ namespace Prover
             report.Res = res;
 
             report.ConsolePrint();
+            report.FilePrint(answersDirectory);
         }
 
         static void GeneticBreeding()

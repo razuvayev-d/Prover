@@ -1,6 +1,7 @@
 ﻿using Prover.DataStructures;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace Prover.ResolutionMethod
 {
@@ -62,8 +63,8 @@ namespace Prover.ResolutionMethod
             Clause res = new Clause();
 
             res.CreateName();
-            res.AddRange(lits1);
-            res.RemoveDupLits();
+            res.AddRange(lits1.Distinct().ToList());
+            //res.RemoveDupLits();
 
             //if (res.Equals(clause1) || res.Equals(clause2))
             //    return null;
@@ -119,8 +120,8 @@ namespace Prover.ResolutionMethod
             }
 
             Clause res = new Clause();
-            res.AddRange(literals);
-            res.RemoveDupLits();
+            res.AddRange(literals.Distinct().ToList());
+            //res.RemoveDupLits();
             res.CreateName();
             res.depth = clause.depth + 1;
             //res.subst.AddAll(sigma);

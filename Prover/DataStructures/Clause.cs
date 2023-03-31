@@ -49,6 +49,10 @@ namespace Prover.DataStructures
             }
         }
 
+
+
+        public Dictionary<string, int> PredStats = new Dictionary<string, int>();
+
         public Literal this[int index]
         {
             get
@@ -66,6 +70,17 @@ namespace Prover.DataStructures
         public Clause()
         {
             clauseIdCounter++;
+            //PredStats = new Dictionary<string, int>();
+        }
+
+        private void CollectPredStats()
+        {
+           
+            foreach (var lit in literals)
+                if (PredStats.ContainsKey(lit.Name))
+                    PredStats[lit.Name]++;
+                else
+                    PredStats[lit.Name] = 1;
         }
         //Непонятно почему, но так очень хорошо работает (несоответствие веса функ символов) (2 y y и 1 y x)
         private static int LitComparer(Literal x, Literal y) => x.Weight(2, 1).CompareTo(y.Weight(2, 1));
@@ -87,8 +102,12 @@ namespace Prover.DataStructures
             //{
             //    Console.Write(l.ToString() +", ");
             //}
+
+
             this.literals = literals;
             this.type = type;
+
+            CollectPredStats();
             if (name is not null)
                 this.name = name;
             else
@@ -253,7 +272,7 @@ namespace Prover.DataStructures
             for (int i = start; i < literals.Count; i++)
                 result.literals.Add(literals[i].DeepCopy());
 
-
+            result.PredStats = PredStats.ToDictionary(entry => entry.Key, entry => entry.Value);
             return result;
         }
 
@@ -276,6 +295,7 @@ namespace Prover.DataStructures
         public void AddRange(List<Literal> literals)
         {
             this.literals.AddRange(literals);
+            CollectPredStats();
 
         }
 

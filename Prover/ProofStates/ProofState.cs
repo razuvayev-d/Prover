@@ -8,6 +8,8 @@ using System.Threading;
 using System.Linq;
 using static Prover.Report;
 using System.IO;
+using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace Prover.ProofStates
 {
@@ -31,6 +33,7 @@ namespace Prover.ProofStates
 
         public string file { get; set; }
 
+        public int degree_of_parallelism { get; set; } = 1;
         public SearchParams()
         {
         }
@@ -76,6 +79,9 @@ namespace Prover.ProofStates
             }
             else sb.AppendLine("\nБез ограничения времени");
 
+            if (degree_of_parallelism > 1)
+                sb.Append("\nСтепень параллелизма: " + degree_of_parallelism);
+
             return sb.ToString();
         }
     }
@@ -93,6 +99,8 @@ namespace Prover.ProofStates
         bool indexed = false;
 
         public LiteralSelector Selector;
+
+        private Barrier barrier; 
 
         //public int initial_clause_count;
         //public int proc_clause_count = 0;
@@ -122,6 +130,8 @@ namespace Prover.ProofStates
             {
                 Selector = LiteralSelection.GetSelector(Params.literal_selection);
             }
+
+            LiteralSelection.ClausesInProblems = processed;
         }
         static int iter = 0;
         public Clause ProcessClause()
@@ -198,8 +208,7 @@ namespace Prover.ProofStates
         
         }
 
-
-        public Clause Saturate()
+        private Clause SequentalSaturate()
         {
             while (unprocessed.Count > 0)
             {
@@ -215,6 +224,146 @@ namespace Prover.ProofStates
                 }
             }
             return null;
+        }
+
+        public Clause Saturate()
+        {
+            if (Params.degree_of_parallelism > 1)
+                return ParallelSaturate();
+            return SequentalSaturate();
+        }
+
+        private Clause ParallelSaturate()
+        {
+            List<Task<Clause>> Tasks = new List<Task<Clause>>(Params.degree_of_parallelism);
+            for (int i = 0; i < Params.degree_of_parallelism; i++)          
+                Tasks.Add(null);
+            
+
+                while (unprocessed.Count > 0)
+            {
+                
+                if (token.IsCancellationRequested) return null;
+                barrier = new Barrier(Params.degree_of_parallelism);
+                for (int i = 0; i < Params.degree_of_parallelism; i++)
+                { 
+                    Tasks[i] = new Task<Clause>(ProcessClauseThread);
+                    Tasks[i].Start();
+                }
+                Task.WaitAll(Tasks.ToArray());
+
+
+                for (int i = 0; i < Params.degree_of_parallelism; i++)
+                {
+
+                    //unprocessed.clauses = unprocessed.clauses.Distinct().ToList();
+
+                    //unprocessed.Distinct();
+                    //processed.Distinct();
+                    Clause res = Tasks[i].Result;
+                    if (res is not null)
+                    {
+                        return res;
+                    }
+                }
+            }
+            return null;
+        }
+
+        public Clause ProcessClauseThread()
+        {
+            Clause given_clause = null;
+            lock ("Extract")
+            {
+                given_clause = unprocessed.ExtractBest();
+            }
+            if (given_clause is null)
+            {
+                barrier.RemoveParticipants(1);
+                return null;
+            }
+                //Console.WriteLine("\nGIVEN========================== {0}", ++iter);
+                //Console.WriteLine(given_clause.ToString());
+                //Console.WriteLine(given_clause.evaluation[0].ToString() + " " + given_clause.evaluation[1]);
+                //Console.WriteLine("PROCESSED: {0}   UNPROC: {1}", processed.Count, unprocessed.Count);
+
+                //using (StreamWriter sw = new StreamWriter("given_clauses000.txt", true))
+                //{
+                //    sw.WriteLine("1;" +given_clause.ToString() +";" + ++iter + ";" + processed.Count + ";" + unprocessed.Count + ";" + statistics.factor_count + ";" + statistics.backward_subsumed + ";" + statistics.forward_subsumed);
+                //}
+                given_clause = given_clause.FreshVarCopy();
+
+            if (given_clause.IsEmpty)
+            {
+                barrier.RemoveParticipant();
+                return given_clause;
+            }
+
+            if (Params.delete_tautologies && given_clause.IsTautology)
+            {
+                statistics.tautologies_deleted++;
+                barrier.RemoveParticipant();
+                return null;
+            }
+
+            if (Params.forward_subsumption && Subsumption.Forward(processed, given_clause))
+            {
+                statistics.forward_subsumed++;
+                //Console.WriteLine("Forward");
+                barrier.RemoveParticipant();
+                return null;
+            }
+
+            if (Params.backward_subsumption)
+            {
+                lock ("backward")
+                {
+                    var tmp = Subsumption.Backward(given_clause, processed);
+                    statistics.backward_subsumed += tmp;
+                }// Subsumption.Backward(given_clause, processed);
+
+                //Console.WriteLine("BACKWARD " + tmp);
+            }
+            barrier.SignalAndWait();
+            if (Params.literal_selection is not null)
+            {
+                given_clause.SelectInferenceLiterals(Selector);
+            }
+
+            ClauseSet newClauses = new ClauseSet();
+            ClauseSet factors = ResControl.ComputeAllFactors(given_clause);
+            statistics.factor_count += factors.Count;
+
+            newClauses.AddRange(factors);
+            ClauseSet resolvents;
+          
+            if (indexed)
+                resolvents = ResControl.ComputeAllResolventsIndexed(given_clause, processed as IndexedClauseSet);
+            else
+                resolvents = ResControl.ComputeAllResolvents(given_clause, processed);
+
+            barrier.SignalAndWait();
+            lock ("resolwentsAdd")
+            {
+                //Console.WriteLine("FACTORS LEN {0}, RESOLV LEN {1}", factors.Count, resolvents.Count);
+                statistics.resolvent_count += resolvents.Count;
+                statistics.proc_clause_count++;
+                //resolvents.Distinct();
+                newClauses.AddRange(resolvents);
+
+                processed.AddClause(given_clause);
+
+                for (int i = 0; i < newClauses.Count; i++)
+                {
+                    Clause c = newClauses[i];
+                    if (c.IsEmpty) return c;
+                    unprocessed.AddClause(c);
+                }
+            }
+            return null;
+
+
+
         }
 
 

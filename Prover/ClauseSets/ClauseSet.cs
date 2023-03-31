@@ -20,6 +20,10 @@ namespace Prover.ClauseSets
             this.clauses = clauses;
         }
 
+        /// <summary>
+        /// Сколько раз встечается каждый предикативный символ
+        /// </summary>
+        public Dictionary<string, int> PredStats { get; } = new Dictionary<string, int>();
         public ClauseSet()
         {
             this.clauses = new List<Clause>();
@@ -28,11 +32,27 @@ namespace Prover.ClauseSets
         internal void AddRange(ClauseSet clauses)
         {
             this.clauses.AddRange(clauses.clauses);
+
+            foreach (var pair in clauses.PredStats)
+                if (PredStats.ContainsKey(pair.Key))
+                    PredStats[pair.Key] += pair.Value;
+                else
+                    PredStats[pair.Key] = pair.Value;
         }
 
         public virtual void AddClause(Clause clause)
         {
             clauses.Add(clause);
+            AddPredStats(clause);
+        }
+
+        private void AddPredStats(Clause clause)
+        {
+            foreach (var pair in clause.PredStats)
+                if (PredStats.ContainsKey(pair.Key))
+                    PredStats[pair.Key] += pair.Value;
+                else
+                    PredStats[pair.Key] = pair.Value;
         }
 
         public Clause ExtractFirst()

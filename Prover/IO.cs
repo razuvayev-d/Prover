@@ -1,5 +1,6 @@
 ﻿using Prover.Heuristics;
 using Prover.ProofStates;
+using Prover.ResolutionMethod;
 using System;
 using System.IO;
 using System.Text.RegularExpressions;
@@ -17,13 +18,14 @@ namespace Prover
             Console.WriteLine("Параметры прувера: \n");
 
             Console.WriteLine("-h - справка \n" +
-                "-i - применение индексирования\n" +
+               // "-i - применение индексирования\n" +
+                "-t - удаление тавтологий\n" +
                 "-b - обратное поглощение\n" +
                 "-f - прямое поглощение\n" +
                 "-p - вывести доказательство\n" +
                 "-s - вывести предварительные преобразования\n" +
-                "-t - установить таймаут" +
-                "-S - подавить аксиомы равенства"
+                "-T - установить таймаут" +
+                "-S - подавить аксиомы равенства" 
                 );
         }
         public static SearchParams ParamsSplit(string[] args)
@@ -47,15 +49,15 @@ namespace Prover
                         param.backward_subsumption = true; break;
                     case "-f":
                         param.forward_subsumption = true; break;
-                    //case "-t": 
-                    //    //param.delete_tautologies = true; break;
-                    //    param.timeout 
+                    case "-t": 
+                        param.delete_tautologies = true; break;
+                        //break;  param.timeout 
                     case "-p":
                         param.proof = true; break;
                     case "-s":
                         param.simplify = true; break;
 
-                    case "-t":
+                    case "-T":
                         param.timeout = Convert.ToInt32(args[++i]);
                         break;
                     case "-H":
@@ -64,6 +66,10 @@ namespace Prover
                         break;
                     case "-S":
                         param.supress_eq_axioms = true; break;
+                    case "-ls":
+                        //var heur = args[++i];
+                        param.literal_selection = args[++i];// LiteralSelection.GetSelector(heur);
+                        break;
                     default:
                         if (flag)
                             param.file = arg;

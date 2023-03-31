@@ -9,6 +9,7 @@ namespace Prover.ResolutionMethod
     public delegate List<Literal> LiteralSelector(List<Literal> literals);
     public static class LiteralSelection
     {
+        public static ClauseSets.ClauseSet ClausesInProblems;
         static Random r=new Random();
         public static LiteralSelector GetSelector(string funcName)
         {
@@ -30,11 +31,20 @@ namespace Prover.ResolutionMethod
                     return LargestLitRandom;
                 case "eq":
                     return EqLit;
+                case "mostfreq":
+                    return MostFreqLit;
                 default:
                     throw new ArgumentException("Неизвестная функция выбора литералов");
             }
         }
-
+        public static List<Literal> MostFreqLit(List<Literal> list)
+        {            
+            var lit = ClausesInProblems.PredStats.MaxBy(x => x.Value).Key;
+            var res = list.Where(x => x.Name == lit).ToList();
+            if (res.Count > 0)
+                return res;
+            else return RandomSelection(list);
+        }
 
         /// <summary>
         /// Возвращает первый литерал из списка (как список)
