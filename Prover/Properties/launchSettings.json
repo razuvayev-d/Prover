@@ -2,7 +2,7 @@
   "profiles": {
     "Prover": {
       "commandName": "Project",
-      "commandLineArgs": "-f -p .\\Problems\\PUZ001+1.p\r\n\r\n\r\n"
+      "commandLineArgs": "-f -b -p -s .\\Problems\\PUZ001+1.p -H PickGiven5 -ls large\r\n\r\n\r\n"
     }
   }
 }

@@ -52,7 +52,7 @@ namespace Prover
 
 
             param.degree_of_parallelism = 1;
-            param.timeout = 105000;
+            //param.timeout = 105000;
             FOFFullClear(param.file, param);
 
 

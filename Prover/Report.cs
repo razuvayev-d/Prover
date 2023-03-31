@@ -56,6 +56,7 @@ namespace Prover
             public int forward_subsumed { get; set; } = 0;
             public int backward_subsumed { get; set; } = 0;
             public int depth { get; set; } = 0;
+            public int search_depth { get; set; } = 0;
 
             public override string ToString()
             {
@@ -70,6 +71,7 @@ namespace Prover
                 sb.Append("\nОбратное поглощение: ".PadRight(offset, ' ') + backward_subsumed);
                 sb.Append("\nУдалено тавтологий: ".PadRight(offset, ' ') + tautologies_deleted);
                 sb.Append("\nГлубина вывода: ".PadRight(offset, ' ') + depth);
+                sb.Append("\nГлубина поиска: ".PadRight(offset, ' ') + search_depth);
 
                 return sb.ToString();
             }

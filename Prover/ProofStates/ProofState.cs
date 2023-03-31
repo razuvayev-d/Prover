@@ -220,9 +220,11 @@ namespace Prover.ProofStates
                 Clause res = ProcessClause();
                 if (res is not null)
                 {
+                    statistics.search_depth = Math.Max(unprocessed.clauses.Select(x => x.depth).Max(), processed.clauses.Select(x => x.depth).Max());
                     return res;
                 }
             }
+            statistics.search_depth = Math.Max(unprocessed.clauses.Select(x => x.depth).Max(), processed.clauses.Select(x => x.depth).Max());
             return null;
         }
 

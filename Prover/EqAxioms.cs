@@ -92,7 +92,7 @@ namespace Prover
                 if (arity > 0)
                 {
                     var c = GenerateFunCompatAx(f.Key, arity);
-                    c.name = "Subst_for_" + f.Key; //+count.ToString();
+                    c.name = "subst_for_" + f.Key; //+count.ToString();
                     count++;
                     res.Add(c);
                 }
@@ -104,7 +104,7 @@ namespace Prover
                 if (arity > 0 && p.Key != "=")
                 {
                     var c = GeneratePredCompatAx(p.Key, arity);
-                    c.name = "Subst_for_" + p.Key; //+ count.ToString();
+                    c.name = "subst_for_" + p.Key; //+ count.ToString();
                     count++;
                     res.Add(c);
                 }
