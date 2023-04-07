@@ -87,7 +87,7 @@ cnf(c9,axiom, p(X,Y)).
             {
                 var l = cand.Clause.Literals[cand.Position];
                 Assert.AreEqual(l.Negative, !lit.Negative);
-                Assert.AreEqual(l.Name, lit.Name);
+                Assert.AreEqual(l.PredicateSymbol, lit.PredicateSymbol);
             }
 
 
@@ -100,7 +100,7 @@ cnf(c9,axiom, p(X,Y)).
             {
                 var l = cand.Clause.Literals[cand.Position];
                 Assert.AreEqual(l.Negative, !lit.Negative);
-                Assert.AreEqual(l.Name, lit.Name);
+                Assert.AreEqual(l.PredicateSymbol, lit.PredicateSymbol);
             }
 
             lit = c8.Literals[0];

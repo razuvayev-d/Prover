@@ -147,19 +147,22 @@ namespace Prover.ClauseSets
         public void GetResolutionLiterals(Literal lit, List<Clause> clauseres, List<int> indices)
         {
 
-            if (clauseres.Count != 0)
-                throw new Exception("non empty result variable clauseres passed to ClauseSet.getResolutionLiterals()");
+            //if (clauseres.Count != 0)
+            //    throw new Exception("non empty result variable clauseres passed to ClauseSet.getResolutionLiterals()");
 
-            //assert clauseres.size() == 0 : "non empty result variable clauseres passed to ClauseSet.getResolutionLiterals()";
-            if (indices.Count != 0)
-                throw new Exception("non empty result variable indices passed to ClauseSet.getResolutionLiterals()");
+            ////assert clauseres.size() == 0 : "non empty result variable clauseres passed to ClauseSet.getResolutionLiterals()";
+            //if (indices.Count != 0)
+            //    throw new Exception("non empty result variable indices passed to ClauseSet.getResolutionLiterals()");
             for (int i = 0; i < clauses.Count; i++)
             {
                 Clause c = clauses[i];
                 for (int j = 0; j < c.Length; j++)
                 {
-                    clauseres.Add(clauses[i]);
-                    indices.Add(j);
+                    if (c[j].IsInference)
+                    {
+                        clauseres.Add(clauses[i]);
+                        indices.Add(j);
+                    }
                 }
             }
         }

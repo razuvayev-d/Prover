@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text;
 using System.Text.RegularExpressions;
 
 namespace Prover.Tokenization
@@ -65,6 +66,24 @@ namespace Prover.Tokenization
     /// </summary>
     public class Lexer
     {
+
+        public static string FromTokenType(TokenType type)
+        {
+            var regex = tokenDefs.Where(x => x.Item2 == type).First().Item1.ToString();
+            return regex.Substring(regex.IndexOf('^') + 1).Replace(@"\", "");
+        }
+
+        public static string TokenList(TokenType[] types)
+        {
+            var sb = new StringBuilder();
+
+            foreach (var t in types)
+            {
+                sb.Append(string.Format("\"{0}\"", FromTokenType(t)));
+            }
+            return sb.ToString();
+        }
+
         static List<(Regex, TokenType)> tokenDefs = new List<(Regex, TokenType)>{
             (new Regex(@"^\."),                    TokenType.FullStop),
             (new Regex(@"^\("),                    TokenType.OpenPar),
@@ -153,7 +172,7 @@ namespace Prover.Tokenization
                     return new Token(type, literal, source, old_pos);
                 }
             }
-            throw new ArgumentException("IllegalCharacterError (not impl)");
+            throw new LexerException(string.Format("Встретился неожиданный символ \"{0}\"", source[pos]) , pos);//"IllegalCharacterError (not impl)");
         }
         Token Look()
         {
@@ -185,8 +204,7 @@ namespace Prover.Tokenization
         /// <param name="tokenTypes"></param>
         public void CheckTok(params TokenType[] tokenTypes)
         {
-            if (!TestTok(tokenTypes)) throw new ArgumentException("UnexpectedTokenError (not imp). " + source[pos]);
-
+            if (!TestTok(tokenTypes)) throw new UnexpectedTokenException("Встретился неожиданный токен", source[pos], tokenTypes, Look().type);
         }
 
         /// <summary>
@@ -211,7 +229,7 @@ namespace Prover.Tokenization
         public void CheckLit(params string[] litvals)
         {
             if (!TestLit(litvals))
-                throw new ArgumentException("UnexpectedIdentError (ni)");
+                throw new UnexpectedIdentifierException("Встретился неожиданный идентификатор ", pos, litvals, LookLit());
 
         }
 

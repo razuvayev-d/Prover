@@ -41,6 +41,7 @@ namespace Prover
             //FOFFull(path);
 
             var param = IO.ParamsSplit(args);
+            param.index = true;
             //param.delete_tautologies = true;
             //param.forward_subsumption = true;
             //param.backward_subsumption = true;
@@ -50,7 +51,7 @@ namespace Prover
             //param.literal_selection = "large2"; //"largerandom";// largerandom"; //"large";
             //param.literal_selection = "mostfreq";
 
-
+            param.heuristics = Heuristics.Heuristics.RefinedSOS;
             param.degree_of_parallelism = 1;
             //param.timeout = 105000;
             FOFFullClear(param.file, param);
@@ -142,12 +143,15 @@ namespace Prover
                 if (complete)
                 {
                     res = tsk.Result;
-
                 }
                 else
                 {
                     res = null;
                     report.Timeout = true;
+                    //var a = state.unprocessed.clauses.MaxBy(x => x.depth);
+                    //var b = state.processed.clauses.MaxBy(x => x.depth);
+                    //state.statistics.search_depth = Math.Max(a.depth, b.depth);
+                    //state.statistics.search_depth = Math.Max(state.unprocessed.clauses.Select(x => x.depth).Max(), state.processed.clauses.Select(x => x.depth).Max());
                 }
             }
             else
@@ -164,6 +168,15 @@ namespace Prover
             }
             state.statistics.ElapsedTime = stopwatch.Elapsed.TotalMilliseconds;
             report.Res = res;
+            if (state.statistics.search_depth == 0)
+            {
+                var list = state.unprocessed.clauses.Select(x => x.depth).ToList();
+                //var a = state.unprocessed.clauses.MaxBy(x => x.depth).;
+                var amax = list.Max();
+                var b = state.processed.clauses.MaxBy(x => x.depth);
+                var bmax = b.depth;
+                state.statistics.search_depth = Math.Max(amax, bmax);
+            }
 
             report.ConsolePrint();
             report.FilePrint(answersDirectory);

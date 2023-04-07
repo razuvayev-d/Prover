@@ -144,7 +144,13 @@ namespace Prover.ProofStates
 
             //using (StreamWriter sw = new StreamWriter("given_clauses000.txt", true))
             //{
-            //    sw.WriteLine("1;" +given_clause.ToString() +";" + ++iter + ";" + processed.Count + ";" + unprocessed.Count + ";" + statistics.factor_count + ";" + statistics.backward_subsumed + ";" + statistics.forward_subsumed);
+            //    sw.WriteLine("1;" + given_clause.ToString() + ";" + ++iter + ";" + processed.Count + ";" + unprocessed.Count + ";" + statistics.factor_count + ";" + statistics.backward_subsumed + ";" + statistics.forward_subsumed);
+            //}
+
+            //using (StreamWriter sw = new StreamWriter("given_clauses001.txt", true))
+            //{
+            //    sw.WriteLine((++iter).ToString() + " " + given_clause.ToString());
+            //    sw.WriteLine("\t" + given_clause.evaluation[0] + "\t" + given_clause.evaluation[1]);
             //}
             given_clause = given_clause.FreshVarCopy();
 
@@ -182,7 +188,10 @@ namespace Prover.ProofStates
 
             newClauses.AddRange(factors);
             ClauseSet resolvents;
-
+            //using (StreamWriter sw = new StreamWriter("given_clauses001.txt", true))
+            //{
+            //    sw.WriteLine("    RESOLVENTS");
+            //}
             if (indexed)
                 resolvents = ResControl.ComputeAllResolventsIndexed(given_clause, processed as IndexedClauseSet);
             else
@@ -208,7 +217,7 @@ namespace Prover.ProofStates
         
         }
 
-        private Clause SequentalSaturate()
+        public Clause Saturate()
         {
             while (unprocessed.Count > 0)
             {
@@ -220,20 +229,24 @@ namespace Prover.ProofStates
                 Clause res = ProcessClause();
                 if (res is not null)
                 {
-                    statistics.search_depth = Math.Max(unprocessed.clauses.Select(x => x.depth).Max(), processed.clauses.Select(x => x.depth).Max());
+                    var x = unprocessed.clauses.MaxBy(x => x.depth);
+                    var y = processed.clauses.MaxBy(x => x.depth);
+                    statistics.search_depth = Math.Max(x.depth, y.depth);
                     return res;
                 }
             }
-            statistics.search_depth = Math.Max(unprocessed.clauses.Select(x => x.depth).Max(), processed.clauses.Select(x => x.depth).Max());
+            var a = unprocessed.clauses.MaxBy(x => x.depth);
+            var b = processed.clauses.MaxBy(x => x.depth);
+            statistics.search_depth = Math.Max(a.depth, b.depth);
             return null;
         }
 
-        public Clause Saturate()
-        {
-            if (Params.degree_of_parallelism > 1)
-                return ParallelSaturate();
-            return SequentalSaturate();
-        }
+        //public Clause Saturate()
+        //{
+        //    if (Params.degree_of_parallelism > 1)
+        //        return ParallelSaturate();
+        //    return SequentalSaturate();
+        //}
 
         private Clause ParallelSaturate()
         {

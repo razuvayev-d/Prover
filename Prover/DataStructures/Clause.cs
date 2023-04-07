@@ -77,14 +77,16 @@ namespace Prover.DataStructures
         {
            
             foreach (var lit in literals)
-                if (PredStats.ContainsKey(lit.Name))
-                    PredStats[lit.Name]++;
+                if (PredStats.ContainsKey(lit.PredicateSymbol))
+                    PredStats[lit.PredicateSymbol]++;
                 else
-                    PredStats[lit.Name] = 1;
+                    PredStats[lit.PredicateSymbol] = 1;
         }
         //Непонятно почему, но так очень хорошо работает (несоответствие веса функ символов) (2 y y и 1 y x)
-        private static int LitComparer(Literal x, Literal y) => x.Weight(2, 1).CompareTo(y.Weight(2, 1));
-        
+        //private static int LitComparer(Literal x, Literal y) => x.Weight(2, 1).CompareTo(y.Weight(2, 1));
+
+        private static int LitComparer(Literal x, Literal y) => x.CompareTo(y);
+
         public Clause(List<Literal> literals, string type = "plain", string name = null) : base(name)
         {
             //Непонятно почему, но так очень хорошо работает (несоответствие веса функ символов)

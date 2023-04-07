@@ -14,7 +14,10 @@ namespace Prover.Heuristics
         [Obsolete]
         public static EvaluationScheme RefinedSOS = new EvaluationScheme(new List<(ClauseEvaluationFunction, int)> {
                                                                            (new RefinedWeight(PriorityFunctions.SimulateSOS, 3, 1, 2, 3, 4), 5),
-                                                                           (new LIFOEvaluation(), 1) });
+                                                                           (new LIFOEvaluation(), 1),
+                                                                           (new ByDerivationDepth(PriorityFunctions.PreferAll), 2),
+                                                                           (new ByLiteralNumber(PriorityFunctions.PreferAll), 1)
+                                                                            });
 
 
         /// <summary>

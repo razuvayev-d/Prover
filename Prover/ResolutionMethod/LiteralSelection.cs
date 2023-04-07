@@ -40,7 +40,7 @@ namespace Prover.ResolutionMethod
         public static List<Literal> MostFreqLit(List<Literal> list)
         {            
             var lit = ClausesInProblems.PredStats.MaxBy(x => x.Value).Key;
-            var res = list.Where(x => x.Name == lit).ToList();
+            var res = list.Where(x => x.PredicateSymbol == lit).ToList();
             if (res.Count > 0)
                 return res;
             else return RandomSelection(list);
@@ -81,8 +81,10 @@ namespace Prover.ResolutionMethod
         public static List<Literal> LargestLit(List<Literal> list)
         {
             //list.Sort((x, y) => y.Weight(1, 1).CompareTo(x.Weight(1, 1)));
-            var x = list.MaxBy(x => x.Weight(1, 1));
-            return new List<Literal>() { x };
+
+            list.Sort((x, y) => y.WeightCache.Weight11.CompareTo(y.WeightCache.Weight11));
+            //var x = list.MaxBy(x => x.Weight(1, 1));
+            return new List<Literal>() { list[list.Count - 1] };
         }
 
         public static List<Literal> LargestLitRandom(List<Literal> list)

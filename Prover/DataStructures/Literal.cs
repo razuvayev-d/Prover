@@ -3,6 +3,7 @@ using Prover.Tokenization;
 using System;
 using System.Collections.Generic;
 using System.Text;
+using System.Xml.Linq;
 
 namespace Prover.DataStructures
 {
@@ -11,11 +12,32 @@ namespace Prover.DataStructures
     /// уже допускаем равносильные атомы с инфиксными "=" или "!="
     /// и нормализуем их при создании.
     /// </summary>
-    public class Literal : Formula
+    public class Literal : Formula, IComparable
     {
+
+        public struct LiteralCache
+        {
+            /// <summary>
+            /// Кэшированное значение weight(1,1)
+            /// </summary>
+            public int Weight11 { get; }
+            /// <summary>
+            /// Кэшированное значение weight(1,1)
+            /// </summary>
+            public int Weight21 { get; }
+
+            public LiteralCache(int w11, int w21) 
+            {
+                Weight11 = w11;
+                Weight21= w21;
+            }
+        }
+
+        public LiteralCache WeightCache;
+
         public bool Negative { get; private set; }
-        string name;
-        public string Name => name;
+        string predicateSymbol;
+        public string PredicateSymbol => predicateSymbol;
         public bool HasVariables
         {
             get
@@ -37,6 +59,7 @@ namespace Prover.DataStructures
 
         public static Literal True => tru;
         public static Literal False => fal;
+      
 
         public int ConstCount
         {
@@ -55,30 +78,38 @@ namespace Prover.DataStructures
             if (name == "!=")
             {
                 this.Negative = !negative;
-                this.name = "=";
+                this.predicateSymbol = "=";
                 this.arguments = arguments;
             }
             else
             {
-                this.name = name;
+                this.predicateSymbol = name;
                 this.arguments = arguments;
                 Negative = negative;
             }
 
             IsInference = true;
+            WeightCache = new LiteralCache(Weight(1, 1), Weight(2, 2));
+        }
 
-            //TODO: разобраться с обработкой равенства при создании литерала
-            //if (atom.Func == "!=")
-            //{
 
-            //}
-            //self.negative = not negative
-            //    self.atom = list(["="])
-            //    self.atom.extend(termArgs(atom))
-            //else:
-            //    self.negative = negative
-            //    self.atom = atom
-            //self.setInferenceLit(True)
+        private Literal(string name, List<Term> arguments, bool negative, LiteralCache cache):base(string.Empty, null) 
+        {
+            WeightCache = cache;
+            if (name == "!=")
+            {
+                this.Negative = !negative;
+                this.predicateSymbol = "=";
+                this.arguments = arguments;
+            }
+            else
+            {
+                this.predicateSymbol = name;
+                this.arguments = arguments;
+                Negative = negative;
+            }
+
+            IsInference = true;
         }
 
         public bool IsInference { get; set; } 
@@ -87,7 +118,7 @@ namespace Prover.DataStructures
             int btstate = ((BTSubst)subst).GetState;
             // TODO: зачем я тут написал negative?
             if (Negative != other.Negative) return false;
-            if (name != other.name) return false;
+            if (predicateSymbol != other.predicateSymbol) return false;
             bool res = true;
 
             //int min = Math.Min(other.arguments.Count, arguments.Count);
@@ -109,7 +140,7 @@ namespace Prover.DataStructures
             {
                 Literal other = (Literal)obj;
                 if (Negative != other.Negative) return false;
-                if (Name != other.Name) return false;
+                if (PredicateSymbol != other.PredicateSymbol) return false;
                 if (arguments.Count != other.arguments.Count) return false;
                 if (IsEquational)
                 {
@@ -151,7 +182,7 @@ namespace Prover.DataStructures
         /// <returns></returns>
         public bool AtomEquals(Literal other)
         {
-            if (Name != other.Name) return false;
+            if (PredicateSymbol != other.PredicateSymbol) return false;
             if (arguments.Count != other.arguments.Count) return false;
             int n = arguments.Count;
             for (int i = 0; i < n; i++)
@@ -200,8 +231,6 @@ namespace Prover.DataStructures
                 //if (arguments is null) return false;
                 //if (arguments.Count != 1) return false; // Если аргументов много то очевидно не коннстанта
                 return Equals(True);
-                return Negative && Term.AtomIsConstFalse(arguments[0])
-                    || !Negative && Term.AtomIsConstTrue(arguments[0]);
             }
         }
 
@@ -221,7 +250,7 @@ namespace Prover.DataStructures
         {
             if (sig == null) sig = new Signature();
 
-            sig.AddPred(name, arguments.Count);
+            sig.AddPred(predicateSymbol, arguments.Count);
             foreach (var s in arguments)
                 s.CollectSig(sig);
             return sig;
@@ -239,7 +268,7 @@ namespace Prover.DataStructures
                 StringBuilder result = new StringBuilder();
                 if (Negative)
                     result.Append('~');
-                result.Append(name);
+                result.Append(predicateSymbol);
                 if (arguments is not null)
                 {
                     var n = arguments.Count;
@@ -273,7 +302,7 @@ namespace Prover.DataStructures
             else
             {
                 // TODO: Разобраться с отрицанием константных литералов (complete)
-                return new Literal(/*"~" + */ name, Term.ListCopy(arguments), !Negative);
+                return new Literal(/*"~" + */ predicateSymbol, Term.ListCopy(arguments), !Negative);
             }
         }
 
@@ -292,11 +321,7 @@ namespace Prover.DataStructures
             return two.Equals(one.Negate());
         }
 
-        public Literal Copy()
-        {
-            throw new NotImplementedException();
-            // return new Literal(this.name, arguments.Cl())
-        }
+
         /// <summary>
         /// Применяет указанную подстановку к аргументам литерала
         /// </summary>
@@ -365,7 +390,7 @@ namespace Prover.DataStructures
                 lexer.Next();
             }
             var atom = ParseAtom(lexer);
-            if(atom.name == "=" || atom.name == "!=")
+            if(atom.predicateSymbol == "=" || atom.predicateSymbol == "!=")
                 return atom;
             atom.Negative = negative;
             return atom;
@@ -399,7 +424,7 @@ namespace Prover.DataStructures
         /// <returns></returns>
         public PredicateAbstraction PredicateAbstraction()
         {
-            return new PredicateAbstraction(!Negative, name);
+            return new PredicateAbstraction(!Negative, predicateSymbol);
         }
         public static Literal ParseAtom(Lexer lexer)
         {
@@ -432,13 +457,13 @@ namespace Prover.DataStructures
             return res;
         }
 
-        public bool IsEquational => name == "=" || name == "!=";
+        public bool IsEquational => predicateSymbol == "=" || predicateSymbol == "!=";
         public Literal DeepCopy()
         {
             List<Term> newlist = new List<Term>(arguments.Count);
             foreach (var term in arguments)
                 newlist.Add(Term.Copy(term));
-            return new Literal(name, newlist, Negative);
+            return new Literal(predicateSymbol, newlist, Negative, WeightCache);
         }
 
         /// <summary>
@@ -447,11 +472,25 @@ namespace Prover.DataStructures
         /// <returns></returns>
         public override int GetHashCode()
         {
-            int total = Name.GetHashCode() * 3;
+            int total = PredicateSymbol.GetHashCode() * 3;
 
             for (int i = 0; i < arguments.Count; i++)
                 total += arguments[i].GetHashCode() * i;
+            if (Negative) total *= -1;
             return total;
+        }
+
+        public int CompareTo(object obj)
+        {
+            Literal other = obj as Literal;
+            if (this.Negative && !other.Negative) return -1;
+            if(other.Negative && !this.Negative) return 1;
+
+            if (this.PredicateSymbol != other.PredicateSymbol) return PredicateSymbol.CompareTo(other.PredicateSymbol);
+
+            var w1 = this.WeightCache.Weight21;
+            var w2 = other.WeightCache.Weight21;
+            return w2 - w1;
         }
     }
 }

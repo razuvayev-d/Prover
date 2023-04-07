@@ -59,9 +59,9 @@ namespace Prover.ClauseSets
                 if (lit.IsInference)
                 {
                     if (!lit.Negative) //positive case
-                        InsertData(pos_ind, lit.Name, (clause, i));
+                        InsertData(pos_ind, lit.PredicateSymbol, (clause, i));
                     else
-                        InsertData(neg_ind, lit.Name, (clause, i));
+                        InsertData(neg_ind, lit.PredicateSymbol, (clause, i));
                 }
             }
         }
@@ -74,9 +74,9 @@ namespace Prover.ClauseSets
                 if (lit.IsInference)
                 {
                     if (!lit.Negative) //positive case
-                        RemoveData(pos_ind, lit.Name, (clause, i));
+                        RemoveData(pos_ind, lit.PredicateSymbol, (clause, i));
                     else
-                        RemoveData(neg_ind, lit.Name, (clause, i));
+                        RemoveData(neg_ind, lit.PredicateSymbol, (clause, i));
                 }
             }
         }
@@ -89,8 +89,8 @@ namespace Prover.ClauseSets
             else
                 idx = pos_ind;
 
-            if (idx.ContainsKey(lit.Name))
-                return idx[lit.Name];
+            if (idx.ContainsKey(lit.PredicateSymbol))
+                return idx[lit.PredicateSymbol];
             return new List<Candidate>();
         }
 
