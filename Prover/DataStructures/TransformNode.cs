@@ -11,8 +11,10 @@ namespace Prover.DataStructures
         public string TransformOperation;
         public Substitution Sbst;
         public string LiteralStr;
-
-        public bool from_conjecture { get; private set; } = false;
+        /// <summary>
+        /// Для стратегии поддержки
+        /// </summary>
+        public bool from_conjecture { get; protected set; } = false;
 
         public TransformNode(string transformation = "input", TransformNode parent1 = null, TransformNode parent2 = null)
         {
@@ -46,6 +48,7 @@ namespace Prover.DataStructures
         {
             List<TransformNode> path = new List<TransformNode>();
             TransformNode actual = this;
+            path.Add(actual);
             while (actual.Parent1 is not null)
             {
                 path.Add(actual.Parent1);
@@ -59,6 +62,7 @@ namespace Prover.DataStructures
                 sb.Append(node.TransformOperation + '\n');
                 sb.Append(node.ToString() + "\n\n");
             }
+            if (path.Count == 1) sb.Append("Оставляем без изменений.");
             return sb.ToString();
 
         }

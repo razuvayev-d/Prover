@@ -22,6 +22,10 @@ namespace ProverTests
         static Clause c12 = new Clause();
         static Clause c13 = new Clause();
 
+        static Clause lol1 = new Clause();
+        static Clause lol2 = new Clause();
+        static Clause lol3 = new Clause();
+
         static ResolutionTest()
         {
             string spec = @"cnf(c1, axiom, p(a, X)|p(X, a)).
@@ -31,6 +35,9 @@ namespace ProverTests
                         cnf(c5, axiom, p(X)|~q|p(a)|~q|p(Y)).
                         cnf(not_p, axiom,~p(a)).
                         cnf(taut, axiom, p(X4)|~p(X4)).
+                        cnf(lol, axiom, p(X)|z(Y)).
+                        cnf(lol2,axiom, ~p(f(X))).
+                        cnf(lol3, axiom, p(X)|p(f(X))).
                         ";
 
             Lexer lex = new Lexer(spec);
@@ -39,6 +46,13 @@ namespace ProverTests
             c3 = Clause.ParseClause(lex);
             c4 = Clause.ParseClause(lex);
             c5 = Clause.ParseClause(lex);
+
+            lol1 = Clause.ParseClause(lex); //skip
+            lol2 = Clause.ParseClause(lex); // skip
+
+            lol1 = Clause.ParseClause(lex);
+            lol2 = Clause.ParseClause(lex);
+            lol3 = Clause.ParseClause(lex);
 
             string spec2 = "cnf(not_p,axiom,~p(a)).\n" +
                         "cnf(taut,axiom,p(X4)|~p(X4)).\n";
@@ -64,6 +78,12 @@ namespace ProverTests
         public void TestMethod1()
         {
             Assert.AreNotEqual(Resolution.Apply(c1, 0, c2, 0), null);
+        }
+        [TestMethod]
+        public void TestMethodXX()
+        {
+            Assert.AreEqual(Resolution.Apply(lol1, 0, lol2, 0), null);
+            Assert.AreEqual(Resolution.Factor(lol3, 0, 1), null);
         }
 
         [TestMethod]

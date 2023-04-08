@@ -20,6 +20,10 @@ namespace Prover.ClauseSets
             this.clauses = clauses;
         }
 
+        /// <summary>
+        /// Сколько раз встечается каждый предикативный символ
+        /// </summary>
+        public Dictionary<string, int> PredStats { get; } = new Dictionary<string, int>();
         public ClauseSet()
         {
             this.clauses = new List<Clause>();
@@ -28,11 +32,27 @@ namespace Prover.ClauseSets
         internal void AddRange(ClauseSet clauses)
         {
             this.clauses.AddRange(clauses.clauses);
+
+            foreach (var pair in clauses.PredStats)
+                if (PredStats.ContainsKey(pair.Key))
+                    PredStats[pair.Key] += pair.Value;
+                else
+                    PredStats[pair.Key] = pair.Value;
         }
 
         public virtual void AddClause(Clause clause)
         {
             clauses.Add(clause);
+            AddPredStats(clause);
+        }
+
+        private void AddPredStats(Clause clause)
+        {
+            foreach (var pair in clause.PredStats)
+                if (PredStats.ContainsKey(pair.Key))
+                    PredStats[pair.Key] += pair.Value;
+                else
+                    PredStats[pair.Key] = pair.Value;
         }
 
         public Clause ExtractFirst()
@@ -47,31 +67,6 @@ namespace Prover.ClauseSets
                 return null;
         }
 
-        public void Distinct()
-        {
-            var clauses = new List<Clause>();
-            foreach (var clause in this.clauses)
-            {
-                //if (!clauses.Contains(clause))
-                if (!TMP_CONTAINS(clause, clauses))
-                    clauses.Add(clause);
-            }
-            this.clauses = clauses;
-        }
-
-        /// <summary>
-        /// Потому что встроенный contains использует GetHashCode
-        /// </summary>
-        /// <param name="clause"></param>
-        /// <param name="clauses"></param>
-        /// <returns></returns>
-        public bool TMP_CONTAINS(Clause clause, List<Clause> clauses)
-        {
-            // TODO: замена TMP_CONTAINS
-            foreach (var clause2 in clauses)
-                if (clause2.Equals(clause)) return true;
-            return false;
-        }
 
         public Clause this[int i]
         {
@@ -133,9 +128,9 @@ namespace Prover.ClauseSets
             foreach (var c in conjuncts)
             {
                 var disj = c.DisjToList();
-                var litlist = new List<Formula>();
+                var litlist = new List<Literal>();
                 foreach (var l in disj)
-                    litlist.Add(l);
+                    litlist.Add(l as Literal);
                 var clause = new Clause(litlist, f.Type);
                 res.Add(clause);
             }
@@ -152,19 +147,22 @@ namespace Prover.ClauseSets
         public void GetResolutionLiterals(Literal lit, List<Clause> clauseres, List<int> indices)
         {
 
-            if (clauseres.Count != 0)
-                throw new Exception("non empty result variable clauseres passed to ClauseSet.getResolutionLiterals()");
+            //if (clauseres.Count != 0)
+            //    throw new Exception("non empty result variable clauseres passed to ClauseSet.getResolutionLiterals()");
 
-            //assert clauseres.size() == 0 : "non empty result variable clauseres passed to ClauseSet.getResolutionLiterals()";
-            if (indices.Count != 0)
-                throw new Exception("non empty result variable indices passed to ClauseSet.getResolutionLiterals()");
+            ////assert clauseres.size() == 0 : "non empty result variable clauseres passed to ClauseSet.getResolutionLiterals()";
+            //if (indices.Count != 0)
+            //    throw new Exception("non empty result variable indices passed to ClauseSet.getResolutionLiterals()");
             for (int i = 0; i < clauses.Count; i++)
             {
                 Clause c = clauses[i];
                 for (int j = 0; j < c.Length; j++)
                 {
-                    clauseres.Add(clauses[i]);
-                    indices.Add(j);
+                    if (c[j].IsInference)
+                    {
+                        clauseres.Add(clauses[i]);
+                        indices.Add(j);
+                    }
                 }
             }
         }

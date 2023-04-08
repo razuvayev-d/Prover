@@ -7,7 +7,7 @@ namespace Prover.ResolutionMethod
     {
         public static Substitution MGU(Literal l1, Literal l2)
         {
-            if (l1.Name != l2.Name) return null;
+            if (l1.PredicateSymbol != l2.PredicateSymbol) return null;
             //if (l1.Negative == l2.Negative) return null;
 
             List<Term> terms1 = new List<Term>();
@@ -42,7 +42,7 @@ namespace Prover.ResolutionMethod
                 {
                     if (t1.Equals(t2)) continue;
 
-                    if (OccursCheck(t1, t2)) return null;
+                    if (OccursCheck(t1, t2)) return null; //проверка на случаи f(x) -> X
 
                     Substitution newBinding = new Substitution(t1, t2);
 
@@ -73,7 +73,7 @@ namespace Prover.ResolutionMethod
                     //if (!t1.IsCompound || !t2.IsCompound) //тип проверка на функциональность, считаем что константа это функция 
                     //    throw new Exception("tems is not compound");
 
-                    if (!t1.name.Equals(t2.name))
+                    if (!t1.FunctionSymbol.Equals(t2.FunctionSymbol))
                         return null;
 
                     terms1.AddRange(t1.TermArgs);
@@ -82,13 +82,15 @@ namespace Prover.ResolutionMethod
             }
             return substitution;
         }
-
+        /// <summary>
+        /// Проверка на то что t!=x
+        /// </summary>
         private static bool OccursCheck(Term x, Term t)
         {
             if (t.IsCompound)
             {
-                for (int i = 0; i < t.subterms.Count; i++)
-                    if (OccursCheck(x, t.subterms[i]))
+                for (int i = 0; i < t.Arguments.Count; i++)
+                    if (OccursCheck(x, t.Arguments[i]))
                         return true;
                 return false;
             }

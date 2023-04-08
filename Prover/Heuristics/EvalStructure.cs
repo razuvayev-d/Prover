@@ -9,20 +9,21 @@ namespace Prover.Heuristics
     /// содержит несколько различных функций оценки и способ
     /// чередования между ними.
     /// </summary>
-    public class EvalStructure
+    public class EvaluationScheme
     {
         public List<ClauseEvaluationFunction> EvalFunctions = null;
         public List<int> EvalVec = null;
         int current = 0;
         int currentCount = 0;
-        string name = string.Empty;
+        public string Name { get; }
 
         /// <summary>
         /// Deprecated
         /// </summary>
         /// <param name="descriptor"></param>
         /// <param name="rating"></param>
-        public EvalStructure(List<ClauseEvaluationFunction> descriptor, List<int> rating)
+        [Obsolete]
+        public EvaluationScheme(List<ClauseEvaluationFunction> descriptor, List<int> rating)
         {
             if (descriptor != null && rating != null && descriptor.Count > 0 && rating.Count > 0)
             {
@@ -34,7 +35,7 @@ namespace Prover.Heuristics
         }
 
 
-        public EvalStructure(List<(ClauseEvaluationFunction, int)> eval_descriptor)
+        public EvaluationScheme(List<(ClauseEvaluationFunction, int)> eval_descriptor, string name = null)
         {
             if (eval_descriptor.Count == 0) throw new Exception("eval_descriptoir is empty!");
             EvalFunctions = new List<ClauseEvaluationFunction>();
@@ -45,15 +46,17 @@ namespace Prover.Heuristics
                 EvalVec.Add(eval.Item2);
             }
             currentCount = EvalVec[0];
+            this.Name = name;
         }
 
-        public EvalStructure(ClauseEvaluationFunction cef, int rating)
+        public EvaluationScheme(ClauseEvaluationFunction cef, int rating, string name = null)
         {
             EvalFunctions = new List<ClauseEvaluationFunction>();
             EvalVec = new List<int>();
             EvalFunctions.Add(cef);
             EvalVec.Add(rating);
             currentCount = EvalVec[0];
+            this.Name = name;
         }
 
         public List<int> Evaluate(Clause clause)

@@ -41,15 +41,22 @@ namespace Prover
             //FOFFull(path);
 
             var param = IO.ParamsSplit(args);
-            param.delete_tautologies = true;
-            param.forward_subsumption = true;
-            param.backward_subsumption = true;
-            param.delete_tautologies = true;
-            param.heuristics = Heuristics.Heuristics.PickGiven5;
-            param.literal_selection = "large";
-            
-            //FOFFull(param.file, param);
+            param.index = true;
+            //param.delete_tautologies = true;
+            //param.forward_subsumption = true;
+            //param.backward_subsumption = true;
+            //param.delete_tautologies = true;
+            //param.heuristics = Heuristics.Heuristics.PickGiven5;
+
+            //param.literal_selection = "large2"; //"largerandom";// largerandom"; //"large";
+            //param.literal_selection = "mostfreq";
+
+            param.heuristics = Heuristics.Heuristics.RefinedSOS;
+            param.degree_of_parallelism = 1;
+            //param.timeout = 105000;
             FOFFullClear(param.file, param);
+
+
             //if (args[0] == "-i") indexing = true;
             //////if (args[1] == "-so") statonly = true;
             //FOFFull(args[args.Length - 1]);
@@ -59,18 +66,18 @@ namespace Prover
             //param.forward_subsumption = true;
             //param.simplify = false;
             //foreach (string file in files)
-            //    FOFFull(file, param);
+            //    FOFFullClear(file, param);
             //////Rating(file);
 
-            Console.ForegroundColor = ConsoleColor.Green;
-            Console.WriteLine("Solved: {0} / {1}", Count, files.Length);
-            Console.WriteLine("Solved problems:");
-            Console.ResetColor();
+            //Console.ForegroundColor = ConsoleColor.Green;
+            //Console.WriteLine("Solved: {0} / {1}", Count, files.Length);
+            //Console.WriteLine("Solved problems:");
+            //Console.ResetColor();
 
-            foreach (var x in solved)
-            {
-                Console.WriteLine(x);
-            }
+            //foreach (var x in solved)
+            //{
+            //    Console.WriteLine(x);
+            //}
         }
 
         static void FOFFullClear(string Path, SearchParams param = null)
@@ -88,16 +95,6 @@ namespace Prover
                 delete_tautologies = true,
                 timeout = 100000
             };
-
-
-
-            string TPTPStatus;
-            using (StreamReader sr = new StreamReader(Path))
-            {
-                string text = sr.ReadToEnd();
-                var rg = new Regex("(Status).+(\n)");
-                TPTPStatus = rg.Match(text).Value;
-            }
 
             var problem = new FOFSpec();
             
@@ -123,7 +120,6 @@ namespace Prover
             var state = new ProofState(param, cnf, false, indexing);
 
 
-
             report.Params = param;
             report.ClausesStr = cnf.ToString();
             report.problem = problem;
@@ -147,12 +143,15 @@ namespace Prover
                 if (complete)
                 {
                     res = tsk.Result;
-
                 }
                 else
                 {
                     res = null;
                     report.Timeout = true;
+                    //var a = state.unprocessed.clauses.MaxBy(x => x.depth);
+                    //var b = state.processed.clauses.MaxBy(x => x.depth);
+                    //state.statistics.search_depth = Math.Max(a.depth, b.depth);
+                    //state.statistics.search_depth = Math.Max(state.unprocessed.clauses.Select(x => x.depth).Max(), state.processed.clauses.Select(x => x.depth).Max());
                 }
             }
             else
@@ -169,8 +168,18 @@ namespace Prover
             }
             state.statistics.ElapsedTime = stopwatch.Elapsed.TotalMilliseconds;
             report.Res = res;
+            if (state.statistics.search_depth == 0)
+            {
+                var list = state.unprocessed.clauses.Select(x => x.depth).ToList();
+                //var a = state.unprocessed.clauses.MaxBy(x => x.depth).;
+                var amax = list.Max();
+                var b = state.processed.clauses.MaxBy(x => x.depth);
+                var bmax = b.depth;
+                state.statistics.search_depth = Math.Max(amax, bmax);
+            }
 
             report.ConsolePrint();
+            report.FilePrint(answersDirectory);
         }
 
         static void GeneticBreeding()

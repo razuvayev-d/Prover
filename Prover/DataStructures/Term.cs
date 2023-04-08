@@ -11,8 +11,8 @@ namespace Prover.DataStructures
     public class Term : Formula
     {
 
-        public string name;
-        public List<Term> subterms = new List<Term>();
+        public string FunctionSymbol;
+        public List<Term> Arguments = new List<Term>();
         bool constant;
 
 
@@ -23,8 +23,8 @@ namespace Prover.DataStructures
                 if (constant)
                     return 1;
                 int sum = 0;
-                for (int i = 0; i < subterms.Count; i++)
-                    sum += this.subterms[i].ConstCount;
+                for (int i = 0; i < Arguments.Count; i++)
+                    sum += this.Arguments[i].ConstCount;
                 return sum;
             }
         }
@@ -43,16 +43,16 @@ namespace Prover.DataStructures
         public Term() { }
         public Term(string name, List<Term> subterms = null)
         {
-            this.name = name;
+            this.FunctionSymbol = name;
             if (subterms is not null)
-                this.subterms = subterms;
+                this.Arguments = subterms;
             constant = name == name.ToLower() && (subterms is null || subterms.Count == 0);
         }
         public Term(string name, List<Term> subterms, bool constant)
         {
-            this.name = name;
+            this.FunctionSymbol = name;
             if (subterms is not null)
-                this.subterms = subterms;
+                this.Arguments = subterms;
             this.constant = constant;
         }
 
@@ -65,7 +65,7 @@ namespace Prover.DataStructures
         {
             get
             {
-                if (IsCompound) return subterms.Count;
+                if (IsCompound) return Arguments.Count;
                 else return 0;
             }
         }
@@ -88,15 +88,15 @@ namespace Prover.DataStructures
             }
             else
             {
-                if (target.IsVar || matcher.name != target.name)
+                if (target.IsVar || matcher.FunctionSymbol != target.FunctionSymbol)
                 {
                     result = false;
                 }
                 else
                 {
-                    for (int i = 0; i < matcher.subterms.Count; i++)
+                    for (int i = 0; i < matcher.Arguments.Count; i++)
                     {
-                        result = Match(matcher.subterms[i], target.subterms[i], subst);
+                        result = Match(matcher.Arguments[i], target.Arguments[i], subst);
                         if (!result)
                             break;
                     }
@@ -110,14 +110,14 @@ namespace Prover.DataStructures
         public override string ToString()
         {
             var result = new StringBuilder();
-            result.Append(name);
-            var n = subterms.Count;
+            result.Append(FunctionSymbol);
+            var n = Arguments.Count;
             if (n > 0)
             {
                 result.Append('(');
                 for (int i = 0; i < n; i++)
                 {
-                    result.Append(subterms[i].ToString());
+                    result.Append(Arguments[i].ToString());
                     if (i < n - 1)
                         result.Append(", ");
                 }
@@ -129,11 +129,11 @@ namespace Prover.DataStructures
         {
             List<Term> copy = new List<Term>();
 
-            foreach (var v in t.subterms)
+            foreach (var v in t.Arguments)
             {
                 copy.Add(Copy(v));
             }
-            return new Term(t.name, copy, t.constant);
+            return new Term(t.FunctionSymbol, copy, t.constant);
         }
 
 
@@ -155,21 +155,21 @@ namespace Prover.DataStructures
         public static implicit operator Literal(Term t)
         {
             //if (t.constant) throw new Exception("Константа не может быть литерой");
-            return new Literal(t.name, t.subterms);
+            return new Literal(t.FunctionSymbol, t.Arguments);
         }
 
         public void AddSubterm(Term t)
         {
-            subterms ??= new List<Term>();
+            Arguments ??= new List<Term>();
             constant = false;
-            subterms.Add(t);
+            Arguments.Add(t);
         }
 
         public void AddSubterms(List<Term> t)
         {
-            subterms ??= new List<Term>();
+            Arguments ??= new List<Term>();
             constant = false;
-            subterms.AddRange(t);
+            Arguments.AddRange(t);
         }
 
 
@@ -179,7 +179,7 @@ namespace Prover.DataStructures
             if (IsConstant) return fweight;
 
             var res = fweight;
-            foreach (var v in subterms)
+            foreach (var v in Arguments)
             {
                 res = res + v.Weight(fweight, vweight);
             }
@@ -217,10 +217,10 @@ namespace Prover.DataStructures
             {
                 result.Add(this);
             }
-            if (subterms is null) return result;
-            for (int i = 0; i < subterms.Count; i++)
+            if (Arguments is null) return result;
+            for (int i = 0; i < Arguments.Count; i++)
             {
-                var newVars = subterms[i].CollectVars();
+                var newVars = Arguments[i].CollectVars();
                 foreach (Term newv in newVars)
                     if (!result.Contains(newv))
                         result.Add(newv);
@@ -234,8 +234,8 @@ namespace Prover.DataStructures
 
             if (IsCompound)
             {
-                sig.AddFun(Func, subterms.Count);
-                foreach (var strm in subterms)
+                sig.AddFun(Func, Arguments.Count);
+                foreach (var strm in Arguments)
                     strm.CollectSig(sig);
             }
             return sig;
@@ -256,19 +256,19 @@ namespace Prover.DataStructures
             return res;
         }
 
-        public bool IsVar => subterms.Count == 0 && !constant; // subterms is null;
-        public bool IsCompound => subterms.Count > 0; //subterms is not null;
+        public bool IsVar => Arguments.Count == 0 && !constant; // subterms is null;
+        public bool IsCompound => Arguments.Count > 0; //subterms is not null;
 
         public string Func
         {
             get
             {
-                if (IsCompound) return name;
+                if (IsCompound) return FunctionSymbol;
                 else throw new Exception("Not Func");
             }
         }
 
-        public List<Term> TermArgs => subterms;
+        public List<Term> TermArgs => Arguments;
 
         public bool IsConstFalse => Equals(False);
 
@@ -304,21 +304,21 @@ namespace Prover.DataStructures
             }
             var t = (Term)obj;
             if (IsVar && t.IsVar || constant && t.constant)
-                return name == t.name;
+                return FunctionSymbol == t.FunctionSymbol;
             if (IsVar != t.IsVar) return false;
-            if (name != t.name) return false;
+            if (FunctionSymbol != t.FunctionSymbol) return false;
             return TermListEqual(TermArgs, t.TermArgs);
         }
 
         public override int GetHashCode()
         {
             int total = 0;
-            if (subterms is null) return total + name.GetHashCode() * 2;
+            if (Arguments is null) return total + FunctionSymbol.GetHashCode() * 2;
             else
             {
-                total = name.GetHashCode() * 2;
-                for (int i = 0; i < subterms.Count; i++)
-                    total += subterms[i].GetHashCode();
+                total = FunctionSymbol.GetHashCode() * 2;
+                for (int i = 0; i < Arguments.Count; i++)
+                    total += Arguments[i].GetHashCode();
                 return total;
             }
         }

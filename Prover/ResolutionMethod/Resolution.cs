@@ -1,6 +1,8 @@
 ﻿using Prover.DataStructures;
 using System;
 using System.Collections.Generic;
+using System.IO;
+using System.Linq;
 
 namespace Prover.ResolutionMethod
 {
@@ -62,8 +64,8 @@ namespace Prover.ResolutionMethod
             Clause res = new Clause();
 
             res.CreateName();
-            res.AddRange(lits1);
-            res.RemoveDupLits();
+            res.AddRange(lits1.Distinct().ToList());
+            //res.RemoveDupLits();
 
             //if (res.Equals(clause1) || res.Equals(clause2))
             //    return null;
@@ -77,7 +79,11 @@ namespace Prover.ResolutionMethod
 
             res.depth = Math.Max(clause1.depth, clause2.depth) + 1;
             //res.subst.AddAll(sigma);
-            res.SetTransform("resolution", clause1, clause2, sigma, l1.Name);
+            res.SetTransform("resolution", clause1, clause2, sigma, l1.PredicateSymbol);
+            //using (StreamWriter sw = new StreamWriter("given_clauses001.txt", true))
+            //{
+            //    sw.WriteLine("\t" + res.ToString());
+            //}
             return res;
         }
 
@@ -119,12 +125,13 @@ namespace Prover.ResolutionMethod
             }
 
             Clause res = new Clause();
-            res.AddRange(literals);
-            res.RemoveDupLits();
+            res.AddRange(literals.Distinct().ToList());
+            //res.RemoveDupLits();
             res.CreateName();
             res.depth = clause.depth + 1;
             //res.subst.AddAll(sigma);
-            res.SetTransform("factoring", clause, null, sigma, l1.Name);
+            res.SetTransform("factoring", clause, null, sigma, l1.PredicateSymbol);
+    
             return res;
 
             //res.CreateName();

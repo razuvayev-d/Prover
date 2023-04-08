@@ -19,7 +19,7 @@ namespace Prover.ResolutionMethod
         {
             Term res = new Term();
 
-            res.name = NewSkolemSymbol();
+            res.FunctionSymbol = NewSkolemSymbol();
             var n = varlist.Count;
             if (n == 0) res.IsConstant = true;
             for (int i = 0; i < n; i++)

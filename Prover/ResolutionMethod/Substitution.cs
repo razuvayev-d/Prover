@@ -85,10 +85,10 @@ namespace Prover.ResolutionMethod
             else
             {
                 Term res = new Term();
-                res.name = term.name;
+                res.FunctionSymbol = term.FunctionSymbol;
                 var n = term.SubtermsCount;
                 for (int i = 0; i < n; i++)
-                    res.AddSubterm(Apply(term.subterms[i]));
+                    res.AddSubterm(Apply(term.Arguments[i]));
                 return res;
             }
         }

@@ -1,5 +1,7 @@
 ﻿using Prover.ResolutionMethod;
 using Prover.Tokenization;
+using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -47,6 +49,10 @@ namespace Prover.DataStructures
             }
         }
 
+
+
+        public Dictionary<string, int> PredStats = new Dictionary<string, int>();
+
         public Literal this[int index]
         {
             get
@@ -64,35 +70,51 @@ namespace Prover.DataStructures
         public Clause()
         {
             clauseIdCounter++;
+            //PredStats = new Dictionary<string, int>();
         }
+
+        private void CollectPredStats()
+        {
+           
+            foreach (var lit in literals)
+                if (PredStats.ContainsKey(lit.PredicateSymbol))
+                    PredStats[lit.PredicateSymbol]++;
+                else
+                    PredStats[lit.PredicateSymbol] = 1;
+        }
+        //Непонятно почему, но так очень хорошо работает (несоответствие веса функ символов) (2 y y и 1 y x)
+        //private static int LitComparer(Literal x, Literal y) => x.Weight(2, 1).CompareTo(y.Weight(2, 1));
+
+        private static int LitComparer(Literal x, Literal y) => x.CompareTo(y);
+
         public Clause(List<Literal> literals, string type = "plain", string name = null) : base(name)
         {
+            //Непонятно почему, но так очень хорошо работает (несоответствие веса функ символов)
+            literals.Sort(LitComparer);// (x, y) => LitComparer(x, y));
+            //Console.WriteLine("\n=======================\n");
+            //foreach (var l in literals)
+            //{
+            //    Console.Write(l.ToString() + ", ");
+            //}
+            //Console.WriteLine("\nafter\n");
+            //literals.Sort((x, y) => y.Negative.CompareTo(x.Negative));
+            ////literals.Sort((x, y) => x.Weight(2, 1).CompareTo(y.Weight(2, 1)));
+            //Console.WriteLine();
+            //foreach (var l in literals)
+            //{
+            //    Console.Write(l.ToString() +", ");
+            //}
+
+
             this.literals = literals;
             this.type = type;
+
+            CollectPredStats();
             if (name is not null)
                 this.name = name;
             else
                 this.name = string.Format("c{0}", clauseIdCounter++);
-        }
-
-        public Clause(List<Formula> literals, string type = "plain", string name = null) : base(name)
-        {
-            var n = literals.Count;
-            List<Literal> lits = new List<Literal>(n);
-            for (int i = 0; i < n; i++)
-            {
-                // lits[i] = (Literal)literals[i];
-                lits.Add((Literal)literals[i]);
-            }
-
-            this.literals = lits;
-            this.type = type;
-
-            if (name is not null)
-                this.name = name;
-            else
-                this.name = string.Format("c{0}", clauseIdCounter++);
-        }
+        }   
 
         public static Clause ParseClause(Lexer lexer)
         {
@@ -245,13 +267,14 @@ namespace Prover.DataStructures
             result.Parent2 = Parent2;
             if (Sbst != null)
                 result.Sbst = Sbst.DeepCopy();
+            result.from_conjecture = from_conjecture;
 
             result.depth = depth;
 
             for (int i = start; i < literals.Count; i++)
                 result.literals.Add(literals[i].DeepCopy());
 
-
+            result.PredStats = PredStats.ToDictionary(entry => entry.Key, entry => entry.Value);
             return result;
         }
 
@@ -260,6 +283,9 @@ namespace Prover.DataStructures
         public void RemoveDupLits()
         {
             literals = literals.Distinct().ToList();
+            literals.Sort(LitComparer);
+            //literals.Sort((x, y) => x.Weight(1, 1).CompareTo(y.Weight(2, 1)));
+
             //var lits = new List<Literal>();
             //for (int i = 0; i < literals.Count; i++)
             //    if (!lits.Contains(literals[i]))
@@ -271,6 +297,8 @@ namespace Prover.DataStructures
         public void AddRange(List<Literal> literals)
         {
             this.literals.AddRange(literals);
+            CollectPredStats();
+
         }
 
         public override bool Equals(object obj)

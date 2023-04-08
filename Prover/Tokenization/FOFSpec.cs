@@ -1,5 +1,6 @@
 ﻿using Prover.ClauseSets;
 using Prover.DataStructures;
+using System;
 using System.Collections.Generic;
 using System.IO;
 
@@ -23,33 +24,41 @@ namespace Prover.Tokenization
         {
             Lexer lex = TPTPLexer(source, refdir);
 
-            while (!lex.TestTok(TokenType.EOFToken))
+            try
             {
-                lex.CheckLit("cnf", "fof", "include");
-                if (lex.TestLit("cnf"))
+                while (!lex.TestTok(TokenType.EOFToken))
                 {
-                    var clause = Clause.ParseClause(lex);
-                    AddClause(clause);
-                }
-                else if (lex.TestLit("fof"))
-                {
-                    var formula = WFormula.ParseWFormula(lex);
-                    AddFormula(formula);
-                }
-                else
-                {
-                    lex.AcceptLit("include");
-                    lex.AcceptTok(TokenType.OpenPar);
+                    lex.CheckLit("cnf", "fof", "include");
+                    if (lex.TestLit("cnf"))
+                    {
+                        var clause = Clause.ParseClause(lex);
+                        AddClause(clause);
+                    }
+                    else if (lex.TestLit("fof"))
+                    {
+                        var formula = WFormula.ParseWFormula(lex);
+                        AddFormula(formula);
+                    }
+                    else
+                    {
+                        lex.AcceptLit("include");
+                        lex.AcceptTok(TokenType.OpenPar);
 
-                    var m = lex.LookLit();
-                    var name = m.Substring(1, m.Length - 2);
+                        var m = lex.LookLit();
+                        var name = m.Substring(1, m.Length - 2);
 
-                    lex.AcceptTok(TokenType.SQString);
-                    lex.AcceptTok(TokenType.ClosePar);
-                    lex.AcceptTok(TokenType.FullStop);
-                    Parse(name, refdir);
+                        lex.AcceptTok(TokenType.SQString);
+                        lex.AcceptTok(TokenType.ClosePar);
+                        lex.AcceptTok(TokenType.FullStop);
+                        Parse(name, refdir);
+                    }
+
                 }
-
+            }
+            catch(LexerException ex)
+            {
+                Console.WriteLine(ex.Message);
+                Environment.Exit(1);
             }
         }
 

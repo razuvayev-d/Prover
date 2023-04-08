@@ -17,7 +17,7 @@ namespace Prover.ResolutionMethod
             List<Literal> result = new List<Literal>();
             foreach (var literal in clause.Literals)
             {
-                if (literal.Name == "=" || literal.Name == "!=")
+                if (literal.PredicateSymbol == "=" || literal.PredicateSymbol == "!=")
                 {
                     result.Add(literal);
                 }
