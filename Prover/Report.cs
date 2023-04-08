@@ -10,6 +10,40 @@ using System.Text.Json.Serialization;
 
 namespace Prover
 {
+    public class Statistics
+    {
+        [JsonPropertyName("Elapsed time")]
+        public double ElapsedTime { get; set; } = 0;
+        [JsonPropertyName("Initial clauses")]
+        public int initial_count { get; set; } = 0;
+        public int proc_clause_count { get; set; } = 0;
+        public int factor_count { get; set; } = 0;
+        public int resolvent_count { get; set; } = 0;
+        public int tautologies_deleted { get; set; } = 0;
+        public int forward_subsumed { get; set; } = 0;
+        public int backward_subsumed { get; set; } = 0;
+        public int depth { get; set; } = 0;
+        public int search_depth { get; set; } = 0;
+
+        public override string ToString()
+        {
+            StringBuilder sb = new StringBuilder();
+            const int offset = 25;
+            sb.Append("Затрачено времени: ".PadRight(offset, ' ') + ElapsedTime);
+            sb.Append("\nНачальных клауз: ".PadRight(offset, ' ') + initial_count);
+            sb.Append("\nОбработано клауз: ".PadRight(offset, ' ') + proc_clause_count);
+            sb.Append("\nФакторизовано: ".PadRight(offset, ' ') + factor_count);
+            sb.Append("\nВычислено резольвент: ".PadRight(offset, ' ') + resolvent_count);
+            sb.Append("\nПрямое поглощение: ".PadRight(offset, ' ') + forward_subsumed);
+            sb.Append("\nОбратное поглощение: ".PadRight(offset, ' ') + backward_subsumed);
+            sb.Append("\nУдалено тавтологий: ".PadRight(offset, ' ') + tautologies_deleted);
+            sb.Append("\nГлубина вывода: ".PadRight(offset, ' ') + depth);
+            sb.Append("\nГлубина поиска: ".PadRight(offset, ' ') + search_depth);
+
+            return sb.ToString();
+        }
+    }
+
 
     internal class Report
     {
@@ -43,39 +77,7 @@ namespace Prover
         {
         }
 
-        public class Statistics
-        {
-            [JsonPropertyName("Elapsed time")]
-            public double ElapsedTime { get; set; } = 0;
-            [JsonPropertyName("Initial clauses")]
-            public int initial_count { get; set; } = 0;
-            public int proc_clause_count { get; set; } = 0;
-            public int factor_count { get; set; } = 0;
-            public int resolvent_count { get; set; } = 0;
-            public int tautologies_deleted { get; set; } = 0;
-            public int forward_subsumed { get; set; } = 0;
-            public int backward_subsumed { get; set; } = 0;
-            public int depth { get; set; } = 0;
-            public int search_depth { get; set; } = 0;
-
-            public override string ToString()
-            {
-                StringBuilder sb = new StringBuilder();
-                const int offset = 25;
-                sb.Append("Затрачено времени: ".PadRight(offset, ' ') + ElapsedTime);
-                sb.Append("\nНачальных клауз: ".PadRight(offset, ' ') + initial_count);
-                sb.Append("\nОбработано клауз: ".PadRight(offset, ' ') + proc_clause_count);
-                sb.Append("\nФакторизовано: ".PadRight(offset, ' ') + factor_count);
-                sb.Append("\nВычислено резольвент: ".PadRight(offset, ' ') + resolvent_count);
-                sb.Append("\nПрямое поглощение: ".PadRight(offset, ' ') + forward_subsumed);
-                sb.Append("\nОбратное поглощение: ".PadRight(offset, ' ') + backward_subsumed);
-                sb.Append("\nУдалено тавтологий: ".PadRight(offset, ' ') + tautologies_deleted);
-                sb.Append("\nГлубина вывода: ".PadRight(offset, ' ') + depth);
-                sb.Append("\nГлубина поиска: ".PadRight(offset, ' ') + search_depth);
-
-                return sb.ToString();
-            }
-        }
+        
 
 
         public string ProblemName { get; set; }
