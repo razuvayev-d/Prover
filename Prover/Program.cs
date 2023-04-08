@@ -189,7 +189,8 @@ namespace Prover
             {
                 delete_tautologies = true,
                 backward_subsumption = true,
-                forward_subsumption = true
+                forward_subsumption = true,
+                literal_selection = "large"
             };
 
             GeneticAlgorithm algorithm = new GeneticAlgorithm(options, sp);
