@@ -51,10 +51,11 @@ namespace Prover
             //param.literal_selection = "large2"; //"largerandom";// largerandom"; //"large";
             //param.literal_selection = "mostfreq";
 
-            param.heuristics = Heuristics.Heuristics.RefinedSOS;
-            param.degree_of_parallelism = 1;
+            param.heuristics = Heuristics.Heuristics.PickGiven5;
+            param.timeout = 5000;
+            //param.degree_of_parallelism = 1;
             //param.timeout = 105000;
-            FOFFullClear(param.file, param);
+           // FOFFullClear(param.file, param);
 
 
             //if (args[0] == "-i") indexing = true;
@@ -65,19 +66,19 @@ namespace Prover
             //param.backward_subsumption = true;
             //param.forward_subsumption = true;
             //param.simplify = false;
-            //foreach (string file in files)
-            //    FOFFullClear(file, param);
+            foreach (string file in files)
+                FOFFullClear(file, param);
             //////Rating(file);
 
-            //Console.ForegroundColor = ConsoleColor.Green;
-            //Console.WriteLine("Solved: {0} / {1}", Count, files.Length);
-            //Console.WriteLine("Solved problems:");
-            //Console.ResetColor();
+            Console.ForegroundColor = ConsoleColor.Green;
+            Console.WriteLine("Solved: {0} / {1}", Count, files.Length);
+            Console.WriteLine("Solved problems:");
+            Console.ResetColor();
 
-            //foreach (var x in solved)
-            //{
-            //    Console.WriteLine(x);
-            //}
+            foreach (var x in solved)
+            {
+                Console.WriteLine(x);
+            }
         }
 
         static void FOFFullClear(string Path, SearchParams param = null)

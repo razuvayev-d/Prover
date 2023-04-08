@@ -229,9 +229,9 @@ namespace Prover.ProofStates
                 Clause res = ProcessClause();
                 if (res is not null)
                 {
-                    var x = unprocessed.clauses.MaxBy(x => x.depth);
-                    var y = processed.clauses.MaxBy(x => x.depth);
-                    statistics.search_depth = Math.Max(x.depth, y.depth);
+                    //    var x = unprocessed.clauses.MaxBy(x => x.depth);
+                    //    var y = processed.clauses.MaxBy(x => x.depth);
+                    //    statistics.search_depth = Math.Max(x.depth, y.depth);
                     return res;
                 }
             }
