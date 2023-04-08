@@ -168,15 +168,15 @@ namespace Prover
             }
             state.statistics.ElapsedTime = stopwatch.Elapsed.TotalMilliseconds;
             report.Res = res;
-            if (state.statistics.search_depth == 0)
-            {
-                var list = state.unprocessed.clauses.Select(x => x.depth).ToList();
-                //var a = state.unprocessed.clauses.MaxBy(x => x.depth).;
-                var amax = list.Max();
-                var b = state.processed.clauses.MaxBy(x => x.depth);
-                var bmax = b.depth;
-                state.statistics.search_depth = Math.Max(amax, bmax);
-            }
+            //if (state.statistics.search_depth == 0)
+            //{
+            //    var list = state.unprocessed.clauses.Select(x => x.depth).ToList();
+            //    //var a = state.unprocessed.clauses.MaxBy(x => x.depth).;
+            //    var amax = list.Max();
+            //    var b = state.processed.clauses.MaxBy(x => x.depth);
+            //    var bmax = b.depth;
+            //    state.statistics.search_depth = Math.Max(amax, bmax);
+            //}
 
             report.ConsolePrint();
             report.FilePrint(answersDirectory);
