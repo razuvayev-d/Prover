@@ -90,7 +90,6 @@ namespace Prover.DataStructures
         public Clause(List<Literal> literals, string type = "plain", string name = null) : base(name)
         {
             //Непонятно почему, но так очень хорошо работает (несоответствие веса функ символов)
-            literals.Sort(LitComparer);// (x, y) => LitComparer(x, y));
             //Console.WriteLine("\n=======================\n");
             //foreach (var l in literals)
             //{
@@ -105,8 +104,12 @@ namespace Prover.DataStructures
             //    Console.Write(l.ToString() +", ");
             //}
 
+            foreach (var l in literals)
+                if (!l.IsPropFalse) //Случай p | F -> p
+                    this.literals.Add(l);
+            this.literals.Sort(LitComparer);// (x, y) => LitComparer(x, y));
 
-            this.literals = literals;
+            //this.literals = literals;
             this.type = type;
 
             CollectPredStats();
