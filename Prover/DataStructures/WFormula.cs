@@ -162,7 +162,7 @@ namespace Prover.DataStructures
                 wf = tmp;
             }
 
-            f = Formula.formulaShiftQuantorsOut(f);
+            f = Formula.FormulaShiftQuantorsOut(f);
             if (!f.Equals(wf.Formula))
             {
                 tmp = new WFormula(f, wf.type);

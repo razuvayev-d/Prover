@@ -12,7 +12,7 @@ namespace Prover.DataStructures
     /// уже допускаем равносильные атомы с инфиксными "=" или "!="
     /// и нормализуем их при создании.
     /// </summary>
-    public class Literal : Formula, IComparable
+    public class Literal : Formula
     {
 
         public struct LiteralCache
@@ -33,6 +33,9 @@ namespace Prover.DataStructures
             }
         }
 
+        /// <summary>
+        /// Кэш весов
+        /// </summary>
         public LiteralCache WeightCache;
 
         public bool Negative { get; private set; }

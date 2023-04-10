@@ -8,9 +8,7 @@ namespace Prover.DataStructures
     public partial class Formula
     {
         /// <summary>
-        ///Convert f into a NNF.Equivalences(<=>) are eliminated
-        ///polarity-dependend, top to bottom.Returns(f', m), where f' is a
-        /// NNF of f, and m indicates if f!=f'
+        ///Преобразование формулы в нормальную форму отрицания.
         /// </summary>
         public static (Formula, bool) FormulaNNF(Formula f, bool polarity)
         {
@@ -78,7 +76,7 @@ namespace Prover.DataStructures
         /// <param name="f"></param>
         /// <param name="polarity"></param>
         /// <returns></returns>
-        public static (Formula, bool) RootFormulaNNF(Formula f, bool polarity)
+        private static (Formula, bool) RootFormulaNNF(Formula f, bool polarity)
         {
 
             bool normalForm = false;
@@ -439,7 +437,7 @@ namespace Prover.DataStructures
         /// </summary>
         /// <param name="f"></param>
         /// <returns></returns>
-        public static Formula formulaShiftQuantorsOut(Formula f)
+        public static Formula FormulaShiftQuantorsOut(Formula f)
         {
             List<Term> varlist = new List<Term>();
             //(f, varlist) = SeparateQuantors(f);
@@ -462,7 +460,7 @@ namespace Prover.DataStructures
         /// <param name="f"></param>
         /// <param name="varlist"></param>
         /// <returns></returns>
-        public static Formula SeparateQuantors(Formula f, List<Term> varlist)
+        private static Formula SeparateQuantors(Formula f, List<Term> varlist)
         {
             Formula result = f; //= f.Copy();
             //if (varlist is null)
