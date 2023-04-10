@@ -118,7 +118,7 @@ namespace Prover.ProofStates
 
         public Clause Saturate2()
         {
-            int k = 0;
+            
 
             var M = unprocessed;
             List<Clause> resolvents = new List<Clause>();

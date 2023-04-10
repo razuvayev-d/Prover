@@ -138,8 +138,10 @@ namespace Prover.ClauseSets
                     i++;
                 }
             }
-            catch (Exception e)
-            { return false; }
+            catch (Exception)
+            {
+                return false;
+            }
             return true;
         }
 
