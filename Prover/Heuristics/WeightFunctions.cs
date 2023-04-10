@@ -272,8 +272,8 @@ namespace Prover.Heuristics
             hEval = (clause) =>
             {
                 if (prio(clause))
-                    return int.MaxValue / 2 - clause.depth; //так как меньше -- лучше. 
-                return 10000 + NonPrioConstModifier - clause.depth;
+                    return int.MaxValue / 2 - clause.Depth; //так как меньше -- лучше. 
+                return 10000 + NonPrioConstModifier - clause.Depth;
             };
         }
     }
@@ -291,8 +291,8 @@ namespace Prover.Heuristics
             hEval = (clause) =>
             {
                 if (prio(clause))
-                    return clause.depth;
-                return 10000 + clause.depth;
+                    return clause.Depth;
+                return 10000 + clause.Depth;
             };
         }
     }

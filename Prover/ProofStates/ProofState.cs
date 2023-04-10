@@ -121,10 +121,12 @@ namespace Prover.ProofStates
             //{
             //    sw.WriteLine("    RESOLVENTS");
             //}
-            if (indexed)
-                resolvents = ResControl.ComputeAllResolventsIndexed(given_clause, processed as IndexedClauseSet);
-            else
-                resolvents = ResControl.ComputeAllResolvents(given_clause, processed);
+
+            resolvents = ResControl.ComputeAllResolvents(given_clause, processed);
+            //if (indexed)
+            //    resolvents = ResControl.ComputeAllResolventsIndexed(given_clause, processed as IndexedClauseSet);
+            //else
+            //    resolvents = ResControl.ComputeAllResolvents(given_clause, processed);
 
             //Console.WriteLine("FACTORS LEN {0}, RESOLV LEN {1}", factors.Count, resolvents.Count);
             statistics.resolvent_count += resolvents.Count;
@@ -150,7 +152,11 @@ namespace Prover.ProofStates
         {
             while (unprocessed.Count > 0)
             {
-                if (token.IsCancellationRequested) return null;
+                if (token.IsCancellationRequested)
+                {
+                    statistics.search_depth = unprocessed.MaxClauseDepth;
+                    return null;
+                }
                 //unprocessed.clauses = unprocessed.clauses.Distinct().ToList();
 
                 //unprocessed.Distinct();
@@ -158,15 +164,11 @@ namespace Prover.ProofStates
                 Clause res = ProcessClause();
                 if (res is not null)
                 {
-                    var x = unprocessed.clauses.MaxBy(x => x.depth);
-                    var y = processed.clauses.MaxBy(x => x.depth);
-                    statistics.search_depth = Math.Max(x.depth, y.depth);
+                    statistics.search_depth = unprocessed.MaxClauseDepth;
                     return res;
                 }
             }
-            var a = unprocessed.clauses.MaxBy(x => x.depth);
-            var b = processed.clauses.MaxBy(x => x.depth);
-            statistics.search_depth = Math.Max(a.depth, b.depth);
+            statistics.search_depth = unprocessed.MaxClauseDepth;
             return null;
         }
 

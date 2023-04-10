@@ -256,7 +256,7 @@ namespace Prover
             CreateInference(res, inference);
 
             inference = inference.DistinctBy(c => c.Name).ToList();
-            inference.Sort((c1, c2) => c1.depth.CompareTo(c2.depth));
+            inference.Sort((c1, c2) => c1.Depth.CompareTo(c2.Depth));
 
             pad_clause_str = inference.Select(c => c.ToString().Length).Max() + 2;
             pad_name = inference.Select(c => c.Name.Length).Max() + 2;

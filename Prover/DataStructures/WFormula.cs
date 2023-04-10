@@ -94,7 +94,7 @@ namespace Prover.DataStructures
         public List<Clause> Clausify()
         {
             var wf = WFormulaCnf(this);
-            var clauses = ClauseSet.FormulaCNFSplit(wf);
+            var clauses = ClauseSet.FormulaCNFSplitToClause(wf);
 
             foreach (var c in clauses)
             {

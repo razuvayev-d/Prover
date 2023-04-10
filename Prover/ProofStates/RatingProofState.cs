@@ -49,7 +49,7 @@ namespace Prover.ProofStates
 
             unprocessed.clauses.Sort(delegate (Clause c1, Clause c2)
             {
-                return c1.evaluation[0].CompareTo(c2.evaluation[0]);
+                return c1.Evaluation[0].CompareTo(c2.Evaluation[0]);
             });
 
             ClauseArray = unprocessed.clauses;
@@ -109,7 +109,7 @@ namespace Prover.ProofStates
         {
             unprocessed.clauses.Sort(delegate (Clause c1, Clause c2)
             {
-                return c1.evaluation[0].CompareTo(c2.evaluation[0]);
+                return c1.Evaluation[0].CompareTo(c2.Evaluation[0]);
             });
             return unprocessed.clauses;
         }
@@ -191,7 +191,7 @@ namespace Prover.ProofStates
                 }
                 else //resolvent is not null
                 {
-                    resolvent.evaluation = Params.heuristics.Evaluate(resolvent);
+                    resolvent.Evaluation = Params.heuristics.Evaluate(resolvent);
                     resolvents.Add(resolvent);
 
                     allClauses.Add(resolvent);

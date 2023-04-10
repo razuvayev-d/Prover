@@ -51,7 +51,7 @@ namespace Prover
             //param.literal_selection = "large2"; //"largerandom";// largerandom"; //"large";
             //param.literal_selection = "mostfreq";
 
-            param.heuristics = Heuristics.Heuristics.RefinedSOS;
+            //param.heuristics = Heuristics.Heuristics.RefinedSOS;
             param.degree_of_parallelism = 1;
             //param.timeout = 105000;
             FOFFullClear(param.file, param);
@@ -164,7 +164,7 @@ namespace Prover
             if (res is not null && res.IsEmpty)
             {
                 Count++;
-                state.statistics.depth = res.depth;
+                state.statistics.depth = res.Depth;
             }
             state.statistics.ElapsedTime = stopwatch.Elapsed.TotalMilliseconds;
             report.Res = res;
@@ -338,7 +338,7 @@ namespace Prover
                 foreach (string s in str)
                     proof.Append(i++ + ". " + s + "\n");
 
-                var report = new Report(state, res.depth)
+                var report = new Report(state, res.Depth)
                 {
                     ProblemName = System.IO.Path.GetFileName(Path),
                     Formula = formulastr,
@@ -554,7 +554,7 @@ namespace Prover
             foreach (string s in str)
                 proof.Append(i++ + ". " + s + "\n");
 
-            var report = new Report(state, res.depth)
+            var report = new Report(state, res.Depth)
             {
                 ProblemName = System.IO.Path.GetFileName(Path),
                 Formula = formulastr,
@@ -693,7 +693,7 @@ namespace Prover
             foreach (string s in str)
                 proof.Append(i++ + ". " + s + "\n");
 
-            var report = new Report(state, res.depth)
+            var report = new Report(state, res.Depth)
             {
                 ProblemName = System.IO.Path.GetFileName(Path),
                 Formula = formulastr,

@@ -84,7 +84,7 @@ namespace Prover.Tokenization
 
         public void AddClause(Clause clause)
         {
-            if (clause.Type == "negated_conjecture")
+            if (clause.from_conjecture)
                 hasConj = true;
             clauses.Add(clause);
         }

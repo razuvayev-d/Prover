@@ -18,21 +18,18 @@ namespace Prover.DataStructures
     public class Clause : TransformNode
     {
         List<Literal> literals = new List<Literal>();
-        string type { get; set; }
         public string name;
+
 
         public List<Literal> Literals => literals;
         public string Name => name;
 
-        static int clauseIdCounter = 0;
-
-        public int depth { get; set; } = 0;
+        public int Depth { get; set; } = 0;
 
         /// <summary>
         /// Содержит оценки в соответствии со схемами. Намример для PickGiven5 {5, 10} означает, что клауза имеет оценку 5 по symbolCount и 10 по LIFO.
         /// </summary>
-        public List<int> evaluation = null;
-        public string Type => type;
+        public List<int> Evaluation = null;   
         public bool IsEmpty => literals.Count == 0;
         public int Length => literals.Count;
 
@@ -49,8 +46,6 @@ namespace Prover.DataStructures
             }
         }
 
-
-
         public Dictionary<string, int> PredStats = new Dictionary<string, int>();
 
         public Literal this[int index]
@@ -61,6 +56,10 @@ namespace Prover.DataStructures
             }
         }
 
+        /// <summary>
+        /// Для имен клауз
+        /// </summary>
+        static int clauseIdCounter = 0;
         public static void ResetCounter()
         {
             clauseIdCounter = 0;
@@ -70,7 +69,6 @@ namespace Prover.DataStructures
         public Clause()
         {
             clauseIdCounter++;
-            //PredStats = new Dictionary<string, int>();
         }
 
         private void CollectPredStats()
@@ -82,36 +80,19 @@ namespace Prover.DataStructures
                 else
                     PredStats[lit.PredicateSymbol] = 1;
         }
-        //Непонятно почему, но так очень хорошо работает (несоответствие веса функ символов) (2 y y и 1 y x)
-        //private static int LitComparer(Literal x, Literal y) => x.Weight(2, 1).CompareTo(y.Weight(2, 1));
 
+        //Непонятно почему, но так очень хорошо работает на некоторых (несоответствие веса функ символов) (2 y y и 1 y x)
+        //private static int LitComparer(Literal x, Literal y) => x.Weight(2, 1).CompareTo(y.Weight(2, 1));
         private static int LitComparer(Literal x, Literal y) => x.CompareTo(y);
 
-        public Clause(List<Literal> literals, string type = "plain", string name = null) : base(name)
+        public Clause(List<Literal> literals, string name = null)
         {
-            //Непонятно почему, но так очень хорошо работает (несоответствие веса функ символов)
-            //Console.WriteLine("\n=======================\n");
-            //foreach (var l in literals)
-            //{
-            //    Console.Write(l.ToString() + ", ");
-            //}
-            //Console.WriteLine("\nafter\n");
-            //literals.Sort((x, y) => y.Negative.CompareTo(x.Negative));
-            ////literals.Sort((x, y) => x.Weight(2, 1).CompareTo(y.Weight(2, 1)));
-            //Console.WriteLine();
-            //foreach (var l in literals)
-            //{
-            //    Console.Write(l.ToString() +", ");
-            //}
-
             foreach (var l in literals)
                 if (!l.IsPropFalse) //Случай p | F -> p
                     this.literals.Add(l);
+
             this.literals.Sort(LitComparer);// (x, y) => LitComparer(x, y));
-
-            //this.literals = literals;
-            this.type = type;
-
+          
             CollectPredStats();
             if (name is not null)
                 this.name = name;
@@ -147,7 +128,10 @@ namespace Prover.DataStructures
             lexer.AcceptTok(TokenType.ClosePar);
             lexer.AcceptTok(TokenType.FullStop);
 
-            var res = new Clause(lits, type, name);
+            var res = new Clause(lits, name);
+
+            if (type == "negated_conjecture")
+                res.SetFromConjectureFlag();
             res.SetTransform("input");
             return res;
         }
@@ -199,7 +183,7 @@ namespace Prover.DataStructures
 
         public void AddEval(List<int> eval)
         {
-            evaluation = eval;
+            Evaluation = eval;
         }
 
         public override string ToString()
@@ -252,15 +236,9 @@ namespace Prover.DataStructures
 
         public Clause DeepCopy()
         {
-            return DeepCopy(0);
-        }
-
-        private Clause DeepCopy(int start)
-        {
-
             Clause result = new Clause();
             result.name = name;
-            result.type = type;
+
 
             /*from TransformNode */
             result.TransformOperation = TransformOperation;
@@ -272,7 +250,33 @@ namespace Prover.DataStructures
                 result.Sbst = Sbst.DeepCopy();
             result.from_conjecture = from_conjecture;
 
-            result.depth = depth;
+            result.Depth = Depth;
+
+            for (int i = 0; i < literals.Count; i++)
+                result.literals.Add(literals[i].DeepCopy());
+
+            result.PredStats = PredStats.ToDictionary(entry => entry.Key, entry => entry.Value);
+            return result;
+        }
+
+        private Clause DeepCopy(int start)
+        {
+
+            Clause result = new Clause();
+            result.name = name;
+          
+
+            /*from TransformNode */
+            result.TransformOperation = TransformOperation;
+            result.Sbst = Sbst;
+            result.LiteralStr = LiteralStr;
+            result.Parent1 = Parent1;
+            result.Parent2 = Parent2;
+            if (Sbst != null)
+                result.Sbst = Sbst.DeepCopy();
+            result.from_conjecture = from_conjecture;
+
+            result.Depth = Depth;
 
             for (int i = start; i < literals.Count; i++)
                 result.literals.Add(literals[i].DeepCopy());
@@ -299,9 +303,11 @@ namespace Prover.DataStructures
 
         public void AddRange(List<Literal> literals)
         {
-            this.literals.AddRange(literals);
+            foreach (var l in literals)
+                if (!l.IsPropFalse)
+                    this.literals.Add(l);
+                //literals.AddRange(literals);
             CollectPredStats();
-
         }
 
         public override bool Equals(object obj)

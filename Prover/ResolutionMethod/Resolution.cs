@@ -60,11 +60,21 @@ namespace Prover.ResolutionMethod
             }
 
             lits1.AddRange(lits2);
+            lits1 = lits1.Distinct().ToList();
 
-            Clause res = new Clause();
+            foreach (Literal l in lits1)
+                if (l.IsPropTrue)
+                    return null;
 
-            res.CreateName();
-            res.AddRange(lits1.Distinct().ToList());
+
+
+            Clause res = new Clause(lits1);
+
+            //Clause res = new Clause();
+
+            //res.CreateName();
+            //res.AddRange(lits1.Distinct().ToList());
+
             //res.RemoveDupLits();
 
             //if (res.Equals(clause1) || res.Equals(clause2))
@@ -77,7 +87,7 @@ namespace Prover.ResolutionMethod
             //clause1.supportsClauses.Add(res.Name);
             //clause2.supportsClauses.Add(res.Name);
 
-            res.depth = Math.Max(clause1.depth, clause2.depth) + 1;
+            res.Depth = Math.Max(clause1.Depth, clause2.Depth) + 1;
             //res.subst.AddAll(sigma);
             res.SetTransform("resolution", clause1, clause2, sigma, l1.PredicateSymbol);
             //using (StreamWriter sw = new StreamWriter("given_clauses001.txt", true))
@@ -124,23 +134,14 @@ namespace Prover.ResolutionMethod
                 literals.Add(l);
             }
 
-            Clause res = new Clause();
-            res.AddRange(literals.Distinct().ToList());
+            Clause res = new Clause(literals.Distinct().ToList());
             //res.RemoveDupLits();
-            res.CreateName();
-            res.depth = clause.depth + 1;
+
+            res.Depth = clause.Depth + 1;
             //res.subst.AddAll(sigma);
             res.SetTransform("factoring", clause, null, sigma, l1.PredicateSymbol);
     
             return res;
-
-            //res.CreateName();
-            //res.AddRange(literals);
-            //res.RemoveDupLits();
-            //res.rationale = "factoring";
-            //res.support.Add(clause.Name);
-
-            //return res;
         }
     }
 }

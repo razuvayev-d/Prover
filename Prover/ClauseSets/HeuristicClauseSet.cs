@@ -38,13 +38,13 @@ namespace Prover.ClauseSets
             //Console.WriteLine(EvalFunctions.EvalFunctions[heuristicIndex].ToString());
             if (clauses.Count == 0) return null;
             int best = 0;
-            int besteval = clauses[0].evaluation[heuristicIndex];
+            int besteval = clauses[0].Evaluation[heuristicIndex];
 
             for (int i = 1; i < clauses.Count; i++)
             {
-                if (clauses[i].evaluation[heuristicIndex] < besteval)
+                if (clauses[i].Evaluation[heuristicIndex] < besteval)
                 {
-                    besteval = clauses[i].evaluation[heuristicIndex];
+                    besteval = clauses[i].Evaluation[heuristicIndex];
                     best = i;
                 }
             }
