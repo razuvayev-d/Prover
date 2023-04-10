@@ -51,14 +51,6 @@ namespace Prover
         {
             statistics = state.statistics;
             statistics.depth = depth;
-            //statistics.initial_count = state.initial_clause_count;
-            //statistics.proc_clause_cout = state.proc_clause_count;
-            //statistics.resolvent_count = state.resolvent_count;
-            //statistics.factor_count = state.factor_count;
-            //statistics.forward_subsumed = state.forward_subsumed;
-            //statistics.backward_subsumed = state.backward_subsumed;
-            //statistics.tautologies_deleted = state.tautologies_deleted;
-            //statistics.depth = depth;
         }
         public Report(RatingProofState state, int depth)
         {
@@ -76,9 +68,6 @@ namespace Prover
         public Report()
         {
         }
-
-        
-
 
         public string ProblemName { get; set; }
         [JsonPropertyName("Read formula")]

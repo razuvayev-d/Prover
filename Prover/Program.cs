@@ -91,7 +91,7 @@ namespace Prover
             {
                 backward_subsumption = true,
                 forward_subsumption = true,
-                heuristics = Heuristics.Heuristics.PickGiven5,
+                heuristics = SearchControl.Heuristics.PickGiven5,
                 delete_tautologies = true,
                 timeout = 100000
             };
@@ -221,7 +221,7 @@ namespace Prover
             {
                 backward_subsumption = true,
                 forward_subsumption = true,
-                heuristics = Heuristics.Heuristics.BreedingBestPrio,
+                heuristics = SearchControl.Heuristics.BreedingBestPrio,
                 delete_tautologies = true,
                 timeout = 100000
             };
@@ -595,7 +595,7 @@ namespace Prover
                 forward_subsumption = true,
                 //backward_subsumption = true
             };
-            param.heuristics = Heuristics.Heuristics.PickGiven5;
+            param.heuristics = SearchControl.Heuristics.PickGiven5;
             string TPTPStatus;
             using (StreamReader sr = new StreamReader(Path))
             {

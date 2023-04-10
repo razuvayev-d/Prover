@@ -1,6 +1,6 @@
 ﻿using Prover.ClauseSets;
 using Prover.DataStructures;
-using Prover.Heuristics;
+using Prover.SearchControl;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;

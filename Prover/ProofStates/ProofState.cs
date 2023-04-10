@@ -1,6 +1,6 @@
 ﻿using Prover.ClauseSets;
 using Prover.DataStructures;
-using Prover.Heuristics;
+using Prover.SearchControl;
 using Prover.ResolutionMethod;
 using System;
 using System.Text;
@@ -13,7 +13,7 @@ using System.Threading.Tasks;
 
 namespace Prover.ProofStates
 {
-    
+
 
 
 

@@ -1,7 +1,7 @@
 ﻿using Prover.DataStructures;
 using System;
 
-namespace Prover.Heuristics
+namespace Prover.SearchControl
 {
 
     /// <summary>

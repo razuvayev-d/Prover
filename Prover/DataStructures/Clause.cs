@@ -1,4 +1,5 @@
-﻿using Prover.ResolutionMethod;
+﻿using Prover.SearchControl;
+using Prover.ResolutionMethod;
 using Prover.Tokenization;
 using System;
 using System.Collections;

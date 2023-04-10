@@ -2,18 +2,18 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Security.Cryptography.X509Certificates;
 
-namespace Prover.ResolutionMethod
+
+namespace Prover.SearchControl
 {
     public delegate List<Literal> LiteralSelector(List<Literal> literals);
     public static class LiteralSelection
     {
         public static ClauseSets.ClauseSet ClausesInProblems;
-        static Random r=new Random();
+        static Random r = new Random();
         public static LiteralSelector GetSelector(string funcName)
         {
-            switch(funcName)
+            switch (funcName)
             {
                 case "first":
                     return FirstLit;
@@ -38,7 +38,7 @@ namespace Prover.ResolutionMethod
             }
         }
         public static List<Literal> MostFreqLit(List<Literal> list)
-        {            
+        {
             var lit = ClausesInProblems.PredStats.MaxBy(x => x.Value).Key;
             var res = list.Where(x => x.PredicateSymbol == lit).ToList();
             if (res.Count > 0)
@@ -57,7 +57,7 @@ namespace Prover.ResolutionMethod
         {
             //list.Sort((x, y) => x.Weight(1, 1).CompareTo(y.Weight(1, 1)));
             var x = list.MinBy(x => x.Weight(1, 1));
-            
+
             return new List<Literal>() { x };
         }
 
@@ -73,7 +73,7 @@ namespace Prover.ResolutionMethod
             var lits = new List<Literal>();
             foreach (var x in list)
             {
-                if(x.IsEquational)
+                if (x.IsEquational)
                     lits.Add(x);
             }
             return lits;
@@ -91,8 +91,8 @@ namespace Prover.ResolutionMethod
         {
             //list.Sort((x, y) => y.Weight(1, 1).CompareTo(x.Weight(1, 1)));
             var max = list.Select(x => x.Weight(1, 1)).Max();
-            var ret = list.Where(x => x.Weight(1,1) == max).ToList();
-            
+            var ret = list.Where(x => x.Weight(1, 1) == max).ToList();
+
             return new List<Literal>() { ret[r.Next(ret.Count)] };
         }
 
@@ -108,13 +108,13 @@ namespace Prover.ResolutionMethod
         }
 
 
-        public static List<Literal> NegativeLit(List<Literal> list) 
+        public static List<Literal> NegativeLit(List<Literal> list)
         {
             return list.Where(x => x.Negative).ToList();
         }
 
-        public static List<Literal> NegativeLitLargest(List<Literal> list) 
-        { 
+        public static List<Literal> NegativeLitLargest(List<Literal> list)
+        {
             var ret = list.Where(x => x.Negative).ToList();
             return LargestLit2(ret);
         }
@@ -127,7 +127,7 @@ namespace Prover.ResolutionMethod
 
         public static List<Literal> RandomSelection(List<Literal> list)
         {
-            return new List<Literal> { list[r.Next(list.Count)] };  
+            return new List<Literal> { list[r.Next(list.Count)] };
         }
         //public static VarSizeLit(List<Literal> litlist)
         //{

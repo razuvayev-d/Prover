@@ -1,4 +1,4 @@
-﻿using Prover.Heuristics;
+﻿using Prover.SearchControl;
 using Prover.ProofStates;
 using Prover.ResolutionMethod;
 using System;
@@ -90,13 +90,13 @@ namespace Prover
             switch (name)
             {
                 case "PickGiven5":
-                    return Prover.Heuristics.Heuristics.PickGiven5;
+                    return Prover.SearchControl.Heuristics.PickGiven5;
                 case "PickGiven2":
-                    return Prover.Heuristics.Heuristics.PickGiven2;
+                    return Prover.SearchControl.Heuristics.PickGiven2;
                 case "SymbolCount":
-                    return Prover.Heuristics.Heuristics.SymbolCountEval;
+                    return Prover.SearchControl.Heuristics.SymbolCountEval;
                 case "FIFO":
-                    return Prover.Heuristics.Heuristics.FIFOEval;
+                    return Prover.SearchControl.Heuristics.FIFOEval;
                 default:
                     Console.WriteLine("Неизвестная эвристика.");
                     Environment.Exit(-1);
