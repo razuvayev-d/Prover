@@ -61,7 +61,7 @@ namespace Prover.Genetic
       
         public EvaluationScheme CreateEvalStructure()
         {
-            var heuristics = new List<(ClauseEvaluationFunction, int)>();
+            var heuristics = new List<(ClauseEvaluationFunction, int, LiteralSelector)>();
             for (int i = 0; i < genes.Count; i++)
             {
                 heuristics.Add(CreateEvalFunct(genes[i]));
