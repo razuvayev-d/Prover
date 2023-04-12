@@ -2,6 +2,7 @@
 using Prover.DataStructures;
 using Prover.Genetic;
 using Prover.ProofStates;
+using Prover.SearchControl;
 using Prover.Tokenization;
 using System;
 using System.Collections.Generic;
@@ -58,7 +59,7 @@ namespace Prover
             //param.timeout = 105000;
             // FOFFullClear(param.file, param);
 
-
+            param.simplify = false;
             //if (args[0] == "-i") indexing = true;
             //////if (args[1] == "-so") statonly = true;
             //FOFFull(args[args.Length - 1]);
