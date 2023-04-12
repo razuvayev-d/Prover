@@ -32,16 +32,17 @@ namespace Prover.Genetic
         {
             var MemberCount = Enum.GetNames(typeof(HeuristicsFunctions)).Length;
             Random r = new Random();
-            string name = ((HeuristicsFunctions)r.Next(MemberCount)).ToString();
-            int weight = r.Next(1, 6);
-            string prio = PriorityFunctions.GetRandomFunctionName();
-            int par1 = r.Next(0, 10);
-            int par2 = r.Next(1000, 2000) % 10;
-            int par3 = r.Next(0, 10);
-            int par4 = r.Next(0, 10);
-            int par5 = r.Next(0, 10);
+            string name = ((HeuristicsFunctions)r.Next(MemberCount)).ToString(); //0
+            int weight = r.Next(1, 6); //1
+            string prio = PriorityFunctions.GetRandomFunctionName();//2
+            int par1 = r.Next(0, 10); //3
+            int par2 = r.Next(1000, 2000) % 10; //4
+            int par3 = r.Next(0, 10); //5
+            int par4 = r.Next(0, 10); //6
+            int par5 = r.Next(0, 10); //7
+            string litselection = LiteralSelection.GetRandomLitSelectionString(); //8
 
-            return new List<object> { name, weight, prio, par1, par2, par3, par4, par5 };
+            return new List<object> { name, weight, prio, par1, par2, par3, par4, par5, litselection };
         }
        
         /// <summary>

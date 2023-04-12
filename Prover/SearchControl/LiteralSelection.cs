@@ -11,6 +11,24 @@ namespace Prover.SearchControl
     {
         public static ClauseSets.ClauseSet ClausesInProblems;
         static Random r = new Random();
+
+
+        private static List<string> LitSelectorsSrtring = new List<string>()
+        {
+            "first", "small", "large",
+                     "small2", "large2",
+                     "smallall", "largeall",
+                     "small2all", "large2all",
+            "random", "largerandom",
+            "mostfreq", "leastfreq",
+            "eq"
+        };
+
+
+        public static string GetRandomLitSelectionString()
+        {
+            return LitSelectorsSrtring[r.Next(LitSelectorsSrtring.Count)];
+        }
         public static LiteralSelector GetSelector(string funcName)
         {
             switch (funcName)
@@ -21,18 +39,34 @@ namespace Prover.SearchControl
                     return SmallesLit;
                 case "large":
                     return LargestLit;
+
                 case "small2":
                     return SmallesLit2;
                 case "large2":
                     return LargestLit2;
+
+                case "smallall":
+                    return SmallestAll;
+                case "small2all":
+                    return Smallest2All;
+
+                case "largeall":
+                    return LargestAll;
+                case "large2all":
+                    return Largest2All;
+
                 case "random":
                     return RandomSelection;
                 case "largerandom":
                     return LargestLitRandom;
+
                 case "eq":
                     return EqLit;
                 case "mostfreq":
                     return MostFreqLit;
+                case "leastfreq":
+                    return LeastFreqLit;
+
                 default:
                     throw new ArgumentException("Неизвестная функция выбора литералов");
             }
@@ -40,6 +74,15 @@ namespace Prover.SearchControl
         public static List<Literal> MostFreqLit(List<Literal> list)
         {
             var lit = ClausesInProblems.PredStats.MaxBy(x => x.Value).Key;
+            var res = list.Where(x => x.PredicateSymbol == lit).ToList();
+            if (res.Count > 0)
+                return res;
+            else return RandomSelection(list);
+        }
+
+        public static List<Literal> LeastFreqLit(List<Literal> list)
+        {
+            var lit = ClausesInProblems.PredStats.MinBy(x => x.Value).Key;
             var res = list.Where(x => x.PredicateSymbol == lit).ToList();
             if (res.Count > 0)
                 return res;
@@ -56,7 +99,7 @@ namespace Prover.SearchControl
         public static List<Literal> SmallesLit(List<Literal> list)
         {
             //list.Sort((x, y) => x.Weight(1, 1).CompareTo(y.Weight(1, 1)));
-            var x = list.MinBy(x => x.Weight(1, 1));
+            var x = list.MinBy(x => x.WeightCache.Weight11);
 
             return new List<Literal>() { x };
         }
@@ -64,7 +107,7 @@ namespace Prover.SearchControl
         public static List<Literal> SmallesLit2(List<Literal> list)
         {
             //list.Sort((x, y) => x.Weight(2, 1).CompareTo(y.Weight(2, 1)));
-            var x = list.MinBy(x => x.Weight(2, 1));
+            var x = list.MinBy(x => x.WeightCache.Weight21);
             return new List<Literal>() { x };
         }
 
@@ -90,40 +133,47 @@ namespace Prover.SearchControl
         public static List<Literal> LargestLitRandom(List<Literal> list)
         {
             //list.Sort((x, y) => y.Weight(1, 1).CompareTo(x.Weight(1, 1)));
-            var max = list.Select(x => x.Weight(1, 1)).Max();
-            var ret = list.Where(x => x.Weight(1, 1) == max).ToList();
+            var max = list.Select(x => x.WeightCache.Weight11).Max();
+            var ret = list.Where(x => x.WeightCache.Weight11 == max).ToList();
 
             return new List<Literal>() { ret[r.Next(ret.Count)] };
         }
 
         public static List<Literal> LargestLit2(List<Literal> list)
         {
-            var x = list.MaxBy(x => x.Weight(2, 1));
-            return new List<Literal>() { x };
+            list.Sort((x, y) => y.WeightCache.Weight21.CompareTo(y.WeightCache.Weight21));
+            //var x = list.MaxBy(x => x.Weight(1, 1));
+            return new List<Literal>() { list[list.Count - 1] };
         }
 
-        public static (int, int) VarSizeEval(Literal lit)
+        public static List<Literal> LargestAll(List<Literal> list)
         {
-            return (lit.CollectVars().Count, -lit.Weight(1, 1));
+            var max = list.Select(x => x.WeightCache.Weight11).Max();
+            return list.Where(x => x.WeightCache.Weight11 == max).ToList();
         }
 
-
-        public static List<Literal> NegativeLit(List<Literal> list)
+        public static List<Literal> Largest2All(List<Literal> list)
         {
-            return list.Where(x => x.Negative).ToList();
+            var max = list.Select(x => x.WeightCache.Weight21).Max();
+            return list.Where(x => x.WeightCache.Weight21 == max).ToList();
         }
 
-        public static List<Literal> NegativeLitLargest(List<Literal> list)
+        public static List<Literal> SmallestAll(List<Literal> list)
         {
-            var ret = list.Where(x => x.Negative).ToList();
-            return LargestLit2(ret);
+            var min = list.Select(x => x.WeightCache.Weight11).Min();
+            return list.Where(x => x.WeightCache.Weight11 == min).ToList();
         }
 
-        public static List<Literal> NegativeLitSmallest(List<Literal> list)
+        public static List<Literal> Smallest2All(List<Literal> list)
         {
-            var ret = list.Where(x => x.Negative).ToList();
-            return SmallesLit2(ret);
+            var min = list.Select(x => x.WeightCache.Weight21).Min();
+            return list.Where(x => x.WeightCache.Weight21 == min).ToList();
         }
+
+        //public static (int, int) VarSizeEval(Literal lit)
+        //{
+        //    return (lit.CollectVars().Count, -lit.Weight(1, 1));
+        //}
 
         public static List<Literal> RandomSelection(List<Literal> list)
         {

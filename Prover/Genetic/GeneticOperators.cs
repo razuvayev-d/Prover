@@ -27,8 +27,10 @@ namespace Prover.Genetic
                                 individual.InvalidFitness = true;
                                 if (j == 2)
                                     individual.genes[i][j] = PriorityFunctions.GetRandomFunctionName();
-                                else // j == 0
-                                    individual.genes[i][j] = Extensions.GetRandomEvaluationFunction();                               
+                                else if (j == 0) // j == 0
+                                    individual.genes[i][j] = Extensions.GetRandomEvaluationFunction();      
+                                 
+
 
                             }
                             else if (param is int)
