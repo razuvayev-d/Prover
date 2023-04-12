@@ -28,10 +28,9 @@ namespace Prover.Genetic
                                 if (j == 2)
                                     individual.genes[i][j] = PriorityFunctions.GetRandomFunctionName();
                                 else if (j == 0) // j == 0
-                                    individual.genes[i][j] = Extensions.GetRandomEvaluationFunction();      
-                                 
-
-
+                                    individual.genes[i][j] = Extensions.GetRandomEvaluationFunction(); 
+                                else // j== 8
+                                    individual.genes[i][j] = LiteralSelection.GetRandomLitSelectionString();                                 
                             }
                             else if (param is int)
                             {

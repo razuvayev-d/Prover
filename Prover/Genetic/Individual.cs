@@ -87,7 +87,7 @@ namespace Prover.Genetic
         //    ByDerivationDepth,
         //    ByDerivationSize
         //}
-        private (ClauseEvaluationFunction, int) CreateEvalFunct(List<object> param)
+        private (ClauseEvaluationFunction, int, LiteralSelector) CreateEvalFunct(List<object> param)
         {
             //switch ((string)param[0])
             //{
@@ -107,22 +107,25 @@ namespace Prover.Genetic
             Func<object, int> ToInt = (obj) => Convert.ToInt32(obj.ToString());
         
             Predicate<Clause> priof = PriorityFunctions.PriorityFunctionSwitch(param[2].ToString());
+            LiteralSelector litsel = LiteralSelection.GetSelector(param[8].ToString());
             switch (param[0].ToString())
             {
                 case "FIFOPrio":
-                    return (new FIFOEvaluationPrio(priof), ToInt(param[1]));
+                    return (new FIFOEvaluationPrio(priof), ToInt(param[1]), litsel);
                 case "LIFOPrio":
-                    return (new LIFOEvaluationPrio(priof), ToInt(param[1]));
+                    return (new LIFOEvaluationPrio(priof), ToInt(param[1]), litsel);
                 case "ClauseWeight":
-                    return (new ClauseWeight(priof, ToInt(param[3]), ToInt(param[4]), ToInt(param[5])), ToInt(param[1]));
+                    return (new ClauseWeight(priof, ToInt(param[3]), ToInt(param[4]), ToInt(param[5])), ToInt(param[1]), litsel);
                 case "ByDerivationDepth":
-                    return (new ByDerivationDepth(priof), Convert.ToInt32(param[1].ToString()));
+                    return (new ByDerivationDepth(priof), Convert.ToInt32(param[1].ToString()), litsel);
                 case "ByLiteralNumber":
-                    return (new ByLiteralNumber(priof), ToInt(param[1]));
+                    return (new ByLiteralNumber(priof), ToInt(param[1]), litsel);
                 case "ByDerivationSize":
-                    return (new ByDerivationSize(priof), ToInt(param[1]));
+                    return (new ByDerivationSize(priof), ToInt(param[1]), litsel);
                 case "RefinedWeight":
-                    return (new RefinedWeight(priof, ToInt(param[3]), ToInt(param[4]), ToInt(param[5]), ToInt(param[6]), ToInt(param[7])),  ToInt(param[1]));
+                    return (new RefinedWeight(priof, ToInt(param[3]), ToInt(param[4]), ToInt(param[5]), ToInt(param[6]), ToInt(param[7])), 
+                        ToInt(param[1]), 
+                        litsel);
                 default: throw new ArgumentException("Нет такой функции " + param[0].ToString());
             }
 
