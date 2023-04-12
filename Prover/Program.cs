@@ -30,7 +30,7 @@ namespace Prover
         static bool statonly = false;
         static void Main(string[] args)
         {
-            //GeneticBreeding();
+           //GeneticBreeding();
             //
             string[] files = Directory.GetFiles(problemsDirectory);
             var s = problemsDirectory + "SYN941+1.p";
