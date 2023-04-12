@@ -20,7 +20,7 @@ namespace Prover.SearchControl
                      "smallall", "largeall",
                      "small2all", "large2all",
             "random", "largerandom",
-            "mostfreq", "leastfreq",
+            //"mostfreq", "leastfreq",
             "eq", "noselection"
         };
 
@@ -78,20 +78,28 @@ namespace Prover.SearchControl
         public static List<Literal> NoSelection(List<Literal> list) { return list; }
         public static List<Literal> MostFreqLit(List<Literal> list)
         {
-            var lit = ClausesInProblems.PredStats.MaxBy(x => x.Value).Key;
-            var res = list.Where(x => x.PredicateSymbol == lit).ToList();
-            if (res.Count > 0)
-                return res;
-            else return RandomSelection(list);
+            if (ClausesInProblems.PredStats.Count > 0)
+            {
+                var lit = ClausesInProblems.PredStats.MaxBy(x => x.Value).Key;
+                var res = list.Where(x => x.PredicateSymbol == lit).ToList();
+                if (res.Count > 0)
+                    return res;
+                else return RandomSelection(list);
+            }
+            return RandomSelection(list);
         }
 
         public static List<Literal> LeastFreqLit(List<Literal> list)
         {
-            var lit = ClausesInProblems.PredStats.MinBy(x => x.Value).Key;
-            var res = list.Where(x => x.PredicateSymbol == lit).ToList();
-            if (res.Count > 0)
-                return res;
-            else return RandomSelection(list);
+            if (ClausesInProblems.PredStats.Count > 0)
+            {
+                var lit = ClausesInProblems.PredStats.MinBy(x => x.Value).Key;
+                var res = list.Where(x => x.PredicateSymbol == lit).ToList();
+                if (res.Count > 0)
+                    return res;
+                else return RandomSelection(list);
+            }
+            return RandomSelection(list);
         }
 
         /// <summary>

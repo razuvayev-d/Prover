@@ -38,6 +38,7 @@ namespace Prover.Genetic
                                 {
                                     individual.InvalidFitness = true;
                                     individual.genes[i][j] = random.NextDouble() > 0.5 ? (int)param + 2 : (int)param - 2;
+                                    if ((int)individual.genes[i][1] <= 0) individual.genes[i][1] = 3;
                                 }
                             }
                         }

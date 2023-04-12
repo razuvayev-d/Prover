@@ -151,7 +151,8 @@ namespace Prover.ProofStates
             {
                 if (token.IsCancellationRequested)
                 {
-                    statistics.search_depth = unprocessed.MaxClauseDepth;
+                    statistics.search_depth = Math.Max(unprocessed.MaxClauseDepth, processed.MaxClauseDepth);
+                    //Console.WriteLine("STATS: " + statistics.search_depth);
                     return null;
                 }
                 //unprocessed.clauses = unprocessed.clauses.Distinct().ToList();
@@ -161,11 +162,12 @@ namespace Prover.ProofStates
                 Clause res = ProcessClause();
                 if (res is not null)
                 {
-                    statistics.search_depth = unprocessed.MaxClauseDepth;
+                    statistics.search_depth = Math.Max(unprocessed.MaxClauseDepth, processed.MaxClauseDepth);
+                    if(res.Depth > statistics.search_depth) statistics.search_depth = res.Depth;
                     return res;
                 }
             }
-            statistics.search_depth = unprocessed.MaxClauseDepth;
+            statistics.search_depth = Math.Max(unprocessed.MaxClauseDepth, processed.MaxClauseDepth);
             return null;
         }
 

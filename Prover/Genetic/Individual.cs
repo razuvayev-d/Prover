@@ -12,6 +12,32 @@ namespace Prover.Genetic
         public List<List<object>> genes { get; set; } = new List<List<object>>(10);//Каждый элемент список вида [name, weight, par1, par2 ... ]
         public int Fitness { get; set; }
         public bool InvalidFitness { get; set; } = true;
+
+
+        public Individual Clone()
+        {
+            Individual clone = new Individual();
+            clone.Fitness = Fitness;
+            clone.InvalidFitness = InvalidFitness;
+
+            var cgenes = new List<List<object>>(10);
+
+            foreach (var gene in this.genes)
+            {
+                var a = new List<object>();
+                cgenes.Add(a);
+                for (int i = 0; i < gene.Count; i++)//9
+                {
+                    if (i == 0 || i == 2 || i == 8)
+                    {
+                        a.Add(gene[i].ToString());
+                    }
+                    else a.Add(Convert.ToInt32(gene[i].ToString()));
+                }
+            }
+            clone.genes = cgenes;
+            return clone;
+        }
         public Individual() { }
 
         public Individual(List<List<object>> genes, int Fitness, bool InvalidF)
@@ -62,6 +88,7 @@ namespace Prover.Genetic
         public EvaluationScheme CreateEvalStructure()
         {
             var heuristics = new List<(ClauseEvaluationFunction, int, LiteralSelector)>();
+            if (genes.Count == 0) throw new Exception("DDDD");
             for (int i = 0; i < genes.Count; i++)
             {
                 heuristics.Add(CreateEvalFunct(genes[i]));

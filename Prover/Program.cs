@@ -20,7 +20,7 @@ namespace Prover
     class Program
     {
         static int Count = 0;
-        static string problemsDirectory = @"./problems/"; // @"./TrainTask"; //@"./problems/";
+        static string problemsDirectory = @"./TrainTask";// @"./problems/"; // @"./TrainTask"; //@"./problems/";
         static string answersDirectory = @"./answers/";
 
         static List<string> solved = new List<string>();
@@ -30,7 +30,7 @@ namespace Prover
         static bool statonly = false;
         static void Main(string[] args)
         {
-           //GeneticBreeding();
+            //GeneticBreeding();
             //
             string[] files = Directory.GetFiles(problemsDirectory);
             var s = problemsDirectory + "SYN941+1.p";
@@ -51,11 +51,12 @@ namespace Prover
             //param.literal_selection = "large2"; //"largerandom";// largerandom"; //"large";
             //param.literal_selection = "mostfreq";
 
-            param.heuristics = Heuristics.Heuristics.PickGiven5;
-            param.timeout = 5000;
+            param.heuristics = SearchControl.Heuristics.PickGiven5;
+            param.timeout = 3000;
+            param.literal_selection = "large";
             //param.degree_of_parallelism = 1;
             //param.timeout = 105000;
-           // FOFFullClear(param.file, param);
+            // FOFFullClear(param.file, param);
 
 
             //if (args[0] == "-i") indexing = true;
@@ -66,14 +67,16 @@ namespace Prover
             //param.backward_subsumption = true;
             //param.forward_subsumption = true;
             //param.simplify = false;
+            //param.simplify = false;
             foreach (string file in files)
                 FOFFullClear(file, param);
             //////Rating(file);
 
-            Console.ForegroundColor = ConsoleColor.Green;
-            Console.WriteLine("Solved: {0} / {1}", Count, files.Length);
             Console.WriteLine("Solved problems:");
             Console.ResetColor();
+            Console.ForegroundColor = ConsoleColor.Green;
+            Console.WriteLine("Solved: {0} / {1}", Count, files.Length);
+  
 
             foreach (var x in solved)
             {
@@ -140,7 +143,7 @@ namespace Prover
                 bool complete = tsk.Wait(param.timeout);
                 stopwatch.Stop();
                 token.Cancel();
-
+                tsk.Wait();
                 if (complete)
                 {
                     res = tsk.Result;
@@ -164,6 +167,7 @@ namespace Prover
 
             if (res is not null && res.IsEmpty)
             {
+                solved.Add(Path);
                 Count++;
                 state.statistics.depth = res.Depth;
             }
@@ -186,7 +190,7 @@ namespace Prover
         static void GeneticBreeding()
         {
             GeneticOptions options = new GeneticOptions();
-            options.Size = 35;
+            options.Size = 25;
             options.MaxNumberOfGeneration = 50;
             options.GenerationTimeOutThreshold = 100;
             options.probWeight = 0.5;
@@ -200,7 +204,7 @@ namespace Prover
                 delete_tautologies = true,
                 backward_subsumption = true,
                 forward_subsumption = true,
-                literal_selection = "large"
+                //literal_selection = "large"
             };
 
             GeneticAlgorithm algorithm = new GeneticAlgorithm(options, sp);

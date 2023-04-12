@@ -40,7 +40,12 @@ namespace Prover.Genetic
             //});
             foreach (var file in files)
             {
-                if (TrySolve(file, individual, timeout, param)) result++;
+                if (TrySolve(file, individual, timeout, param))
+                {
+                    result++;
+                    //Console.WriteLine(file);
+                }
+                   
             }
 
             return result;
@@ -75,6 +80,7 @@ namespace Prover.Genetic
             tsk.Start();
             bool complete = tsk.Wait(timeout);
             token.Cancel();
+            tsk.Wait(15);
             Clause res;
             if (complete)
                 res = tsk.Result;
@@ -138,7 +144,22 @@ namespace Prover.Genetic
 
                 Console.WriteLine("\n\nGeneration number: " + generation.ToString());
 
-                var bests = population.individuals.Where(x => x.Fitness == population.MinFitness).Take(5).ToList();
+                List<Individual> clone = new List<Individual>(population.Size);
+                for (int i = 0; i < population.individuals.Count; i++)
+                    clone.Add(null);
+
+                Parallel.For(0, Options.Size, poptions, i =>
+                {
+                    clone[i] =population.individuals[i].Clone();
+                });
+                //for (int i = 0; i < population.individuals.Count; i++)
+                //    clone.Add(population.individuals[i].Clone());
+
+
+                //    var bests = population.individuals.Where(x => x.Fitness == population.MinFitness).Take(2).ToList();
+
+                //for (int i = 0; i < bests.Count; i++)
+                //    bests[i] = bests[i].Clone();
 
                 //Sequental mutation
                 //for (int i = 0; i < Options.Size; i++)
@@ -171,6 +192,22 @@ namespace Prover.Genetic
                         newIndividuals.Add(ind);
                     }
                 });
+
+                //Parallel.For(0, Options.Size, poptions,
+                //    () => new List<Individual>(), //локальный накопитель
+                //    (i, loop, localStorage) =>
+                //    {
+                //        var ind = GeneticOperators.Crossover(population.individuals[random.Next(Options.Size)], population.individuals[random.Next(Options.Size)], Options.Favor);
+                //        localStorage.Add(ind);
+                //        return localStorage;
+                //    },
+                //    (localStorage) =>
+                //    {
+                //        lock ("kl")
+                //            newIndividuals.AddRange(localStorage);
+                //    });
+
+
                 //newIndividuals.Distinct();
                 List<int> fitness = new List<int>();
 
@@ -182,10 +219,11 @@ namespace Prover.Genetic
                 Parallel.For(0, Options.Size /*(int)Math.Min(population.Size * 1.5, newIndividuals.Count) /*newIndividuals.Count*/, poptions, i =>
                 {
                     newIndividuals[i].Fitness = Fitness.Calculate(newIndividuals[i], timeout, SearchParams);
+                    //newIndividuals[i].InvalidFitness = false;
                 });
-                newIndividuals.AddRange(population.individuals);
+                //newIndividuals.AddRange(population.individuals);
 
-                newIndividuals.AddRange(bests);
+                newIndividuals.AddRange(clone);
 
                 newPopulation.individuals = newIndividuals;
 

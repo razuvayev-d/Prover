@@ -19,6 +19,11 @@ namespace Prover.SearchControl
                                                                            (new ByLiteralNumber(PriorityFunctions.PreferAll), 1)
                                                                             });
 
+        public static EvaluationScheme PickGiven5Lits = new EvaluationScheme(new List<(ClauseEvaluationFunction, int, LiteralSelector)> {
+                                                                                (new SymbolCountEvaluation(2, 1), 5, LiteralSelection.MostFreqLit),
+                                                                                (new FIFOEvaluation(), 1, LiteralSelection.LeastFreqLit)
+                        }, "PickGiven5");
+
 
         /// <summary>
         /// Чередование стратегии предпочтения более коротких дизъюнктов и FIFO с соотношением весов 5 к 1.
