@@ -17,6 +17,11 @@ namespace Prover.ClauseSets
             this.EvalFunctions = evalFunctions;
         }
 
+        public void SetSelector(LiteralSelector selector)
+        {
+            EvalFunctions.SetSelector(selector);
+        }
+
         /// <summary>
         /// Добавляем клаузу в набор. Если в наборе есть эвристики, результаты оценки добавляются в клаузу.
         /// </summary>
@@ -53,6 +58,11 @@ namespace Prover.ClauseSets
             clauses.RemoveAt(best);
             return ret;
         }
+
+        
+        
+
+        
         /// <summary>
         /// Извлекает и возвращает следующую лучшую клаузу в соответствии со схемой оценки.
         /// </summary>
@@ -61,5 +71,7 @@ namespace Prover.ClauseSets
         {
             return ExtractBestByEval(EvalFunctions.NextEval);
         }
+
+        public LiteralSelector Selector => EvalFunctions.CurrentSelector;
     }
 }

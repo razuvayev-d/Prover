@@ -31,13 +31,6 @@ namespace Prover.ProofStates
 
         private Barrier barrier; 
 
-        //public int initial_clause_count;
-        //public int proc_clause_count = 0;
-        //public int factor_count = 0;
-        //public int resolvent_count = 0;
-        //public int tautologies_deleted = 0;
-        //public int forward_subsumed = 0;
-        //public int backward_subsumed = 0;
         bool silent;
         public ProofState(SearchParams Params, ClauseSet clauses, bool silent = false, bool indexed = false)
         {
@@ -58,6 +51,7 @@ namespace Prover.ProofStates
             if(Params.literal_selection is not null)
             {
                 Selector = LiteralSelection.GetSelector(Params.literal_selection);
+                unprocessed.SetSelector(Selector);
             }
 
             LiteralSelection.ClausesInProblems = processed;
@@ -106,10 +100,13 @@ namespace Prover.ProofStates
                 //Console.WriteLine("BACKWARD " + tmp);
             }
 
-            if (Params.literal_selection is not null)
-            {
-                given_clause.SelectInferenceLiterals(Selector);
-            }
+            given_clause.SelectInferenceLiterals(unprocessed.Selector);
+
+            //if (Params.literal_selection is not null)
+            //{
+               
+            //    given_clause.SelectInferenceLiterals(Selector);
+            //}
 
             ClauseSet newClauses = new ClauseSet();
             ClauseSet factors = ResControl.ComputeAllFactors(given_clause);

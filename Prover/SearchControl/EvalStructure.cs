@@ -14,7 +14,7 @@ namespace Prover.SearchControl
         public List<ClauseEvaluationFunction> EvalFunctions = null;
         public List<int> EvalVec = null;
 
-        public List<LiteralSelector> Selector = null;
+        public List<LiteralSelector> Selectors = new List<LiteralSelector>();
 
         int current = 0;
         int currentCount = 0;
@@ -43,13 +43,21 @@ namespace Prover.SearchControl
             if (eval_descriptor.Count == 0) throw new Exception("eval_descriptoir is empty!");
             EvalFunctions = new List<ClauseEvaluationFunction>();
             EvalVec = new List<int>();
+            
             foreach (var eval in eval_descriptor)
             {
                 EvalFunctions.Add(eval.Item1);
                 EvalVec.Add(eval.Item2);
+                Selectors.Add(LiteralSelection.NoSelection);
             }
             currentCount = EvalVec[0];
             this.Name = name;
+        }
+
+        public void SetSelector(LiteralSelector selector)
+        {
+            for (int i = 0; i < Selectors.Count; i++)
+                Selectors[i] = (selector);
         }
 
         public EvaluationScheme(List<(ClauseEvaluationFunction, int, LiteralSelector)> eval_descriptor, string name = null)
@@ -61,6 +69,7 @@ namespace Prover.SearchControl
             {
                 EvalFunctions.Add(eval.Item1);
                 EvalVec.Add(eval.Item2);
+                Selectors.Add(eval.Item3);
             }
             currentCount = EvalVec[0];
             this.Name = name;
@@ -83,6 +92,8 @@ namespace Prover.SearchControl
                 evals.Add(function.Call(clause));
             return evals;
         }
+
+        public LiteralSelector CurrentSelector => Selectors[current];
 
         public int NextEval
         {

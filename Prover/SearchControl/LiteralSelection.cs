@@ -21,7 +21,7 @@ namespace Prover.SearchControl
                      "small2all", "large2all",
             "random", "largerandom",
             "mostfreq", "leastfreq",
-            "eq"
+            "eq", "noselection"
         };
 
 
@@ -67,10 +67,15 @@ namespace Prover.SearchControl
                 case "leastfreq":
                     return LeastFreqLit;
 
+                case "noselection":
+                    return NoSelection;
+
                 default:
                     throw new ArgumentException("Неизвестная функция выбора литералов");
             }
         }
+
+        public static List<Literal> NoSelection(List<Literal> list) { return list; }
         public static List<Literal> MostFreqLit(List<Literal> list)
         {
             var lit = ClausesInProblems.PredStats.MaxBy(x => x.Value).Key;
