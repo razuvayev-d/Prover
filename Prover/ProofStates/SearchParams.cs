@@ -1,4 +1,4 @@
-﻿using Prover.Heuristics;
+﻿using Prover.SearchControl;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -9,7 +9,7 @@ namespace Prover.ProofStates
 {
     internal class SearchParams
     {
-        public EvaluationScheme heuristics { get; set; } = Prover.Heuristics.Heuristics.PickGiven5;
+        public EvaluationScheme heuristics { get; set; } = Prover.SearchControl.Heuristics.PickGiven5;
         public bool delete_tautologies { get; set; } = false;
         public bool forward_subsumption { get; set; } = false;
         public bool backward_subsumption { get; set; } = false;

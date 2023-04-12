@@ -95,12 +95,12 @@ namespace ProverTests
         [TestMethod]
         public void TestMethod3()
         {
-            Assert.AreNotEqual(Resolution.Apply(c2, 0, c3, 0), null);
+            Assert.AreNotEqual(Resolution.Apply(c2, 0, c3, 1), null);
         }
         [TestMethod]
         public void TestMethod4()
         {
-            Assert.AreNotEqual(Resolution.Apply(c6, 0, c7, 0), null);
+            Assert.AreNotEqual(Resolution.Apply(c6, 0, c7, 1), null);
         }
 
         [TestMethod]

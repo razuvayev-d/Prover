@@ -9,7 +9,7 @@
   <ItemGroup>
     <Compile Remove="DataStructures\Class1.cs" />
     <Compile Remove="DataStructures\NodeTransform.cs" />
-    <Compile Remove="Heuristics\FIFOEvaluation.cs" />
+    <Compile Remove="SearchControl\FIFOEvaluation.cs" />
   </ItemGroup>
 
   <ItemGroup>

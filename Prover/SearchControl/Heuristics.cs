@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace Prover.Heuristics
+namespace Prover.SearchControl
 {
     public static class Heuristics
     {

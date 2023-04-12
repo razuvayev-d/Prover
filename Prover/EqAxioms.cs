@@ -19,8 +19,7 @@ namespace Prover
             {
                 while (!lex.TestTok(TokenType.EOFToken))
                 {
-                    Clause c = new Clause();
-                    c = Clause.ParseClause(lex);
+                    Clause c = Clause.ParseClause(lex);
                     c.TransformOperation = "eq_axiom";
                     res.Add(c);
                 }
@@ -28,6 +27,7 @@ namespace Prover
             catch (Exception pe)
             {
                 Console.WriteLine("Error in EqAxioms.generateEquivAxioms(): parse error");
+                Console.WriteLine(pe.Message);
             }
             return res;
         }

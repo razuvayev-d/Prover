@@ -35,8 +35,8 @@ namespace Prover.DataStructures
             set { constant = value; }
         }
 
-        static Term falseConstant = new Term("$false", new List<Term>(), constant: true);
-        static Term trueConstant = new Term("$true", new List<Term>(), constant: true);
+        static readonly Term falseConstant = new("$false", new List<Term>(), constant: true);
+        static readonly Term trueConstant = new("$true", new List<Term>(), constant: true);
         public static Term False => falseConstant;
         public static Term True => trueConstant;
 
@@ -230,7 +230,7 @@ namespace Prover.DataStructures
 
         public override Signature CollectSig(Signature sig = null)
         {
-            if (sig is null) sig = new Signature();
+            sig ??= new Signature();
 
             if (IsCompound)
             {

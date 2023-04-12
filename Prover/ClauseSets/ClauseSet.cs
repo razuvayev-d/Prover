@@ -15,6 +15,19 @@ namespace Prover.ClauseSets
 
         public int Count => clauses.Count;
 
+        public int MaxClauseDepth
+        {
+            get
+            {
+                int max = 0;
+                for (int i = 0; i < clauses.Count; i++)
+                {
+                    if (clauses[i].Depth > max) max = clauses[i].Depth;
+                }
+                return max;
+            }
+        }
+                
         public ClauseSet(List<Clause> clauses)
         {
             this.clauses = clauses;
@@ -115,11 +128,11 @@ namespace Prover.ClauseSets
 
 
         /// <summary>
-        /// Given a formula in CNF, convert it to a set of clauses.
+        /// Преобразует формулу в КНФ в клаузы
         /// </summary>
         /// <param name="formula"></param>
         /// <returns></returns>
-        public static List<Clause> FormulaCNFSplit(WFormula f)
+        public static List<Clause> FormulaCNFSplitToClause(WFormula f)
         {
             var matrix = f.Formula.GetMatrix();
             var res = new List<Clause>();
@@ -131,7 +144,9 @@ namespace Prover.ClauseSets
                 var litlist = new List<Literal>();
                 foreach (var l in disj)
                     litlist.Add(l as Literal);
-                var clause = new Clause(litlist, f.Type);
+                var clause = new Clause(litlist);
+                if (f.Type == "negated_conjecture")
+                    clause.SetFromConjectureFlag();
                 res.Add(clause);
             }
             return res;

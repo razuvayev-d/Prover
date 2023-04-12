@@ -94,7 +94,7 @@ namespace Prover.DataStructures
         public List<Clause> Clausify()
         {
             var wf = WFormulaCnf(this);
-            var clauses = ClauseSet.FormulaCNFSplit(wf);
+            var clauses = ClauseSet.FormulaCNFSplitToClause(wf);
 
             foreach (var c in clauses)
             {
@@ -162,7 +162,7 @@ namespace Prover.DataStructures
                 wf = tmp;
             }
 
-            f = Formula.formulaShiftQuantorsOut(f);
+            f = Formula.FormulaShiftQuantorsOut(f);
             if (!f.Equals(wf.Formula))
             {
                 tmp = new WFormula(f, wf.type);

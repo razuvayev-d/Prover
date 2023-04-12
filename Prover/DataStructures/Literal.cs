@@ -12,7 +12,7 @@ namespace Prover.DataStructures
     /// уже допускаем равносильные атомы с инфиксными "=" или "!="
     /// и нормализуем их при создании.
     /// </summary>
-    public class Literal : Formula, IComparable
+    public class Literal : Formula
     {
 
         public struct LiteralCache
@@ -33,6 +33,9 @@ namespace Prover.DataStructures
             }
         }
 
+        /// <summary>
+        /// Кэш весов
+        /// </summary>
         public LiteralCache WeightCache;
 
         public bool Negative { get; private set; }
@@ -54,8 +57,8 @@ namespace Prover.DataStructures
 
         public List<Term> Arguments => arguments;
 
-        static Literal tru = new Literal("$true", new List<Term>()/*{ Term.True }*/);
-        static Literal fal = new Literal("$false", new List<Term>() /*{ Term.False }*/);
+        static Literal tru = new Literal("$true", new List<Term>());
+        static Literal fal = new Literal("$false", new List<Term>());
 
         public static Literal True => tru;
         public static Literal False => fal;
@@ -209,42 +212,11 @@ namespace Prover.DataStructures
                 vars.AddRange(t.CollectVars());
             return vars;
         }
-        /// <summary>
-        /// Для случая когда литерал это кванторная переменная. Возвращает единственный терм. 
-        /// Если терм не единственный бросает исключение.
-        /// </summary>
-        //public Term QuantorVar
-        //{
-        //    get
-        //    {
-        //        return new Term(Name, null);
-        //        if (arguments.Count > 1)
-        //            throw new Exception("Литерал кванторной переменной имеет больше одного аргумента");
-        //        return arguments[0];
-        //    }
-        //}
 
-        public bool IsPropTrue
-        {
-            get
-            {
-                //if (arguments is null) return false;
-                //if (arguments.Count != 1) return false; // Если аргументов много то очевидно не коннстанта
-                return Equals(True);
-            }
-        }
+        public bool IsPropTrue => Equals(True);
+  
 
-        public bool IsPropFalse
-        {
-            get
-            {
-                //if (arguments is null) return false;
-                //if (arguments.Count != 1) return false; // Если аргументов много то очевидно не константа
-                return Equals(False);
-                return Negative && Term.AtomIsConstTrue(arguments[0])
-                    || !Negative && Term.AtomIsConstFalse(arguments[0]);
-            }
-        }
+        public bool IsPropFalse => Equals(False);
 
         public override Signature CollectSig(Signature sig = null)
         {
@@ -458,6 +430,8 @@ namespace Prover.DataStructures
         }
 
         public bool IsEquational => predicateSymbol == "=" || predicateSymbol == "!=";
+
+
         public Literal DeepCopy()
         {
             List<Term> newlist = new List<Term>(arguments.Count);
@@ -467,7 +441,7 @@ namespace Prover.DataStructures
         }
 
         /// <summary>
-        /// TODO: Хеш-код не зависит от знака! 
+        /// Вычисляет хеш-код
         /// </summary>
         /// <returns></returns>
         public override int GetHashCode()
@@ -480,6 +454,12 @@ namespace Prover.DataStructures
             return total;
         }
 
+        /// <summary>
+        /// Сравнивает два литерала по следующим правилам:
+        /// 1) Положительный всегда больше отрицательного
+        /// 2) Идущий по алфавиту раньше предикатный символ меньше идущего по алфавиту позже
+        /// 3) Если знаки и предикатные символы равны, то сравнение по Literal.Weight(2, 1)
+        /// </summary>
         public int CompareTo(object obj)
         {
             Literal other = obj as Literal;

@@ -38,7 +38,7 @@ namespace Prover.ProofStates
             newClauses.AddRange(factors);
             ClauseSet resolvents = ResControl.ComputeAllResolvents(given_clause, processed);
 
-            resolvents.clauses.Distinct();
+            //resolvents.clauses.Distinct();
             newClauses.AddRange(resolvents);
 
             processed.AddClause(given_clause);

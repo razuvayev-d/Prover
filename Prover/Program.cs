@@ -92,7 +92,7 @@ namespace Prover
             {
                 backward_subsumption = true,
                 forward_subsumption = true,
-                heuristics = Heuristics.Heuristics.PickGiven5,
+                heuristics = SearchControl.Heuristics.PickGiven5,
                 delete_tautologies = true,
                 timeout = 100000
             };
@@ -165,7 +165,7 @@ namespace Prover
             if (res is not null && res.IsEmpty)
             {
                 Count++;
-                state.statistics.depth = res.depth;
+                state.statistics.depth = res.Depth;
             }
             state.statistics.ElapsedTime = stopwatch.Elapsed.TotalMilliseconds;
             report.Res = res;
@@ -222,7 +222,7 @@ namespace Prover
             {
                 backward_subsumption = true,
                 forward_subsumption = true,
-                heuristics = Heuristics.Heuristics.BreedingBestPrio,
+                heuristics = SearchControl.Heuristics.BreedingBestPrio,
                 delete_tautologies = true,
                 timeout = 100000
             };
@@ -339,7 +339,7 @@ namespace Prover
                 foreach (string s in str)
                     proof.Append(i++ + ". " + s + "\n");
 
-                var report = new Report(state, res.depth)
+                var report = new Report(state, res.Depth)
                 {
                     ProblemName = System.IO.Path.GetFileName(Path),
                     Formula = formulastr,
@@ -555,7 +555,7 @@ namespace Prover
             foreach (string s in str)
                 proof.Append(i++ + ". " + s + "\n");
 
-            var report = new Report(state, res.depth)
+            var report = new Report(state, res.Depth)
             {
                 ProblemName = System.IO.Path.GetFileName(Path),
                 Formula = formulastr,
@@ -596,7 +596,7 @@ namespace Prover
                 forward_subsumption = true,
                 //backward_subsumption = true
             };
-            param.heuristics = Heuristics.Heuristics.PickGiven5;
+            param.heuristics = SearchControl.Heuristics.PickGiven5;
             string TPTPStatus;
             using (StreamReader sr = new StreamReader(Path))
             {
@@ -694,7 +694,7 @@ namespace Prover
             foreach (string s in str)
                 proof.Append(i++ + ". " + s + "\n");
 
-            var report = new Report(state, res.depth)
+            var report = new Report(state, res.Depth)
             {
                 ProblemName = System.IO.Path.GetFileName(Path),
                 Formula = formulastr,

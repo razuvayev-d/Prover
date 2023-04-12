@@ -2,7 +2,7 @@
 using System;
 using System.Collections.Generic;
 
-namespace Prover.Heuristics
+namespace Prover.SearchControl
 {
     internal static class PriorityFunctions
     {

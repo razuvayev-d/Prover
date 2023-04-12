@@ -5,19 +5,6 @@ using System.Linq;
 
 namespace Prover.DataStructures
 {
-    enum OpType
-    {
-        Negation,
-        Conjunction,
-        Disjunction,
-        Implication,
-        Biconditional,
-        Exist,
-        All,
-        NoOp
-    }
-
-
     public partial class Formula
     {
         protected string op;
@@ -31,21 +18,21 @@ namespace Prover.DataStructures
             this.subFormula2 = sub2;
         }
 
-        public bool IsLiteral => this is Literal;
-        public bool IsUnary => subFormula2 is null;
+        private bool IsLiteral => this is Literal;
+        private bool IsUnary => subFormula2 is null;
 
-        public bool IsBinary => (subFormula1 is not null) && (subFormula2 is not null) && !IsQuantified;
+        private bool IsBinary => (subFormula1 is not null) && (subFormula2 is not null) && !IsQuantified;
 
-        public bool IsQuantified => op == "!" || op == "?";
+        private bool IsQuantified => op == "!" || op == "?";
 
-        public bool HasSubform1 => (subFormula1 is not null); //IsUnary || IsBinary;
+        private bool HasSubform1 => (subFormula1 is not null); //IsUnary || IsBinary;
 
-        public bool HasSubform2 => IsQuantified || IsBinary;
+        private bool HasSubform2 => IsQuantified || IsBinary;
 
-        public Formula Child1 => subFormula1;
-        public Formula Child2 => subFormula2;
+        protected Formula Child1 => subFormula1;
+        protected Formula Child2 => subFormula2;
 
-
+   
         public override string ToString()
         {
             string arg1 = null;
@@ -82,7 +69,7 @@ namespace Prover.DataStructures
         /// <summary>
         /// Разбираем остальную часть формулы которая начинается с head
         /// </summary>
-        public static Formula ParseAssocFormula(Lexer lexer, Formula head)
+        private static Formula ParseAssocFormula(Lexer lexer, Formula head)
         {
             var op = lexer.LookLit();
             while (lexer.TestLit(op))
@@ -94,7 +81,7 @@ namespace Prover.DataStructures
             return head;
         }
 
-        public static Formula ParseUnitaryFormula(Lexer lexer)
+        private static Formula ParseUnitaryFormula(Lexer lexer)
         {
             if (lexer.TestTok(TokenType.Universal, TokenType.Existential))
             {
@@ -128,7 +115,7 @@ namespace Prover.DataStructures
         /// </summary>
         /// <param name="lexer"></param>
         /// <param name="quantor"></param>
-        public static Formula ParseQuatified(Lexer lexer, string quantor)
+        private static Formula ParseQuatified(Lexer lexer, string quantor)
         {
             lexer.CheckTok(TokenType.IdentUpper);
             var v = Term.ParseTerm(lexer);//.ToLitera(); //!
@@ -148,7 +135,7 @@ namespace Prover.DataStructures
         }
 
         /// <summary>
-        ///  Возвращает множдество всех предикативных и функциональных символов в этой формуле
+        ///  Возвращает множество всех предикативных и функциональных символов в этой формуле
         /// </summary>
         public virtual Signature CollectSig(Signature sig = null)
         {
@@ -453,7 +440,7 @@ namespace Prover.DataStructures
         /// Возвращает набор всех свободных переменных в формуле
         /// </summary>
         /// <returns></returns>
-        public List<Term> CollectFreeVars()
+        private List<Term> CollectFreeVars()
         {
             List<Term> res;
             if (IsLiteral)

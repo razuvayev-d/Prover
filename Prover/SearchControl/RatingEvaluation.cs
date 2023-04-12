@@ -1,7 +1,7 @@
 ﻿using Prover.DataStructures;
 using System.Collections.Generic;
 
-namespace Prover.Heuristics
+namespace Prover.SearchControl
 {
     internal class RatingEvaluation : ClauseEvaluationFunction
     {

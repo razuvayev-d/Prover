@@ -1,5 +1,5 @@
 ﻿using Prover.DataStructures;
-using Prover.Heuristics;
+using Prover.SearchControl;
 using Prover.ProofStates;
 using Prover.Tokenization;
 using System;
