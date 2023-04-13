@@ -5,13 +5,19 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Runtime.Serialization;
 using System.Text;
+using System.Text.Encodings.Web;
+using System.Text.Json;
 using System.Text.Json.Serialization;
 
 namespace Prover
 {
     public class Statistics
     {
+        public string Name { get; } = null;
+
+        public bool ProofFound { get; set; } = false;
         [JsonPropertyName("Elapsed time")]
         public double ElapsedTime { get; set; } = 0;
         [JsonPropertyName("Initial clauses")]
@@ -24,6 +30,13 @@ namespace Prover
         public int backward_subsumed { get; set; } = 0;
         public int depth { get; set; } = 0;
         public int search_depth { get; set; } = 0;
+
+        public int inference_length { get; set; } = 0;
+
+        public Statistics(string name)
+        {
+            this.Name = Path.GetFileNameWithoutExtension(name);
+        }
 
         public override string ToString()
         {
@@ -39,30 +52,30 @@ namespace Prover
             sb.Append("\nУдалено тавтологий: ".PadRight(offset, ' ') + tautologies_deleted);
             sb.Append("\nГлубина вывода: ".PadRight(offset, ' ') + depth);
             sb.Append("\nГлубина поиска: ".PadRight(offset, ' ') + search_depth);
+            sb.Append("\nДлина вывода: ".PadRight(offset, ' ') + inference_length);
 
             return sb.ToString();
         }
     }
 
-
     internal class Report
     {
         public Report(ProofState state, int depth = 0)
         {
-            statistics = state.statistics;
-            statistics.depth = depth;
+            Statistics = state.statistics;
+            Statistics.depth = depth;
         }
         public Report(RatingProofState state, int depth)
         {
-            statistics = new Statistics();
-            statistics.initial_count = state.initial_clause_count;
-            statistics.proc_clause_count = state.proc_clause_count;
-            statistics.resolvent_count = state.resolvent_count;
-            statistics.factor_count = state.factor_count;
-            statistics.forward_subsumed = state.forward_subsumed;
-            statistics.backward_subsumed = state.backward_subsumed;
-            statistics.tautologies_deleted = state.tautologies_deleted;
-            statistics.depth = depth;
+            Statistics = new Statistics("rating");
+            Statistics.initial_count = state.initial_clause_count;
+            Statistics.proc_clause_count = state.proc_clause_count;
+            Statistics.resolvent_count = state.resolvent_count;
+            Statistics.factor_count = state.factor_count;
+            Statistics.forward_subsumed = state.forward_subsumed;
+            Statistics.backward_subsumed = state.backward_subsumed;
+            Statistics.tautologies_deleted = state.tautologies_deleted;
+            Statistics.depth = depth;
         }
 
         public Report()
@@ -78,18 +91,26 @@ namespace Prover
         public string HeuristicName { get; set; }
         public string Result { get; set; }
         public string TPTPResult { get; set; }
-        public Statistics statistics { get; set; }
+        public Statistics Statistics { get; set; }
         public string InitialClauses { get; set; }
         public string Proof { get; set; }
         public FOFSpec problem;
         public Clause Res { get; set; }
-        public ProofState State { get; set; }
+
+        private ProofState _state;
+        public ProofState State { get => _state; 
+            set 
+            {
+                _state = value;
+                Statistics = _state.statistics;
+            } 
+        }
 
         public SearchParams Params { get; set; }
 
         public bool Timeout { get; set; }
         public void ConsolePrint()
-        {
+        {         
             Console.WriteLine("\n\nЗадача " + ProblemName);
             Console.WriteLine();
             string verdict;
@@ -140,12 +161,16 @@ namespace Prover
             Console.WriteLine("\nПосле преобразований получены следующие клаузы: ");
             Console.WriteLine(ClausesStr);
 
-
+            List<string> inference = new List<string>();
+            if (success)
+            {
+                inference = Printer.CreateInference(Res);
+                State.statistics.inference_length = inference.Count;
+            }
+            else Statistics.inference_length = 0;
             if (Params.proof && success)
             {
                 Console.WriteLine("\nДоказательство: ");
-
-                var inference = Printer.CreateInference(Res);
 
                 foreach (string s in inference)
                     Console.WriteLine(s);
@@ -160,10 +185,10 @@ namespace Prover
 
         public void FilePrint(string AnswerDirectory)
         {
-            using (StreamWriter Console = new StreamWriter(Path.Combine(AnswerDirectory, Path.GetFileName(ProblemName))))
+            using (StreamWriter sWriter = new StreamWriter(Path.Combine(AnswerDirectory, Path.GetFileName(ProblemName))))
             {
-                Console.WriteLine("\n\nЗадача " + ProblemName);
-                Console.WriteLine();
+                sWriter.WriteLine("\n\nЗадача " + ProblemName);
+                sWriter.WriteLine();
                 string verdict;
                 bool success = false;
                 if (Res is not null && Res.IsEmpty)
@@ -179,54 +204,70 @@ namespace Prover
                 }
 
 
-                Console.WriteLine(verdict);
+                sWriter.WriteLine(verdict);
 
-                Console.WriteLine();
-                Console.WriteLine(Params.ToString());
+                sWriter.WriteLine();
+                sWriter.WriteLine(Params.ToString());
 
-                Console.WriteLine("Прочитанная формула: ");
-                Console.WriteLine(FormulaStr);
+                sWriter.WriteLine("Прочитанная формула: ");
+                sWriter.WriteLine(FormulaStr);
 
                 if (!Params.supress_eq_axioms && AxiomStr.Length > 0)
                 {
-                    Console.WriteLine("Добавлены следующие аксиомы равенства:");
-                    Console.WriteLine(AxiomStr);
+                    sWriter.WriteLine("Добавлены следующие аксиомы равенства:");
+                    sWriter.WriteLine(AxiomStr);
                 }
 
                 if (Params.simplify)
                 {
                     var CnfForms = problem.clauses.Select(clause => clause.Parent1).Where(x => x is not null).Distinct().ToList();
 
-                    Console.WriteLine("Преобразования в клаузы: ");
+                    sWriter.WriteLine("Преобразования в клаузы: ");
 
                     for (int j = 0; j < CnfForms.Count; j++)
                     {
                         //if (CnfForms[j] is null) continue;
-                        Console.WriteLine("   Формула " + (j + 1));
-                        Console.WriteLine("\n" + CnfForms[j].TransformationPath());
-                        Console.WriteLine();
+                        sWriter.WriteLine("   Формула " + (j + 1));
+                        sWriter.WriteLine("\n" + CnfForms[j].TransformationPath());
+                        sWriter.WriteLine();
                     }
 
                 }
 
-                Console.WriteLine("\nПосле преобразований получены следующие клаузы: ");
-                Console.WriteLine(ClausesStr);
-
-
+                sWriter.WriteLine("\nПосле преобразований получены следующие клаузы: ");
+                sWriter.WriteLine(ClausesStr);
+                List<string> inference = new List<string>();
+                if (success)
+                {
+                    inference = Printer.CreateInference(Res);
+                    State.statistics.inference_length = inference.Count;
+                }
                 if (Params.proof && success)
                 {
-                    Console.WriteLine("\nДоказательство: ");
-
-                    var inference = Printer.CreateInference(Res);
+                    sWriter.WriteLine("\nДоказательство: ");
 
                     foreach (string s in inference)
-                        Console.WriteLine(s);
+                        sWriter.WriteLine(s);
 
-                    Console.WriteLine("Найдена пустая клауза. Доказательство завершено.\n");
+                    sWriter.WriteLine("Найдена пустая клауза. Доказательство завершено.\n");
 
                 }
-                Console.WriteLine("\nСтатистика: ");
-                Console.WriteLine(State.statistics.ToString());
+                sWriter.WriteLine("\nСтатистика: ");
+                sWriter.WriteLine(State.statistics.ToString());
+            }
+        }
+
+        public void StatsToJSONFile(string statsDirectory)
+        {
+            string jsn = JsonSerializer.Serialize(Statistics,
+            new JsonSerializerOptions()
+            {
+                WriteIndented = true,
+                Encoder = JavaScriptEncoder.UnsafeRelaxedJsonEscaping //JavaScriptEncoder.Create(UnicodeRanges.All) 
+            });
+            using (StreamWriter sw = new StreamWriter(statsDirectory + Statistics.Name + ".json"))
+            {
+                sw.WriteLine(jsn);
             }
         }
     }

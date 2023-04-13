@@ -21,8 +21,9 @@ namespace Prover
     class Program
     {
         static int Count = 0;
-        static string problemsDirectory = @"./TrainTask";// @"./problems/"; // @"./TrainTask"; //@"./problems/";
+        static string problemsDirectory = @"./problems/"; //@"./TrainTask";// @"./problems/"; // @"./TrainTask"; //@"./problems/";
         static string answersDirectory = @"./answers/";
+        static string statsDirectory = @"./statistics/";
 
         static List<string> solved = new List<string>();
 
@@ -122,14 +123,13 @@ namespace Prover
             var cnf = problem.Clausify();
             string ClausesStr = cnf.ToString();
 
-            var state = new ProofState(param, cnf, false, indexing);
+            var state = new ProofState(Path, param, cnf, indexing);
 
 
             report.Params = param;
             report.ClausesStr = cnf.ToString();
             report.problem = problem;
             report.State = state;
-
 
             Stopwatch stopwatch = new Stopwatch();
             Clause res;
@@ -144,7 +144,7 @@ namespace Prover
                 bool complete = tsk.Wait(param.timeout);
                 stopwatch.Stop();
                 token.Cancel();
-                tsk.Wait();
+                tsk.Wait(100);
                 if (complete)
                 {
                     res = tsk.Result;
@@ -153,10 +153,6 @@ namespace Prover
                 {
                     res = null;
                     report.Timeout = true;
-                    //var a = state.unprocessed.clauses.MaxBy(x => x.depth);
-                    //var b = state.processed.clauses.MaxBy(x => x.depth);
-                    //state.statistics.search_depth = Math.Max(a.depth, b.depth);
-                    //state.statistics.search_depth = Math.Max(state.unprocessed.clauses.Select(x => x.depth).Max(), state.processed.clauses.Select(x => x.depth).Max());
                 }
             }
             else
@@ -174,18 +170,10 @@ namespace Prover
             }
             state.statistics.ElapsedTime = stopwatch.Elapsed.TotalMilliseconds;
             report.Res = res;
-            //if (state.statistics.search_depth == 0)
-            //{
-            //    var list = state.unprocessed.clauses.Select(x => x.depth).ToList();
-            //    //var a = state.unprocessed.clauses.MaxBy(x => x.depth).;
-            //    var amax = list.Max();
-            //    var b = state.processed.clauses.MaxBy(x => x.depth);
-            //    var bmax = b.depth;
-            //    state.statistics.search_depth = Math.Max(amax, bmax);
-            //}
 
             report.ConsolePrint();
             report.FilePrint(answersDirectory);
+            report.StatsToJSONFile(statsDirectory);
         }
 
         static void GeneticBreeding()
@@ -250,7 +238,7 @@ namespace Prover
             var cnf = problem.Clausify();
             string ClausesStr = cnf.ToString();
 
-            var state = new ProofState(param, cnf, false, indexing);
+            var state = new ProofState(Path, param, cnf, indexing);
 
             Stopwatch stopwatch = new Stopwatch();
             Clause res;
@@ -302,8 +290,8 @@ namespace Prover
                 };
 
                 Console.WriteLine("\nСтатистика: \n");
-                R.statistics.ElapsedTime = stopwatch.Elapsed.TotalMilliseconds;
-                Console.WriteLine(R.statistics.ToString());
+                R.Statistics.ElapsedTime = stopwatch.Elapsed.TotalMilliseconds;
+                Console.WriteLine(R.Statistics.ToString());
 
                 string jsn = JsonSerializer.Serialize(R,
               new JsonSerializerOptions()
@@ -354,7 +342,7 @@ namespace Prover
                     Proof = proof.ToString(),
                     HeuristicName = param.heuristics.ToString()
                 };
-                report.statistics.ElapsedTime = stopwatch.Elapsed.TotalMilliseconds;
+                report.Statistics.ElapsedTime = stopwatch.Elapsed.TotalMilliseconds;
                 StreamWriter r = new StreamWriter(System.IO.Path.Combine(answersDirectory, System.IO.Path.GetFileName(Path)));
 
 
@@ -414,10 +402,10 @@ namespace Prover
 
                 }
                 Console.WriteLine("\nСтатистика: ");
-                Console.WriteLine(report.statistics.ToString());
+                Console.WriteLine(report.Statistics.ToString());
 
                 r.WriteLine("\nСтатистика: ");
-                r.WriteLine(report.statistics.ToString());
+                r.WriteLine(report.Statistics.ToString());
             }
 
 
@@ -571,7 +559,7 @@ namespace Prover
                 HeuristicName = "Rating"
 
             };
-            report.statistics.ElapsedTime = stopwatch.Elapsed.TotalMilliseconds;
+            report.Statistics.ElapsedTime = stopwatch.Elapsed.TotalMilliseconds;
 
 
             string json = JsonSerializer.Serialize(report,
@@ -618,7 +606,7 @@ namespace Prover
             var cnf = problem.Clausify();
             string ClausesStr = cnf.ToString();
 
-            var state = new ProofState(param, cnf, false, false);
+            var state = new ProofState(Path, param, cnf, false);
 
             Stopwatch stopwatch = new Stopwatch();
             //stopwatch.Restart();
@@ -709,7 +697,7 @@ namespace Prover
                 Proof = proof.ToString(),
                 HeuristicName = param.heuristics.ToString()
             };
-            report.statistics.ElapsedTime = stopwatch.Elapsed.TotalMilliseconds;
+            report.Statistics.ElapsedTime = stopwatch.Elapsed.TotalMilliseconds;
 
 
             string json = JsonSerializer.Serialize(report,

@@ -71,7 +71,7 @@ namespace Prover.Genetic
 
             var cnf = problem.Clausify();
 
-            var state = new ProofState(param, cnf, false, false);
+            var state = new ProofState(Path, param, cnf, false);
 
             CancellationTokenSource token = new CancellationTokenSource();
             state.token = token;

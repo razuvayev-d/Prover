@@ -24,7 +24,7 @@ namespace Prover.ProofStates
         public ClauseSet processed;
         public CancellationTokenSource token;
 
-        public Statistics statistics = new Statistics();
+        public Statistics statistics;
         bool indexed = false;
 
         public LiteralSelector Selector;
@@ -32,8 +32,9 @@ namespace Prover.ProofStates
         private Barrier barrier; 
 
         bool silent;
-        public ProofState(SearchParams Params, ClauseSet clauses, bool silent = false, bool indexed = false)
+        public ProofState(string name, SearchParams Params, ClauseSet clauses, bool indexed = false)
         {
+            statistics = new Statistics(name);
             //indexed = true;
             this.Params = Params;
             unprocessed = new HeuristicClauseSet(Params.heuristics);
@@ -164,6 +165,7 @@ namespace Prover.ProofStates
                 {
                     statistics.search_depth = Math.Max(unprocessed.MaxClauseDepth, processed.MaxClauseDepth);
                     if(res.Depth > statistics.search_depth) statistics.search_depth = res.Depth;
+                    statistics.ProofFound = true;
                     return res;
                 }
             }
