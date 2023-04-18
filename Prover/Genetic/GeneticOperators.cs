@@ -99,6 +99,9 @@ namespace Prover.Genetic
             return newInd;
         }
 
+        /// <summary>
+        /// Перемешивает параметры у весовой функции
+        /// </summary>
         private static List<object> cxParams((List<object>, List<object>) weight_founcts, double favor)
         {
             var newfunction = new List<object>();

@@ -9,7 +9,7 @@ namespace Prover.Genetic
     [Serializable]
     public class Individual
     {
-        public List<List<object>> genes { get; set; } = new List<List<object>>(10);//Каждый элемент список вида [name, weight, par1, par2 ... ]
+        public List<List<object>> genes { get; set; } = new List<List<object>>(10);//Каждый элемент список вида [name, weight, par1, par2 ..., litselector ]
         public int Fitness { get; set; }
         public bool InvalidFitness { get; set; } = true;
 

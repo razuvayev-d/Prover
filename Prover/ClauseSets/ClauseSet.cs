@@ -212,5 +212,12 @@ namespace Prover.ClauseSets
             return this;
         }
 
+        public ClauseSet Copy()
+        {
+            var copy = new List<Clause>();  
+            foreach(var c in clauses)
+                copy.Add(c.DeepCopy());
+            return new ClauseSet(copy);
+        }
     }
 }
