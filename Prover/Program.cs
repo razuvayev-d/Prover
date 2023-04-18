@@ -21,7 +21,7 @@ namespace Prover
     class Program
     {
         static int Count = 0;
-        static string problemsDirectory = @"./problems/"; //@"./TrainTask";// @"./problems/"; // @"./TrainTask"; //@"./problems/";
+        static string problemsDirectory = @"./TrainTask";// @"./Problems/"; //@"./TrainTask";// @"./problems/"; // @"./TrainTask"; //@"./problems/";
         static string answersDirectory = @"./answers/";
         static string statsDirectory = @"./statistics/";
 
@@ -32,7 +32,7 @@ namespace Prover
         static bool statonly = false;
         static void Main(string[] args)
         {
-            //GeneticBreeding();
+            GeneticBreeding();
             //
             string[] files = Directory.GetFiles(problemsDirectory);
             var s = problemsDirectory + "SYN941+1.p";
@@ -43,19 +43,35 @@ namespace Prover
             //FOFFull(path);
 
             var param = IO.ParamsSplit(args);
-            param.index = true;
-            //param.delete_tautologies = true;
-            //param.forward_subsumption = true;
-            //param.backward_subsumption = true;
+            //param.index = true;
+            param.delete_tautologies = true;
+            param.forward_subsumption = true;
+            param.backward_subsumption = true;
             //param.delete_tautologies = true;
             //param.heuristics = Heuristics.Heuristics.PickGiven5;
 
             //param.literal_selection = "large2"; //"largerandom";// largerandom"; //"large";
             //param.literal_selection = "mostfreq";
 
-            param.heuristics = SearchControl.Heuristics.PickGiven5;
+
+            var popul = Population.LoadFromFile(@"C:\Users\Danil\source\repos\razuvayev-d\Prover\Prover\bin\Debug\net6.0\generations\49.txt");
+            //popul = Population.LoadFromFile(@"C:\Users\Danil\source\repos\razuvayev-d\Prover\Prover\bin\Release\net6.0\generations\InitialPopulation.txt");
+
+            Console.WriteLine(popul.MaxFitness);
+            var ind = popul.individuals.MaxBy(x => x.Fitness).Clone();
+            ind.InvalidFitness = true;
+
+            Console.WriteLine(ind.ToString());
+            param.heuristics = ind.CreateEvalStructure();
+            // SearchControl.Heuristics.InitialWithLitSel;
+
+            Console.WriteLine("Try SOLVE");
+            param.literal_selection = null;
+           // Console.WriteLine(Fitness.Calculate(ind, 3000, param));
+
+            //param.heuristics = Heuristics.PickGiven5;
             param.timeout = 3000;
-            param.literal_selection = "large";
+            param.literal_selection = null;// "large";
             //param.degree_of_parallelism = 1;
             //param.timeout = 105000;
             // FOFFullClear(param.file, param);
@@ -186,8 +202,8 @@ namespace Prover
             options.LightTimeOut = 3000;
             options.probParam = 0.4;
             options.Mode = GeneticOptions.GeneticMode.CreateNewPopulation;
-            options.PopulationFileName = "InitialPopulation.txt";
-
+            options.PopulationFileName = "InitialPopulation.txt";// @"C:\Users\Danil\source\repos\razuvayev-d\Prover\Prover\bin\Release\net6.0\generations\38.txt";// "InitialPopulation.txt";
+            //Population.LoadFromFile(@"C:\Users\Danil\source\repos\razuvayev-d\Prover\Prover\bin\Release\net6.0\generations\38.txt");
             SearchParams sp = new SearchParams()
             {
                 delete_tautologies = true,

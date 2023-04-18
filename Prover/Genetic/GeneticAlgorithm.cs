@@ -12,91 +12,7 @@ using System.Threading.Tasks;
 
 namespace Prover.Genetic
 {
-    class Fitness
-    {
-        static string TrainDirectory = @".\TrainTask";
-
-        public static int Calculate(Individual individual, int timeout, SearchParams param)
-        {
-            if (individual.InvalidFitness)
-            {
-                individual.InvalidFitness = false;
-                return Calculate(individual.CreateEvalStructure(), timeout, param);
-            }
-            else
-                return individual.Fitness;
-        }
-
-
-        private static int Calculate(EvaluationScheme individual, int timeout, SearchParams param)
-        {
-            int result = 0;
-            string[] files = Directory.GetFiles(TrainDirectory);
-
-            //var PartedData = Partitioner.Create(files, true);
-            //Parallel.ForEach(PartedData, (file) =>
-            //{
-            //    if (TrySolve(file, individual)) Interlocked.Increment(ref result);
-            //});
-            foreach (var file in files)
-            {
-                if (TrySolve(file, individual, timeout, param))
-                {
-                    result++;
-                    //Console.WriteLine(file);
-                }
-                   
-            }
-
-            return result;
-        }
-
-        static bool TrySolve(string Path, EvaluationScheme individual, int timeout, SearchParams param)
-        {
-            Clause.ResetCounter();
-
-            string timeoutStatus = string.Empty;
-
-            param.heuristics = individual;
-            string TPTPStatus;
-            using (StreamReader sr = new StreamReader(Path))
-            {
-                string text = sr.ReadToEnd();
-                var rg = new Regex("(Status).+(\n)");
-                TPTPStatus = rg.Match(text).Value;
-            }
-
-            var problem = new FOFSpec();
-            problem.Parse(Path);
-
-            var cnf = problem.Clausify();
-
-            var state = new ProofState(Path, param, cnf, false);
-
-            CancellationTokenSource token = new CancellationTokenSource();
-            state.token = token;
-            var tsk = new Task<Clause>(() => state.Saturate());
-
-            tsk.Start();
-            bool complete = tsk.Wait(timeout);
-            token.Cancel();
-            tsk.Wait(15);
-            Clause res;
-            if (complete)
-                res = tsk.Result;
-            else
-                res = null;
-
-            if (res is null)
-            {
-                return false;
-            }
-            if (res.IsEmpty) return true;
-            else return false;
-
-        }
-    }
-
+   
     internal class GeneticAlgorithm
     {
         GeneticOptions Options;
@@ -114,22 +30,28 @@ namespace Prover.Genetic
             {
                 MaxDegreeOfParallelism = 16
             };
-
+            var fitness = new Fitness(@".\TrainTask");
             Population population;
             if (Options.Mode == GeneticOptions.GeneticMode.CreateNewPopulation)
             {
                 population = Population.CreateRandom(Options.Size, Options.GenesLengts);
                 Parallel.For(0, Options.Size, poptions, i =>
                 {
-                    population.individuals[i].Fitness = Fitness.Calculate(population.individuals[i], Options.LightTimeOut, SearchParams);
+                    population.individuals[i].Fitness = fitness.Calculate(population.individuals[i], Options.LightTimeOut, SearchParams);
                 });
             }
             else
             {
                 population = Population.LoadFromFile(Options.PopulationFileName);
                 foreach (var g in population.individuals)
-                    g.InvalidFitness = false;
+                    g.InvalidFitness = true;// true; // false;
+
+                Parallel.For(0, Options.Size, poptions, i =>
+                {
+                    population.individuals[i].Fitness = fitness.Calculate(population.individuals[i], Options.LightTimeOut, SearchParams);
+                });
             }
+        
             population.SaveToFile("InitialPopulation.txt");
             Console.WriteLine("Average fitness of generation {0}: {1}", -1, population.AverageFitness);
             Console.WriteLine("Max fitness of generation {0}: {1}", -1, population.MaxFitness);
@@ -209,7 +131,7 @@ namespace Prover.Genetic
 
 
                 //newIndividuals.Distinct();
-                List<int> fitness = new List<int>();
+                //List<int> fitness = new List<int>();
 
                 //Secuental calculate fitness
                 //for (int i = 0; i < newIndividuals.Count; i++)
@@ -218,7 +140,7 @@ namespace Prover.Genetic
                 //}
                 Parallel.For(0, Options.Size /*(int)Math.Min(population.Size * 1.5, newIndividuals.Count) /*newIndividuals.Count*/, poptions, i =>
                 {
-                    newIndividuals[i].Fitness = Fitness.Calculate(newIndividuals[i], timeout, SearchParams);
+                    newIndividuals[i].Fitness = fitness.Calculate(newIndividuals[i], timeout, SearchParams);
                     //newIndividuals[i].InvalidFitness = false;
                 });
                 //newIndividuals.AddRange(population.individuals);

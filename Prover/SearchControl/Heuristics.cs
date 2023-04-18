@@ -25,6 +25,34 @@ namespace Prover.SearchControl
                         }, "PickGiven5");
 
 
+        public static EvaluationScheme BreedingWithLitSel = new EvaluationScheme(new List<(ClauseEvaluationFunction, int, LiteralSelector)> {
+                                                                                 (new ByDerivationDepth(PriorityFunctions.PreferNonGround), 1, LiteralSelection.SmallestAll),
+                                                                                 (new FIFOEvaluationPrio(PriorityFunctions.PreferHorn), 2, LiteralSelection.SmallestAll),
+                                                                                 (new FIFOEvaluationPrio(PriorityFunctions.PreferNonGoals), 7, LiteralSelection.SmallesLit2),
+                                                                                 (new RefinedWeight(PriorityFunctions.PreferNonGround, 8, 7, 8, 5, 4), 1, LiteralSelection.LargestAll),
+                                                                                 (new LIFOEvaluationPrio(PriorityFunctions.PreferHorn), 4, LiteralSelection.RandomSelection)
+        });
+
+
+        public static EvaluationScheme InitialWithLitSel = new EvaluationScheme(new List<(ClauseEvaluationFunction, int, LiteralSelector)> {
+                                                                                 (new FIFOEvaluationPrio(PriorityFunctions.PreferNonUnits), 5, LiteralSelection.Largest2All),
+                                                                        
+                                                                                 (new ClauseWeight(PriorityFunctions.PreferAll, 8, 3, 7), 5, LiteralSelection.LargestAll),
+
+                                                                                 (new FIFOEvaluationPrio(PriorityFunctions.PreferNonGoals), 5, LiteralSelection.LargestLitRandom),
+                                                                                 (new ByLiteralNumber(PriorityFunctions.PreferHorn),3,  LiteralSelection.SmallesLit),
+ 
+                                                                                 (new ByLiteralNumber(PriorityFunctions.PreferNonHorn), 5, LiteralSelection.Smallest2All)
+        });
+
+
+
+
+
+
+
+
+
         /// <summary>
         /// Чередование стратегии предпочтения более коротких дизъюнктов и FIFO с соотношением весов 5 к 1.
         /// </summary>
