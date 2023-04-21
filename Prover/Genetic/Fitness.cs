@@ -73,6 +73,8 @@ namespace Prover.Genetic
                     res = tsk.Result;
                     if (res is not null && res.IsEmpty) result++;
                 }
+
+
             }
             return result;
         }
