@@ -406,18 +406,12 @@ namespace Prover.DataStructures
 
         public bool IsPropConst(bool polarity)
         {
-            if (!IsLiteral)
+            if (IsLiteral)
             {
-                if (Child1 is Literal)
-                    if (polarity)
-                        return ((Literal)this.Child1).IsPropTrue;
-                    else
-                        return ((Literal)this.Child1).IsPropFalse;
-                else if (Child1 is Literal)
-                    if (polarity)
-                        return ((Literal)this.Child2).IsPropTrue;
-                    else
-                        return ((Literal)this.Child2).IsPropFalse;
+                if (polarity)
+                    return ((Literal)this).IsPropTrue;
+                else
+                    return ((Literal)this).IsPropFalse;
             }
             return false;
         }

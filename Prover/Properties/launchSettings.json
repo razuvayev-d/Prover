@@ -2,7 +2,7 @@
   "profiles": {
     "Prover": {
       "commandName": "Project",
-      "commandLineArgs": "-f -t -b -p -s .\\TrainTask\\SYN332+1.p -H PickGiven5 -ls large -T 100000\r\n\r\n\r\n"
+      "commandLineArgs": "-f -t -b -p -s .\\ProblemsSetFrom\\PUZ001+2.p -H PickGiven5 -ls large -T 100000\r\n\r\n\r\n"
     }
   }
 }

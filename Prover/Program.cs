@@ -32,7 +32,7 @@ namespace Prover
         static bool statonly = false;
         static void Main(string[] args)
         {
-            GeneticBreeding();
+            //GeneticBreeding();
             //
             string[] files = Directory.GetFiles(problemsDirectory);
             var s = problemsDirectory + "SYN941+1.p";
@@ -62,19 +62,19 @@ namespace Prover
             ind.InvalidFitness = true;
 
             Console.WriteLine(ind.ToString());
-            param.heuristics = ind.CreateEvalStructure();
+            //param.heuristics = ind.CreateEvalStructure();
             // SearchControl.Heuristics.InitialWithLitSel;
 
             Console.WriteLine("Try SOLVE");
-            param.literal_selection = null;
+            //param.literal_selection = null;
            // Console.WriteLine(Fitness.Calculate(ind, 3000, param));
 
-            //param.heuristics = Heuristics.PickGiven5;
-            param.timeout = 3000;
-            param.literal_selection = null;// "large";
+            param.heuristics = Heuristics.PickGiven5;
+            param.timeout = 10000;
+            param.literal_selection = "large";
             //param.degree_of_parallelism = 1;
             //param.timeout = 105000;
-            // FOFFullClear(param.file, param);
+             FOFFullClear(param.file, param);
 
             param.simplify = false;
             //if (args[0] == "-i") indexing = true;
