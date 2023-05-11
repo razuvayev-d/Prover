@@ -124,12 +124,21 @@ namespace Prover.ResolutionMethod
         public void ComposeBinding(Term var, Term term)
         {
             Substitution tmpSubst = new Substitution(var, term);
-            var vars = subst.Keys;
-            foreach (var x in vars)
+            var it = subst.Keys.GetEnumerator();
+
+            while (it.MoveNext())
             {
-                var bound = subst[x];
-                subst[x] = tmpSubst.Apply(bound);
+                Term key = it.Current;
+                Term bound = subst[key];
+                subst[key] = tmpSubst.Apply(bound);
+                //subst.Add(key, tmpSubst.Apply(bound));
             }
+
+            //foreach (var x in vars)
+            //{
+            //    var bound = subst[x];
+            //    subst[x] = tmpSubst.Apply(bound);
+            //}
             if (!subst.ContainsKey(var))
                 subst[var] = term;
         }
@@ -223,7 +232,7 @@ namespace Prover.ResolutionMethod
         public int BacktrackToState((Substitution, int) btState)
         {
             var (substq, state) = btState;
-            //if (substq != this) throw new Exception();
+            if (substq != this) return 0;// throw new Exception();
             int res = 0;
 
             while (subst.Count > state)

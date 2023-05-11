@@ -50,7 +50,9 @@ namespace Prover.SearchControl
 
 
 
-
+        public static EvaluationScheme ByClauseLength = new EvaluationScheme(new List<(ClauseEvaluationFunction, int, LiteralSelector)> {
+                                                                                (new ByLiteralNumber(PriorityFunctions.PreferAll), 1, LiteralSelection.LargestLit) 
+        });
 
 
         /// <summary>

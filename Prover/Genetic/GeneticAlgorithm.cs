@@ -61,7 +61,7 @@ namespace Prover.Genetic
 
             int timeout = Options.LightTimeOut;
 
-            for (int generation = 0; generation < Options.MaxNumberOfGeneration; generation++)
+            for (int generation = 1; generation < Options.MaxNumberOfGeneration; generation++)
             {
                 Console.WriteLine("Начато в {0}\n", DateTime.Now);
                 //if (generation > Options.GenerationTimeOutThreshold) timeout = Options.HardTimeOut;

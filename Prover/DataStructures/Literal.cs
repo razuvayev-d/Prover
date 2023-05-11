@@ -302,21 +302,12 @@ namespace Prover.DataStructures
         {
             Literal copy = DeepCopy();
             sbst.Apply(copy.arguments);
+            copy.WeightCache = new LiteralCache(copy.Weight(1, 1), copy.Weight(2, 2));
+
             return copy;
         }
 
-        /// <summary>
-        /// Возвращает копию литерала с примененной подстановкой
-        /// </summary>
-        /// <param name="sbst"></param>
-        /// <returns></returns>
-        public Literal SubstituteWithCopy(Substitution sbst)
-        {
-            // TODO: этот метод дублирует Substitute
-            Literal newLit = DeepCopy();
-            return newLit.Substitute(sbst);
-            //return newLit;
-        }
+
         /// <summary>
         /// Parse a list of literals separated by "|" (logical or). As per
         ///TPTP 3 syntax, the single word "$false" is interpreted as the

@@ -62,15 +62,17 @@ namespace Prover.ResolutionMethod
                 }
                 //else if (t2.IsConstant && t1.IsConstant)
                 //{
-                //    //Сравниваем константы по имени, если совпадают то возвращаем текущую подстановку (not null)
-                //    if (!t1.name.Equals(t2.name))
+                //    Сравниваем константы по имени, если совпадают то возвращаем текущую подстановку(not null)
+                //    if (!t1.FunctionSymbol.Equals(t2.FunctionSymbol))
                 //        return null;
-                //    //return substitution;
+                //    else
+                //        continue;
+                //    return substitution;
                 //}
                 else
                 {
-
-                    //if (!t1.IsCompound || !t2.IsCompound) //тип проверка на функциональность, считаем что константа это функция 
+                    
+                    //if (!(t1.IsCompound && t2.IsCompound) || (t1.IsConstant && t2.IsConstant)) return null;//тип проверка на функциональность, считаем что константа это функция 
                     //    throw new Exception("tems is not compound");
 
                     if (!t1.FunctionSymbol.Equals(t2.FunctionSymbol))

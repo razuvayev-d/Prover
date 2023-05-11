@@ -21,7 +21,7 @@ namespace Prover
     class Program
     {
         static int Count = 0;
-        static string problemsDirectory = @"./TrainTask";// @"./Problems/"; //@"./TrainTask";// @"./problems/"; // @"./TrainTask"; //@"./problems/";
+        static string problemsDirectory = @"./GEO5/";// @"./TRAINTask";//@"./LCL"; //@"./TrainTask";// @"./Problems/"; //@"./TrainTask";// @"./problems/"; // @"./TrainTask"; //@"./problems/";
         static string answersDirectory = @"./answers/";
         static string statsDirectory = @"./statistics/";
 
@@ -49,12 +49,12 @@ namespace Prover
             param.backward_subsumption = true;
             //param.delete_tautologies = true;
             //param.heuristics = Heuristics.Heuristics.PickGiven5;
-
+            //FOFFullClear(param.file, param);
             //param.literal_selection = "large2"; //"largerandom";// largerandom"; //"large";
             //param.literal_selection = "mostfreq";
 
 
-            var popul = Population.LoadFromFile(@"C:\Users\Danil\source\repos\razuvayev-d\Prover\Prover\bin\Debug\net6.0\generations\49.txt");
+            var popul = Population.LoadFromFile(@"C:\Users\Danil\source\repos\razuvayev-d\Prover\Prover\bin\Release\net6.0\generations\50.txt");
             //popul = Population.LoadFromFile(@"C:\Users\Danil\source\repos\razuvayev-d\Prover\Prover\bin\Release\net6.0\generations\InitialPopulation.txt");
 
             Console.WriteLine(popul.MaxFitness);
@@ -62,16 +62,24 @@ namespace Prover
             ind.InvalidFitness = true;
 
             Console.WriteLine(ind.ToString());
-            //param.heuristics = ind.CreateEvalStructure();
-            // SearchControl.Heuristics.InitialWithLitSel;
-
-            Console.WriteLine("Try SOLVE");
-            //param.literal_selection = null;
-           // Console.WriteLine(Fitness.Calculate(ind, 3000, param));
-
+            param.heuristics = ind.CreateEvalStructure();
+            //SearchControl.Heuristics.InitialWithLitSel;
             param.heuristics = Heuristics.PickGiven5;
-            param.timeout = 10000;
-            param.literal_selection = "large";
+            param.literal_selection = "large"; //null;// "large";
+
+            //param.timeout = 0;         
+            //FOFFullClear(param.file, param);
+
+            //Console.WriteLine("Try SOLVE");
+            // param.literal_selection = "large";
+
+
+            // Console.WriteLine(Fitness.Calculate(ind, 3000, param));
+
+            //param.heuristics = Heuristics.PickGiven5;
+            //param.heuristics = Heuristics.ByClauseLength;
+            param.timeout = 300000;
+            //param.literal_selection = "large";
             //param.degree_of_parallelism = 1;
             //param.timeout = 105000;
              FOFFullClear(param.file, param);
@@ -87,19 +95,27 @@ namespace Prover
             //param.simplify = false;
             //param.simplify = false;
             foreach (string file in files)
-                FOFFullClear(file, param);
+            {
+                var olds = solved.Count;
+                if (file.Contains("+"))
+                    FOFFullClear(file, param);
+                if (solved.Count > olds)
+                    using (StreamWriter sw = new StreamWriter("solved.txt"))
+                        sw.WriteLine(solved[olds]);
+            }
             //////Rating(file);
 
             Console.WriteLine("Solved problems:");
             Console.ResetColor();
             Console.ForegroundColor = ConsoleColor.Green;
             Console.WriteLine("Solved: {0} / {1}", Count, files.Length);
-  
 
-            foreach (var x in solved)
-            {
-                Console.WriteLine(x);
-            }
+            using (StreamWriter sw = new StreamWriter("solved.txt"))
+                foreach (var x in solved)
+                {
+                    sw.WriteLine(x);
+                    Console.WriteLine(x);
+                }
         }
 
         static void FOFFullClear(string Path, SearchParams param = null)
@@ -160,7 +176,7 @@ namespace Prover
                 bool complete = tsk.Wait(param.timeout);
                 stopwatch.Stop();
                 token.Cancel();
-                tsk.Wait(100);
+                tsk.Wait(10000);
                 if (complete)
                 {
                     res = tsk.Result;
@@ -195,12 +211,12 @@ namespace Prover
         static void GeneticBreeding()
         {
             GeneticOptions options = new GeneticOptions();
-            options.Size = 25;
-            options.MaxNumberOfGeneration = 50;
+            options.Size = 30;
+            options.MaxNumberOfGeneration = 50 + 1;
             options.GenerationTimeOutThreshold = 100;
             options.probWeight = 0.5;
             options.LightTimeOut = 3000;
-            options.probParam = 0.4;
+            options.probParam = 0.3;
             options.Mode = GeneticOptions.GeneticMode.CreateNewPopulation;
             options.PopulationFileName = "InitialPopulation.txt";// @"C:\Users\Danil\source\repos\razuvayev-d\Prover\Prover\bin\Release\net6.0\generations\38.txt";// "InitialPopulation.txt";
             //Population.LoadFromFile(@"C:\Users\Danil\source\repos\razuvayev-d\Prover\Prover\bin\Release\net6.0\generations\38.txt");
@@ -209,7 +225,7 @@ namespace Prover
                 delete_tautologies = true,
                 backward_subsumption = true,
                 forward_subsumption = true,
-                //literal_selection = "large"
+                literal_selection = null// "large"
             };
 
             GeneticAlgorithm algorithm = new GeneticAlgorithm(options, sp);

@@ -9,13 +9,6 @@ using System.Text;
 
 namespace Prover.DataStructures
 {
-    /// <summary>
-    /// Класс, представляющий клаузулу. В настоящее время клаузула состоит из
-    /// следующие элементы:
-    /// - Cписок литералов.
-    /// - Тип ("простой", если не задан).
-    /// - Имя(генерируется автоматически, если не задано)
-    /// </summary>
     public class Clause : TransformNode
     {
         List<Literal> literals = new List<Literal>();
@@ -217,7 +210,7 @@ namespace Prover.DataStructures
             Clause newC = DeepCopy();
             newC.literals = new List<Literal>();
             for (int i = 0; i < literals.Count; i++)
-                newC.literals.Add(literals[i].SubstituteWithCopy(subst));
+                newC.literals.Add(literals[i].Substitute(subst));
             return newC;
         }
 
